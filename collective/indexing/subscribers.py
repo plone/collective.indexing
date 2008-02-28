@@ -64,7 +64,10 @@ def objectMoved(ev):
     if ev.newParent is ev.oldParent:
         # it's a renaming operation
         dispatchToSublocations(ev.object, ev)
-    objectAdded(ev)
+    uid = getObjectUID(ev.object, 'objectMoved')
+    indexer = queryUtility(IIndexing, default=None)
+    if uid is not None and indexer is not None:
+        indexer.reindex(uid)
 
 
 def dispatchObjectMovedEvent(ob, ev):
