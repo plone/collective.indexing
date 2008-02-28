@@ -13,6 +13,8 @@ ptc.setupPloneSite()
 import collective.indexing
 from collective.indexing.interfaces import IIndexing, IIndexQueue
 from collective.indexing.transactions import QueueTM
+from collective.indexing.reducer import QueueReducer
+from collective.indexing.reducer import DELETE, UPDATE, ADD
 
 
 class MockIndexer(object):
@@ -189,10 +191,46 @@ class QueueTransactionManagerTests(TestCase):
         self.assertEqual(self.queue.processed, [('index', 'foo', None)])
 
 
+class QueueReducerTests(TestCase):
+    def testReduceQueue(self):
+        reducer = QueueReducer()
+
+        queue = [(UPDATE, 'A', None),(UPDATE, 'A', None)]
+        self.failUnlessEqual(reducer.optimize(queue), [(UPDATE, 'A', None)])
+
+        queue = [(ADD, 'A', None),(UPDATE, 'A', None)]
+        self.failUnlessEqual(reducer.optimize(queue), [(ADD, 'A', None)])
+
+        queue = [(ADD, 'A', None),(DELETE, 'A', None)]
+        self.failUnlessEqual(reducer.optimize(queue), [])
+
+        queue = [(DELETE, 'A', None),(ADD, 'A', None)]
+        self.failUnlessEqual(reducer.optimize(queue), [(UPDATE, 'A', None)])
+
+    def testReduceQueueWithAttributes(self):
+        reducer = QueueReducer()
+
+        queue = [(UPDATE, 'A', None),(UPDATE, 'A', ('a','b'))]
+        self.failUnlessEqual(reducer.optimize(queue), [(UPDATE, 'A', None)])
+
+        queue = [(UPDATE, 'A', ('a','b')),(UPDATE, 'A', None)]
+        self.failUnlessEqual(reducer.optimize(queue), [(UPDATE, 'A', None)])
+
+        queue = [(UPDATE, 'A', ('a','b')),(UPDATE, 'A', ('b','c'))]
+        self.failUnlessEqual(reducer.optimize(queue), [(UPDATE, 'A', ('a', 'c', 'b'))])
+
+        queue = [(ADD, 'A', None),(UPDATE, 'A', None)]
+        self.failUnlessEqual(reducer.optimize(queue), [(ADD, 'A', None)])
+
+        queue = [(UPDATE, 'A', ('a','b')),(DELETE, 'A', None),(ADD, 'A', None)]
+        self.failUnlessEqual(reducer.optimize(queue), [(UPDATE, 'A', None)])
+
+
 def test_suite():
     return TestSuite([
         makeSuite(SubscriberTests),
         makeSuite(QueueTransactionManagerTests),
+        makeSuite(QueueReducerTests),
     ])
 
 if __name__ == '__main__':

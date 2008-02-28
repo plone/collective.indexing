@@ -36,3 +36,11 @@ class IIndexQueue(IIndexing):
     def clear():
         """ clear the queue's contents in an ordered fashion """
 
+
+class IQueueReducer(Interface):
+    """Optimizing the queue by removing redundant queue entries"""
+
+    def optimize(queue):
+        """Remove redundant entries from the queue and return optimized queue
+        The queue is a list of tuples with (operator, uid, attributes)
+        """
