@@ -2,7 +2,7 @@ from unittest import TestSuite, makeSuite, main
 
 from zope.component import provideUtility
 from zope.interface import implements
-from transaction import savepoint
+from transaction import savepoint, commit, abort
 
 from Products.Five import zcml
 from Products.Five import fiveconfigure
@@ -11,10 +11,11 @@ from Products.PloneTestCase.layer import PloneSite
 ptc.setupPloneSite()
 
 import collective.indexing
-from collective.indexing.interfaces import IIndexing
+from collective.indexing.interfaces import IIndexing, IIndexQueue
+from collective.indexing.transactions import QueueTM
 
 
-class MockIndexer:
+class MockIndexer(object):
     implements(IIndexing)
 
     def __init__(self):
@@ -28,6 +29,41 @@ class MockIndexer:
 
     def unindex(self, uid):
         self.queue.append(('unindex', uid))
+
+
+class MockQueue(MockIndexer):
+    implements(IIndexQueue)
+
+    processed = None
+
+    def index(self, uid, attributes=None):
+        super(MockQueue, self).index(uid, attributes)
+        self.hook()
+
+    def reindex(self, uid, attributes=None):
+        super(MockQueue, self).reindex(uid, attributes)
+        self.hook()
+
+    def unindex(self, uid):
+        super(MockQueue, self).unindex(uid)
+        self.hook()
+
+    def getState(self):
+        return list(self.queue)     # better return a copy... :)
+
+    def setState(self, state):
+        self.queue = state
+
+    def optimize(self):
+        pass
+
+    def process(self):
+        self.processed = self.queue
+        self.clear()
+        return len(self.processed)
+
+    def clear(self):
+        self.queue = []
 
 
 class TestCase(ptc.PloneTestCase):
@@ -115,9 +151,48 @@ class SubscriberTests(TestCase):
         self.assertEqual(self.queue, [('reindex', uid, None)])
 
 
+class QueueTransactionManagerTests(TestCase):
+
+    def afterSetUp(self):
+        self.setRoles(('Manager',))
+        self.queue = MockQueue()
+        self.tman = QueueTM(self.queue)
+        self.queue.hook = self.tman._register   # set up the transaction manager hook
+
+    def testFlushQueueOnCommit(self):
+        self.queue.index('foo')
+        commit()
+        self.assertEqual(self.queue.getState(), [])
+        self.assertEqual(self.queue.processed, [('index', 'foo', None)])
+
+    def testFlushQueueOnAbort(self):
+        self.queue.index('foo')
+        abort()
+        self.assertEqual(self.queue.getState(), [])
+        self.assertEqual(self.queue.processed, None)
+
+    def testUseSavePoint(self):
+        self.queue.index('foo')
+        savepoint()
+        self.queue.reindex('bar')
+        commit()
+        self.assertEqual(self.queue.getState(), [])
+        self.assertEqual(self.queue.processed, [('index', 'foo', None), ('reindex', 'bar', None)])
+
+    def testRollbackSavePoint(self):
+        self.queue.index('foo')
+        sp = savepoint()
+        self.queue.reindex('bar')
+        sp.rollback()
+        commit()
+        self.assertEqual(self.queue.getState(), [])
+        self.assertEqual(self.queue.processed, [('index', 'foo', None)])
+
+
 def test_suite():
     return TestSuite([
         makeSuite(SubscriberTests),
+        makeSuite(QueueTransactionManagerTests),
     ])
 
 if __name__ == '__main__':

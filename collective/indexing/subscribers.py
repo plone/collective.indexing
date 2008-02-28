@@ -6,7 +6,7 @@ from zope.app.container.contained import dispatchToSublocations
 from Products.Archetypes.utils import shasattr
 from collective.indexing.interfaces import IIndexing
 
-logger = getLogger('collective.indexing')
+logger = getLogger('collective.indexing.subscribers')
 
 
 def getObjectUID(obj, subscriber_name):
