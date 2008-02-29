@@ -1,0 +1,70 @@
+from zope.interface import implements
+
+from collective.indexing.interfaces import IIndexing, IIndexQueue
+from collective.indexing.interfaces import IIndexQueueProcessor
+from collective.indexing.config import INDEX, REINDEX, UNINDEX
+
+
+class MockIndexer(object):
+    implements(IIndexing)
+
+    def __init__(self):
+        self.queue = []
+
+    def index(self, uid, attributes=None):
+        self.queue.append((INDEX, uid, attributes))
+
+    def reindex(self, uid, attributes=None):
+        self.queue.append((REINDEX, uid, attributes))
+
+    def unindex(self, uid):
+        self.queue.append((UNINDEX, uid))
+
+
+class MockQueue(MockIndexer):
+    implements(IIndexQueue)
+
+    processed = None
+    hook = lambda self: 42
+
+    def index(self, uid, attributes=None):
+        super(MockQueue, self).index(uid, attributes)
+        self.hook()
+
+    def reindex(self, uid, attributes=None):
+        super(MockQueue, self).reindex(uid, attributes)
+        self.hook()
+
+    def unindex(self, uid):
+        super(MockQueue, self).unindex(uid)
+        self.hook()
+
+    def getState(self):
+        return list(self.queue)     # better return a copy... :)
+
+    def setState(self, state):
+        self.queue = state
+
+    def optimize(self):
+        pass
+
+    def process(self):
+        self.processed = self.queue
+        self.clear()
+        return len(self.processed)
+
+    def clear(self):
+        self.queue = []
+
+
+class MockQueueProcessor(MockQueue):
+    implements(IIndexQueueProcessor)
+
+    state = 'unknown'
+
+    def begin(self):
+        self.state = 'started'
+
+    def commit(self):
+        self.state = 'finished'
+
