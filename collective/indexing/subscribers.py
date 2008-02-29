@@ -1,7 +1,7 @@
 from logging import getLogger
 from zope.component import queryUtility
 from zope.event import notify
-from zope.app.event.objectevent import ObjectModifiedEvent, Attributes
+from zope.lifecycleevent import ObjectModifiedEvent, Attributes
 from zope.app.container.contained import dispatchToSublocations
 from Products.Archetypes.utils import shasattr
 from collective.indexing.interfaces import IIndexing
