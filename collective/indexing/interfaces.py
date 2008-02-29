@@ -20,6 +20,10 @@ class IIndexing(Interface):
 class IIndexQueue(IIndexing):
     """ a queue for storing and optimizing indexing operations """
 
+    def setHook(hook):
+        """ set the hook for the transaction manager;  this hook must be
+            called whenever an indexing operation is added to the queue """
+
     def getState():
         """ get the state of the queue, i.e. its contents """
 
@@ -37,10 +41,21 @@ class IIndexQueue(IIndexing):
         """ clear the queue's contents in an ordered fashion """
 
 
+class IIndexQueueProcessor(IIndexing):
+    """ a queue processor, i.e. an actual implementation of index operations
+        for a particular search engine, e.g. the catalog, solr etc """
+
+    def begin():
+        """ called before processing of the queue is started """
+
+    def commit():
+        """ called after processing of the queue has ended """
+
+
 class IQueueReducer(Interface):
-    """Optimizing the queue by removing redundant queue entries"""
+    """ Optimizing the queue by removing redundant queue entries """
 
     def optimize(queue):
-        """Remove redundant entries from the queue and return optimized queue
-        The queue is a list of tuples with (operator, uid, attributes)
-        """
+        """ Remove redundant entries from the queue and return optimized queue
+        The queue is a list of tuples with (operator, uid, attributes) """
+

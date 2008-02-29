@@ -1,7 +1,8 @@
-from unittest import TestSuite, makeSuite, main
+from unittest import TestSuite, makeSuite, main, TestCase as UnitTestCase
 
 from zope.component import provideUtility
 from zope.interface import implements
+from zope.testing.cleanup import CleanUp
 from transaction import savepoint, commit, abort
 
 from Products.Five import zcml
@@ -12,8 +13,10 @@ ptc.setupPloneSite()
 
 import collective.indexing
 from collective.indexing.interfaces import IIndexing, IIndexQueue
+from collective.indexing.interfaces import IIndexQueueProcessor
 from collective.indexing.transactions import QueueTM
 from collective.indexing.reducer import QueueReducer
+from collective.indexing.queue import IndexQueue
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
 
 
@@ -37,6 +40,7 @@ class MockQueue(MockIndexer):
     implements(IIndexQueue)
 
     processed = None
+    hook = lambda self: 42
 
     def index(self, uid, attributes=None):
         super(MockQueue, self).index(uid, attributes)
@@ -66,6 +70,18 @@ class MockQueue(MockIndexer):
 
     def clear(self):
         self.queue = []
+
+
+class MockQueueProcessor(MockQueue):
+    implements(IIndexQueueProcessor)
+
+    state = 'unknown'
+
+    def begin(self):
+        self.state = 'started'
+
+    def commit(self):
+        self.state = 'finished'
 
 
 class TestCase(ptc.PloneTestCase):
@@ -153,6 +169,25 @@ class SubscriberTests(TestCase):
         self.assertEqual(self.queue, [(REINDEX, uid, None)])
 
 
+class QueueTests(CleanUp, UnitTestCase):
+
+    def setUp(self):
+        self.queue = IndexQueue()
+
+    def testInterface(self):
+        IIndexQueue.providedBy(self.queue)
+
+    def testQueueProcessor(self):
+        queue = self.queue
+        proc = MockQueueProcessor()
+        provideUtility(proc, IIndexQueueProcessor)
+        queue.index('foo')
+        self.assertEqual(queue.process(), 1)    # also do the processing...
+        self.assertEqual(queue.getState(), [])
+        self.assertEqual(proc.getState(), [(INDEX, 'foo', None)])
+        self.assertEqual(proc.state, 'finished')
+
+
 class QueueTransactionManagerTests(TestCase):
 
     def afterSetUp(self):
@@ -191,7 +226,7 @@ class QueueTransactionManagerTests(TestCase):
         self.assertEqual(self.queue.processed, [(INDEX, 'foo', None)])
 
 
-class QueueReducerTests(TestCase):
+class QueueReducerTests(UnitTestCase):
 
     def testReduceQueue(self):
         reducer = QueueReducer()
@@ -230,6 +265,7 @@ class QueueReducerTests(TestCase):
 def test_suite():
     return TestSuite([
         makeSuite(SubscriberTests),
+        makeSuite(QueueTests),
         makeSuite(QueueTransactionManagerTests),
         makeSuite(QueueReducerTests),
     ])
