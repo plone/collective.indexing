@@ -1,10 +1,12 @@
 from unittest import TestSuite, makeSuite, main, TestCase
 
+from zope.interface import implements
 from zope.component import provideUtility
 from zope.testing.cleanup import CleanUp
 
 from collective.indexing.interfaces import IIndexQueue
 from collective.indexing.interfaces import IIndexQueueProcessor
+from collective.indexing.interfaces import IQueueReducer
 from collective.indexing.reducer import QueueReducer
 from collective.indexing.queue import IndexQueue
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
@@ -54,6 +56,32 @@ class QueueTests(CleanUp, TestCase):
         self.assertEqual(queue.getState(), [])
         self.assertEqual(proc.getState(), [(INDEX, 'foo', None), (REINDEX, 'foo', None), (UNINDEX, 'foo', None)])
         self.assertEqual(proc.state, 'finished')
+
+    def testQueueReducer(self):
+        class MessyReducer(object):
+            implements(IQueueReducer)
+            def optimize(self, queue):
+                return [ op for op in queue if not op[0] == UNINDEX ]
+        queue = self.queue
+        queue.index('foo')
+        queue.reindex('foo')
+        queue.unindex('foo')
+        queue.index('foo', 'bar')
+        queue.optimize()
+        self.assertEqual(queue.getState(), [(INDEX, 'foo', None), (REINDEX, 'foo', None), (UNINDEX, 'foo', None), (INDEX, 'foo', 'bar')])
+        provideUtility(MessyReducer())  # hook up the reducer
+        queue.optimize()                # and try again...
+        self.assertEqual(queue.getState(), [(INDEX, 'foo', None), (REINDEX, 'foo', None), (INDEX, 'foo', 'bar')])
+
+    def testRealQueueReducer(self):
+        provideUtility(QueueReducer())
+        queue = self.queue
+        queue.index('foo')
+        queue.reindex('foo')
+        queue.unindex('foo')
+        queue.index('foo', 'bar')
+        queue.optimize()
+        self.assertEqual(queue.getState(), [(INDEX, 'foo', None)])
 
 
 class QueueReducerTests(TestCase):
