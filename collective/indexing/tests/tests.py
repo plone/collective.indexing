@@ -57,14 +57,14 @@ class SubscriberTests(TestCase):
     def testRemoveObject(self):
         uid = self.portal.file1.UID()
         self.portal.manage_delObjects('file1')
-        self.assertEqual(self.queue, [(UNINDEX, uid)])
+        self.assertEqual(self.queue, [(UNINDEX, uid, None)])
 
     def testAddAndRemoveObject(self):
         self.portal.invokeFactory('File', id='foo', title='Foo')
         uid = self.portal.foo.UID()
         self.portal.manage_delObjects('foo')
         index = self.queue.index((INDEX, uid, None))
-        unindex = self.queue.index((UNINDEX, uid))
+        unindex = self.queue.index((UNINDEX, uid, None))
         self.assert_(index < unindex)
 
     def testMoveObject(self):
@@ -79,7 +79,7 @@ class SubscriberTests(TestCase):
         self.assert_((REINDEX, self.portal.folder2.file2.UID(), None) in self.queue, self.queue)
         self.assert_((REINDEX, self.portal.folder2.UID(), None) in self.queue, self.queue)
         # there should be no 'unindex', since it's still the same object...
-        self.failIf((UNINDEX, original_uid) in self.queue, self.queue)
+        self.failIf((UNINDEX, original_uid, None) in self.queue, self.queue)
         self.assertEqual(original_uid, self.portal.folder2.file2.UID())
 
     def testCopyObject(self):

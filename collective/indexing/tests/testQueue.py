@@ -52,7 +52,7 @@ class QueueTests(CleanUp, TestCase):
         queue.unindex('foo')
         self.assertEqual(queue.process(), 3)    # also do the processing...
         self.assertEqual(queue.getState(), [])
-        self.assertEqual(proc.getState(), [(INDEX, 'foo', None), (REINDEX, 'foo', None), (UNINDEX, 'foo')])
+        self.assertEqual(proc.getState(), [(INDEX, 'foo', None), (REINDEX, 'foo', None), (UNINDEX, 'foo', None)])
         self.assertEqual(proc.state, 'finished')
 
 

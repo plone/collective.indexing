@@ -18,7 +18,7 @@ class MockIndexer(object):
         self.queue.append((REINDEX, uid, attributes))
 
     def unindex(self, uid):
-        self.queue.append((UNINDEX, uid))
+        self.queue.append((UNINDEX, uid, None))
 
 
 class MockQueue(MockIndexer):
