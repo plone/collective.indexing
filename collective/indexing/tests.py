@@ -14,7 +14,7 @@ import collective.indexing
 from collective.indexing.interfaces import IIndexing, IIndexQueue
 from collective.indexing.transactions import QueueTM
 from collective.indexing.reducer import QueueReducer
-from collective.indexing.reducer import DELETE, UPDATE, ADD
+from collective.indexing.config import INDEX, REINDEX, UNINDEX
 
 
 class MockIndexer(object):
@@ -24,13 +24,13 @@ class MockIndexer(object):
         self.queue = []
 
     def index(self, uid, attributes=None):
-        self.queue.append(('index', uid, attributes))
+        self.queue.append((INDEX, uid, attributes))
 
     def reindex(self, uid, attributes=None):
-        self.queue.append(('reindex', uid, attributes))
+        self.queue.append((REINDEX, uid, attributes))
 
     def unindex(self, uid):
-        self.queue.append(('unindex', uid))
+        self.queue.append((UNINDEX, uid))
 
 
 class MockQueue(MockIndexer):
@@ -97,7 +97,7 @@ class SubscriberTests(TestCase):
     def testAddObject(self):
         self.portal.invokeFactory('File', id='foo', title='Foo')
         uid = self.portal.foo.UID()
-        self.assert_(('index', uid, None) in self.queue)
+        self.assert_((INDEX, uid, None) in self.queue)
 
     def testUpdateObject(self):
         self.file.update(title='Foo')
@@ -105,19 +105,19 @@ class SubscriberTests(TestCase):
 
     def testModifyObject(self):
         self.file.processForm({'title': 'Foo'})
-        self.assertEqual(self.queue, [('reindex', self.file.UID(), None)])
+        self.assertEqual(self.queue, [(REINDEX, self.file.UID(), None)])
 
     def testRemoveObject(self):
         uid = self.portal.file1.UID()
         self.portal.manage_delObjects('file1')
-        self.assertEqual(self.queue, [('unindex', uid)])
+        self.assertEqual(self.queue, [(UNINDEX, uid)])
 
     def testAddAndRemoveObject(self):
         self.portal.invokeFactory('File', id='foo', title='Foo')
         uid = self.portal.foo.UID()
         self.portal.manage_delObjects('foo')
-        index = self.queue.index(('index', uid, None))
-        unindex = self.queue.index(('unindex', uid))
+        index = self.queue.index((INDEX, uid, None))
+        unindex = self.queue.index((UNINDEX, uid))
         self.assert_(index < unindex)
 
     def testMoveObject(self):
@@ -128,29 +128,29 @@ class SubscriberTests(TestCase):
         original_uid = self.portal.folder1.file2.UID()
         cookie = self.portal.folder1.manage_cutObjects(ids=('file2',))
         self.portal.folder2.manage_pasteObjects(cookie)
-        self.assert_(('reindex', self.portal.folder1.UID(), None) in self.queue, self.queue)
-        self.assert_(('reindex', self.portal.folder2.file2.UID(), None) in self.queue, self.queue)
-        self.assert_(('reindex', self.portal.folder2.UID(), None) in self.queue, self.queue)
+        self.assert_((REINDEX, self.portal.folder1.UID(), None) in self.queue, self.queue)
+        self.assert_((REINDEX, self.portal.folder2.file2.UID(), None) in self.queue, self.queue)
+        self.assert_((REINDEX, self.portal.folder2.UID(), None) in self.queue, self.queue)
         # there should be no 'unindex', since it's still the same object...
-        self.failIf(('unindex', original_uid) in self.queue, self.queue)
+        self.failIf((UNINDEX, original_uid) in self.queue, self.queue)
         self.assertEqual(original_uid, self.portal.folder2.file2.UID())
 
     def testCopyObject(self):
         cookie = self.portal.manage_copyObjects(ids=('file1',))
         self.folder.manage_pasteObjects(cookie)
-        self.assert_(('index', self.folder.file1.UID(), None) in self.queue)
-        self.assert_(('reindex', self.folder.UID(), None) in self.queue)
+        self.assert_((INDEX, self.folder.file1.UID(), None) in self.queue)
+        self.assert_((REINDEX, self.folder.UID(), None) in self.queue)
 
     def testRenameObject(self):
         savepoint()         # need to create a savepoint, because!
         uid = self.portal.file1.UID()
         self.portal.manage_renameObject('file1', 'foo')
-        self.assertEqual(self.queue, [('reindex', uid, None)])
+        self.assertEqual(self.queue, [(REINDEX, uid, None)])
 
     def testPublishObject(self):
         uid = self.folder.UID()
         self.portal.portal_workflow.doActionFor(self.folder, 'publish')
-        self.assertEqual(self.queue, [('reindex', uid, None)])
+        self.assertEqual(self.queue, [(REINDEX, uid, None)])
 
 
 class QueueTransactionManagerTests(TestCase):
@@ -165,7 +165,7 @@ class QueueTransactionManagerTests(TestCase):
         self.queue.index('foo')
         commit()
         self.assertEqual(self.queue.getState(), [])
-        self.assertEqual(self.queue.processed, [('index', 'foo', None)])
+        self.assertEqual(self.queue.processed, [(INDEX, 'foo', None)])
 
     def testFlushQueueOnAbort(self):
         self.queue.index('foo')
@@ -179,7 +179,7 @@ class QueueTransactionManagerTests(TestCase):
         self.queue.reindex('bar')
         commit()
         self.assertEqual(self.queue.getState(), [])
-        self.assertEqual(self.queue.processed, [('index', 'foo', None), ('reindex', 'bar', None)])
+        self.assertEqual(self.queue.processed, [(INDEX, 'foo', None), (REINDEX, 'bar', None)])
 
     def testRollbackSavePoint(self):
         self.queue.index('foo')
@@ -188,42 +188,43 @@ class QueueTransactionManagerTests(TestCase):
         sp.rollback()
         commit()
         self.assertEqual(self.queue.getState(), [])
-        self.assertEqual(self.queue.processed, [('index', 'foo', None)])
+        self.assertEqual(self.queue.processed, [(INDEX, 'foo', None)])
 
 
 class QueueReducerTests(TestCase):
+
     def testReduceQueue(self):
         reducer = QueueReducer()
 
-        queue = [(UPDATE, 'A', None),(UPDATE, 'A', None)]
-        self.failUnlessEqual(reducer.optimize(queue), [(UPDATE, 'A', None)])
+        queue = [(REINDEX, 'A', None), (REINDEX, 'A', None)]
+        self.failUnlessEqual(reducer.optimize(queue), [(REINDEX, 'A', None)])
 
-        queue = [(ADD, 'A', None),(UPDATE, 'A', None)]
-        self.failUnlessEqual(reducer.optimize(queue), [(ADD, 'A', None)])
+        queue = [(INDEX, 'A', None), (REINDEX, 'A', None)]
+        self.failUnlessEqual(reducer.optimize(queue), [(INDEX, 'A', None)])
 
-        queue = [(ADD, 'A', None),(DELETE, 'A', None)]
+        queue = [(INDEX, 'A', None), (UNINDEX, 'A', None)]
         self.failUnlessEqual(reducer.optimize(queue), [])
 
-        queue = [(DELETE, 'A', None),(ADD, 'A', None)]
-        self.failUnlessEqual(reducer.optimize(queue), [(UPDATE, 'A', None)])
+        queue = [(UNINDEX, 'A', None), (INDEX, 'A', None)]
+        self.failUnlessEqual(reducer.optimize(queue), [(REINDEX, 'A', None)])
 
     def testReduceQueueWithAttributes(self):
         reducer = QueueReducer()
 
-        queue = [(UPDATE, 'A', None),(UPDATE, 'A', ('a','b'))]
-        self.failUnlessEqual(reducer.optimize(queue), [(UPDATE, 'A', None)])
+        queue = [(REINDEX, 'A', None), (REINDEX, 'A', ('a','b'))]
+        self.failUnlessEqual(reducer.optimize(queue), [(REINDEX, 'A', None)])
 
-        queue = [(UPDATE, 'A', ('a','b')),(UPDATE, 'A', None)]
-        self.failUnlessEqual(reducer.optimize(queue), [(UPDATE, 'A', None)])
+        queue = [(REINDEX, 'A', ('a','b')), (REINDEX, 'A', None)]
+        self.failUnlessEqual(reducer.optimize(queue), [(REINDEX, 'A', None)])
 
-        queue = [(UPDATE, 'A', ('a','b')),(UPDATE, 'A', ('b','c'))]
-        self.failUnlessEqual(reducer.optimize(queue), [(UPDATE, 'A', ('a', 'c', 'b'))])
+        queue = [(REINDEX, 'A', ('a','b')), (REINDEX, 'A', ('b','c'))]
+        self.failUnlessEqual(reducer.optimize(queue), [(REINDEX, 'A', ('a', 'c', 'b'))])
 
-        queue = [(ADD, 'A', None),(UPDATE, 'A', None)]
-        self.failUnlessEqual(reducer.optimize(queue), [(ADD, 'A', None)])
+        queue = [(INDEX, 'A', None), (REINDEX, 'A', None)]
+        self.failUnlessEqual(reducer.optimize(queue), [(INDEX, 'A', None)])
 
-        queue = [(UPDATE, 'A', ('a','b')),(DELETE, 'A', None),(ADD, 'A', None)]
-        self.failUnlessEqual(reducer.optimize(queue), [(UPDATE, 'A', None)])
+        queue = [(REINDEX, 'A', ('a','b')), (UNINDEX, 'A', None), (INDEX, 'A', None)]
+        self.failUnlessEqual(reducer.optimize(queue), [(REINDEX, 'A', None)])
 
 
 def test_suite():

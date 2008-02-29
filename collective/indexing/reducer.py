@@ -1,10 +1,7 @@
 from zope.interface import implements
 from collective.indexing.interfaces import IQueueReducer
+from collective.indexing.config import INDEX, UNINDEX
 
-# Operators should probably be defined elsewhere.
-DELETE = -1
-UPDATE = 0
-ADD = 1
 
 class QueueReducer(object):
     """Reduce a queue"""
@@ -18,12 +15,12 @@ class QueueReducer(object):
         for iop,uid,iattr in queue:
             op,attr = res.get(uid, (0,iattr))
             # If we are going to delete an item that was added in this transaction, ignore it
-            if op == ADD and iop == DELETE:
+            if op == INDEX and iop == UNINDEX:
                 del res[uid]
             else:
                 # Operators are -1, 0 or 1 which makes it safe to add them
                 op += iop
-                op = min(max(op,DELETE), ADD) # operator always between -1 and 1
+                op = min(max(op,UNINDEX), INDEX) # operator always between -1 and 1
 
                 # Handle attributes, None means all fields, and takes presedence
                 if isinstance(attr, (tuple,list)) and isinstance(iattr, (tuple,list)):
