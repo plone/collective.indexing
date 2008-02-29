@@ -29,6 +29,32 @@ class QueueTests(CleanUp, TestCase):
         self.assertEqual(proc.getState(), [(INDEX, 'foo', None)])
         self.assertEqual(proc.state, 'finished')
 
+    def testMultipleQueueProcessors(self):
+        queue = self.queue
+        proc1 = util.MockQueueProcessor()
+        proc2 = util.MockQueueProcessor()
+        provideUtility(proc1, IIndexQueueProcessor, name='proc1')
+        provideUtility(proc2, IIndexQueueProcessor, name='proc2')
+        queue.index('foo')
+        self.assertEqual(queue.process(), 1)    # also do the processing...
+        self.assertEqual(queue.getState(), [])
+        self.assertEqual(proc1.getState(), [(INDEX, 'foo', None)])
+        self.assertEqual(proc2.getState(), [(INDEX, 'foo', None)])
+        self.assertEqual(proc1.state, 'finished')
+        self.assertEqual(proc2.state, 'finished')
+
+    def testQueueOperations(self):
+        queue = self.queue
+        proc = util.MockQueueProcessor()
+        provideUtility(proc, IIndexQueueProcessor)
+        queue.index('foo')
+        queue.reindex('foo')
+        queue.unindex('foo')
+        self.assertEqual(queue.process(), 3)    # also do the processing...
+        self.assertEqual(queue.getState(), [])
+        self.assertEqual(proc.getState(), [(INDEX, 'foo', None), (REINDEX, 'foo', None), (UNINDEX, 'foo')])
+        self.assertEqual(proc.state, 'finished')
+
 
 class QueueReducerTests(TestCase):
 
