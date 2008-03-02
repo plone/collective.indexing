@@ -21,6 +21,35 @@ class QueueTests(CleanUp, TestCase):
     def testInterface(self):
         IIndexQueue.providedBy(self.queue)
 
+    def testQueueHook(self):
+        class CaptainHook:
+            def __init__(self):
+                self.hooked = 0
+            def __call__(self):
+                self.hooked += 1
+        hook = CaptainHook()
+        queue = self.queue
+        queue.setHook(hook)
+        self.assertEqual(hook.hooked, 0)
+        queue.index('foo')
+        queue.reindex('foo')
+        queue.reindex('bar')
+        self.assertEqual(len(queue.getState()), 3)
+        self.assertEqual(hook.hooked, 3)
+        self.assertEqual(queue.process(), 3)
+        self.assertEqual(hook.hooked, 3)
+
+    def testQueueState(self):
+        queue = self.queue
+        queue.index('foo')
+        self.assertEqual(queue.getState(), [(INDEX, 'foo', None)])
+        state = queue.getState()
+        queue.reindex('bar')
+        self.assertEqual(queue.getState(), [(INDEX, 'foo', None), (REINDEX, 'bar', None)])
+        queue.setState(state)
+        self.assertEqual(queue.getState(), [(INDEX, 'foo', None)])
+        self.assertEqual(queue.process(), 1)
+
     def testQueueProcessor(self):
         queue = self.queue
         proc = util.MockQueueProcessor()
