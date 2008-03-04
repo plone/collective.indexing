@@ -57,6 +57,7 @@ class SubscriberTests(TestCase):
         file1 = self.portal.file1
         self.portal.manage_delObjects('file1')
         self.assert_((UNINDEX, file1, None) in self.queue, self.queue)
+        self.assertRaises(AttributeError, getattr, self.portal, 'file1')
 
     def testAddAndRemoveObject(self):
         self.portal.invokeFactory('File', id='foo', title='Foo')
@@ -65,6 +66,7 @@ class SubscriberTests(TestCase):
         index = self.queue.index((INDEX, foo, None))
         unindex = self.queue.index((UNINDEX, foo, None))
         self.assert_(index < unindex)
+        self.assertRaises(AttributeError, getattr, self.portal, 'foo')
 
     def testMoveObject(self):
         self.portal.folder1.invokeFactory('File', id='file2', title='File 2')
@@ -91,6 +93,7 @@ class SubscriberTests(TestCase):
         savepoint()         # need to create a savepoint, because!
         self.portal.manage_renameObject('file1', 'foo')
         self.assert_((REINDEX, self.portal.foo, None) in self.queue, self.queue)
+        self.assertRaises(AttributeError, getattr, self.portal, 'file1')
 
     def testPublishObject(self):
         self.portal.portal_workflow.doActionFor(self.folder, 'publish')
