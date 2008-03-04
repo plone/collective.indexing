@@ -15,19 +15,19 @@ class IndexQueue(local):
         self.queue = []
         self.hook = lambda: 42  # avoid need to check for `None` everywhere...
 
-    def index(self, uid, attributes=None):
-        assert uid is not None, 'invalid UID'
-        self.queue.append((INDEX, uid, attributes))
+    def index(self, obj, attributes=None):
+        assert obj is not None, 'invalid object'
+        self.queue.append((INDEX, obj, attributes))
         self.hook()
 
-    def reindex(self, uid, attributes=None):
-        assert uid is not None, 'invalid UID'
-        self.queue.append((REINDEX, uid, attributes))
+    def reindex(self, obj, attributes=None):
+        assert obj is not None, 'invalid object'
+        self.queue.append((REINDEX, obj, attributes))
         self.hook()
 
-    def unindex(self, uid):
-        assert uid is not None, 'invalid UID'
-        self.queue.append((UNINDEX, uid, None))
+    def unindex(self, obj):
+        assert obj is not None, 'invalid object'
+        self.queue.append((UNINDEX, obj, None))
         self.hook()
 
     def setHook(self, hook):
@@ -50,14 +50,14 @@ class IndexQueue(local):
         processed = 0
         for name, util in utilities:
             util.begin()
-        for op, uid, attributes in self.queue:
+        for op, obj, attributes in self.queue:
             for name, util in utilities:
                 if op == INDEX:
-                    util.index(uid, attributes)
+                    util.index(obj, attributes)
                 elif op == REINDEX:
-                    util.reindex(uid, attributes)
+                    util.reindex(obj, attributes)
                 elif op == UNINDEX:
-                    util.unindex(uid)
+                    util.unindex(obj)
                 else:
                     raise 'InvalidQueueOperation', op
             processed += 1

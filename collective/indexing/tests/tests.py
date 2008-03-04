@@ -43,8 +43,7 @@ class SubscriberTests(TestCase):
 
     def testAddObject(self):
         self.portal.invokeFactory('File', id='foo', title='Foo')
-        uid = self.portal.foo.UID()
-        self.assert_((INDEX, uid, None) in self.queue)
+        self.assert_((INDEX, self.portal.foo, None) in self.queue)
 
     def testUpdateObject(self):
         self.file.update(title='Foo')
@@ -52,19 +51,19 @@ class SubscriberTests(TestCase):
 
     def testModifyObject(self):
         self.file.processForm({'title': 'Foo'})
-        self.assertEqual(self.queue, [(REINDEX, self.file.UID(), None)])
+        self.assertEqual(self.queue, [(REINDEX, self.file, None)])
 
     def testRemoveObject(self):
-        uid = self.portal.file1.UID()
+        file1 = self.portal.file1
         self.portal.manage_delObjects('file1')
-        self.assertEqual(self.queue, [(UNINDEX, uid, None)])
+        self.assert_((UNINDEX, file1, None) in self.queue, self.queue)
 
     def testAddAndRemoveObject(self):
         self.portal.invokeFactory('File', id='foo', title='Foo')
-        uid = self.portal.foo.UID()
+        foo = self.portal.foo
         self.portal.manage_delObjects('foo')
-        index = self.queue.index((INDEX, uid, None))
-        unindex = self.queue.index((UNINDEX, uid, None))
+        index = self.queue.index((INDEX, foo, None))
+        unindex = self.queue.index((UNINDEX, foo, None))
         self.assert_(index < unindex)
 
     def testMoveObject(self):
@@ -72,32 +71,30 @@ class SubscriberTests(TestCase):
         self.portal.invokeFactory('Folder', id='folder2', title='Folder 2')
         self.queue[:] = []  # clear the queue...
         savepoint()         # need to create a savepoint, because!
-        original_uid = self.portal.folder1.file2.UID()
+        original = self.portal.folder1.file2
         cookie = self.portal.folder1.manage_cutObjects(ids=('file2',))
         self.portal.folder2.manage_pasteObjects(cookie)
-        self.assert_((REINDEX, self.portal.folder1.UID(), None) in self.queue, self.queue)
-        self.assert_((REINDEX, self.portal.folder2.file2.UID(), None) in self.queue, self.queue)
-        self.assert_((REINDEX, self.portal.folder2.UID(), None) in self.queue, self.queue)
+        self.assert_((REINDEX, self.portal.folder1, None) in self.queue, self.queue)
+        self.assert_((REINDEX, self.portal.folder2.file2, None) in self.queue, self.queue)
+        self.assert_((REINDEX, self.portal.folder2, None) in self.queue, self.queue)
         # there should be no 'unindex', since it's still the same object...
-        self.failIf((UNINDEX, original_uid, None) in self.queue, self.queue)
-        self.assertEqual(original_uid, self.portal.folder2.file2.UID())
+        self.failIf((UNINDEX, original, None) in self.queue, self.queue)
+        self.assertEqual(original, self.portal.folder2.file2)
 
     def testCopyObject(self):
         cookie = self.portal.manage_copyObjects(ids=('file1',))
         self.folder.manage_pasteObjects(cookie)
-        self.assert_((INDEX, self.folder.file1.UID(), None) in self.queue)
-        self.assert_((REINDEX, self.folder.UID(), None) in self.queue)
+        self.assert_((INDEX, self.folder.file1, None) in self.queue)
+        self.assert_((REINDEX, self.folder, None) in self.queue)
 
     def testRenameObject(self):
         savepoint()         # need to create a savepoint, because!
-        uid = self.portal.file1.UID()
         self.portal.manage_renameObject('file1', 'foo')
-        self.assertEqual(self.queue, [(REINDEX, uid, None)])
+        self.assert_((REINDEX, self.portal.foo, None) in self.queue, self.queue)
 
     def testPublishObject(self):
-        uid = self.folder.UID()
         self.portal.portal_workflow.doActionFor(self.folder, 'publish')
-        self.assertEqual(self.queue, [(REINDEX, uid, None)])
+        self.assertEqual(self.queue, [(REINDEX, self.folder, None)])
 
 
 class QueueTransactionManagerTests(TestCase):

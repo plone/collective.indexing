@@ -3,34 +3,22 @@ from zope.component import queryUtility
 from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent, Attributes
 from zope.app.container.contained import dispatchToSublocations
-from Products.Archetypes.utils import shasattr
 from collective.indexing.interfaces import IIndexing
 
 logger = getLogger('collective.indexing.subscribers')
 
 
-def getObjectUID(obj, subscriber_name):
-    if not shasattr(obj, 'UID'):
-        logger.debug('%s - object has no UID: %r', (subscriber_name, obj))
-        return None
-    uid = obj.UID()
-    if not uid:
-        logger.debug('%s - object has UID: %r', (subscriber_name, obj))
-        return None
-    return uid
-
-
 def objectAdded(ev):
-    uid = getObjectUID(ev.object, 'objectAdded')
+    obj = ev.object
     indexer = queryUtility(IIndexing, default=None)
-    if uid is not None and indexer is not None:
-        indexer.index(uid)
+    if obj is not None and indexer is not None:
+        indexer.index(obj)
 
 
 def objectModified(ev):
-    uid = getObjectUID(ev.object, 'objectModified')
+    obj = ev.object
     indexer = queryUtility(IIndexing, default=None)
-    if uid is None or indexer is None:
+    if obj is None or indexer is None:
         return
     if ev.descriptions:     # not used by archetypes/plone atm...
         # build the list of to be updated attributes
@@ -38,12 +26,12 @@ def objectModified(ev):
         for desc in ev.descriptions:
             if isinstance(desc, Attributes):
                 attrs.extend(desc.attributes)
-        indexer.reindex(uid, attrs)
+        indexer.reindex(obj, attrs)
         if 'allow' in attrs:    # dispatch to sublocations on security changes
             dispatchToSublocations(ev.object, ev)
     else:
         # with no descriptions (of changed attributes) just reindex all
-        indexer.reindex(uid)
+        indexer.reindex(obj)
 
 
 def objectCopied(ev):
@@ -51,10 +39,10 @@ def objectCopied(ev):
 
 
 def objectRemoved(ev):
-    uid = getObjectUID(ev.object, 'objectRemoved')
+    obj = ev.object
     indexer = queryUtility(IIndexing, default=None)
-    if uid is not None and indexer is not None:
-        indexer.unindex(uid)
+    if obj is not None and indexer is not None:
+        indexer.unindex(obj)
 
 
 def objectMoved(ev):
@@ -64,10 +52,10 @@ def objectMoved(ev):
     if ev.newParent is ev.oldParent:
         # it's a renaming operation
         dispatchToSublocations(ev.object, ev)
-    uid = getObjectUID(ev.object, 'objectMoved')
+    obj = ev.object
     indexer = queryUtility(IIndexing, default=None)
-    if uid is not None and indexer is not None:
-        indexer.reindex(uid)
+    if obj is not None and indexer is not None:
+        indexer.reindex(obj)
 
 
 def dispatchObjectMovedEvent(ob, ev):
@@ -78,8 +66,8 @@ def dispatchObjectMovedEvent(ob, ev):
 
 
 def objectTransitioned(ev):
-    uid = getObjectUID(ev.object, 'objectTransitioned')
+    obj = ev.object
     indexer = queryUtility(IIndexing, default=None)
-    if uid is not None and indexer is not None:
-        indexer.reindex(uid)
+    if obj is not None and indexer is not None:
+        indexer.reindex(obj)
 

@@ -7,14 +7,14 @@ class IIndexing(Interface):
         registered as a utility while the indexers (portal catalog, solr)
         are registerd as adapters """
 
-    def index(uid, attributes=None):
-        """ queue an index operation for the given attributes """
+    def index(obj, attributes=None):
+        """ queue an index operation for the given object and attributes """
 
-    def reindex(uid, attributes=None):
-        """ queue a reindex operation for the given attributes """
+    def reindex(obj, attributes=None):
+        """ queue a reindex operation for the given object and attributes """
 
-    def unindex(uid):
-        """ queue an unindex operation """
+    def unindex(obj):
+        """ queue an unindex operation for the given object """
 
 
 class IIndexQueue(IIndexing):

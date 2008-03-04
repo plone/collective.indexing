@@ -11,14 +11,14 @@ class MockIndexer(object):
     def __init__(self):
         self.queue = []
 
-    def index(self, uid, attributes=None):
-        self.queue.append((INDEX, uid, attributes))
+    def index(self, obj, attributes=None):
+        self.queue.append((INDEX, obj, attributes))
 
-    def reindex(self, uid, attributes=None):
-        self.queue.append((REINDEX, uid, attributes))
+    def reindex(self, obj, attributes=None):
+        self.queue.append((REINDEX, obj, attributes))
 
-    def unindex(self, uid):
-        self.queue.append((UNINDEX, uid, None))
+    def unindex(self, obj):
+        self.queue.append((UNINDEX, obj, None))
 
 
 class MockQueue(MockIndexer):
@@ -27,16 +27,16 @@ class MockQueue(MockIndexer):
     processed = None
     hook = lambda self: 42
 
-    def index(self, uid, attributes=None):
-        super(MockQueue, self).index(uid, attributes)
+    def index(self, obj, attributes=None):
+        super(MockQueue, self).index(obj, attributes)
         self.hook()
 
-    def reindex(self, uid, attributes=None):
-        super(MockQueue, self).reindex(uid, attributes)
+    def reindex(self, obj, attributes=None):
+        super(MockQueue, self).reindex(obj, attributes)
         self.hook()
 
-    def unindex(self, uid):
-        super(MockQueue, self).unindex(uid)
+    def unindex(self, obj):
+        super(MockQueue, self).unindex(obj)
         self.hook()
 
     def getState(self):

@@ -4,19 +4,18 @@ from collective.indexing.config import INDEX, UNINDEX
 
 
 class QueueReducer(object):
-    """Reduce a queue"""
+    """ reduce a queue of index operations """
     implements(IQueueReducer)
 
     def optimize(self, queue):
-        """Remove redundant entries from queue.
-        Queue is of the form [(operator, UID, attributes),...]
-        """
+        """ remove redundant entries from queue;
+            queue is of the form [(operator, object, attributes), ...] """
         res = {}
-        for iop,uid,iattr in queue:
-            op,attr = res.get(uid, (0,iattr))
+        for iop, obj, iattr in queue:
+            op, attr = res.get(obj, (0,iattr))
             # If we are going to delete an item that was added in this transaction, ignore it
             if op == INDEX and iop == UNINDEX:
-                del res[uid]
+                del res[obj]
             else:
                 # Operators are -1, 0 or 1 which makes it safe to add them
                 op += iop
@@ -31,6 +30,7 @@ class QueueReducer(object):
                 else:
                     attr = None
 
-                res[uid] = (op, attr)
+                res[obj] = (op, attr)
 
-        return [(op,uid,attr) for uid,(op,attr) in res.items()] # almost Perl!
+        return [(op, obj, attr) for obj, (op, attr) in res.items()] # almost Perl!
+
