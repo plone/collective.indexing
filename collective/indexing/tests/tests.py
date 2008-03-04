@@ -50,7 +50,8 @@ class SubscriberTests(TestCase):
         self.assertEqual(self.queue, [])    # `update()` doesn't fire an event
 
     def testModifyObject(self):
-        self.file.processForm({'title': 'Foo'})
+        self.file.processForm(values={'title': 'Foo'})
+        self.assertEqual(self.file.Title(), 'Foo')
         self.assertEqual(self.queue, [(REINDEX, self.file, None)])
 
     def testRemoveObject(self):
