@@ -19,7 +19,7 @@ class QueueTests(CleanUp, TestCase):
         self.queue = IndexQueue()
 
     def testInterface(self):
-        IIndexQueue.providedBy(self.queue)
+        self.failUnless(IIndexQueue.providedBy(self.queue))
 
     def testQueueHook(self):
         class CaptainHook:
