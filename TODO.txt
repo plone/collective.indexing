@@ -1,0 +1,3 @@
+TODO:
+- cmfmultiplex monkey patch / default adapter for filling the queue
+- default processor implementation indexing in the catalog
