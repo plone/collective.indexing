@@ -1,3 +1,4 @@
 TODO:
+- tests for threaded queue indexers
 - cmfmultiplex monkey patch / default adapter for filling the queue
 - default processor implementation indexing in the catalog
