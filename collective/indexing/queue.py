@@ -1,7 +1,9 @@
+from persistent import Persistent
 from threading import local
 from zope.interface import implements
 from zope.component import queryUtility, getUtilitiesFor
 from collective.indexing.interfaces import IIndexQueue
+from collective.indexing.interfaces import IIndexQueueSwitch
 from collective.indexing.interfaces import IIndexQueueProcessor
 from collective.indexing.interfaces import IQueueReducer
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
@@ -68,4 +70,9 @@ class IndexQueue(local):
 
     def clear(self):
         del self.queue[:]
+
+
+class IndexQueueSwitch(Persistent):
+    """ marker utility for switching queued indexing on/off """
+    implements(IIndexQueueSwitch)
 

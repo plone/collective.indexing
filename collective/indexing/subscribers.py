@@ -4,13 +4,18 @@ from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent, Attributes
 from zope.app.container.contained import dispatchToSublocations
 from collective.indexing.interfaces import IIndexing
+from collective.indexing.interfaces import IIndexQueueSwitch
+from collective.indexing.queue import IndexQueue
 
 logger = getLogger('collective.indexing.subscribers')
 
 
 def getIndexer():
     """ look for and return an indexer """
-    return queryUtility(IIndexing)
+    switch = queryUtility(IIndexQueueSwitch)
+    if switch is not None:          # when switched on...
+        return IndexQueue()         # return queue using indexer or...
+    return queryUtility(IIndexing)  # directly return unqueued indexer...
 
 
 def objectAdded(ev):

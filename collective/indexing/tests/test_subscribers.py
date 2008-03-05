@@ -23,8 +23,11 @@ ptc.setupPloneSite()
 from zope.component import provideUtility, getGlobalSiteManager
 from transaction import savepoint
 
-from collective.indexing.interfaces import IIndexing
+from collective.indexing.interfaces import IIndexQueue, IIndexing
+from collective.indexing.interfaces import IIndexQueueSwitch
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
+from collective.indexing.subscribers import getIndexer
+from collective.indexing.queue import IndexQueueSwitch
 from collective.indexing.tests import util
 
 
@@ -104,9 +107,29 @@ class SubscriberTests(ptc.PloneTestCase):
         self.assertEqual(self.queue, [(REINDEX, self.folder, None)])
 
 
+class IntegrationTests(ptc.PloneTestCase):
+
+    def testGetIndexer(self):
+        # no indexer should be found initially...
+        indexer = getIndexer()
+        self.failIf(indexer, 'indexer found?')
+        # a direct indexer is provided...
+        direct_indexer = util.MockIndexer()
+        provideUtility(direct_indexer)
+        indexer = getIndexer()
+        self.failUnless(indexer, 'no indexer found')
+        self.assertEqual(indexer, direct_indexer, 'who are you?')
+        # queued indexing is enabled...
+        provideUtility(IndexQueueSwitch(), IIndexQueueSwitch)
+        indexer = getIndexer()
+        self.failUnless(indexer, 'no indexer found')
+        self.failUnless(IIndexQueue.providedBy(indexer), 'non-queued indexer found')
+
+
 def test_suite():
     return TestSuite([
         makeSuite(SubscriberTests),
+        makeSuite(IntegrationTests),
     ])
 
 if __name__ == '__main__':
