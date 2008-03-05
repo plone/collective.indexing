@@ -8,16 +8,21 @@ from collective.indexing.interfaces import IIndexing
 logger = getLogger('collective.indexing.subscribers')
 
 
+def getIndexer():
+    """ look for and return an indexer """
+    return queryUtility(IIndexing)
+
+
 def objectAdded(ev):
     obj = ev.object
-    indexer = queryUtility(IIndexing, default=None)
+    indexer = getIndexer()
     if obj is not None and indexer is not None:
         indexer.index(obj)
 
 
 def objectModified(ev):
     obj = ev.object
-    indexer = queryUtility(IIndexing, default=None)
+    indexer = getIndexer()
     if obj is None or indexer is None:
         return
     if ev.descriptions:     # not used by archetypes/plone atm...
@@ -40,7 +45,7 @@ def objectCopied(ev):
 
 def objectRemoved(ev):
     obj = ev.object
-    indexer = queryUtility(IIndexing, default=None)
+    indexer = getIndexer()
     if obj is not None and indexer is not None:
         indexer.unindex(obj)
 
@@ -53,7 +58,7 @@ def objectMoved(ev):
         # it's a renaming operation
         dispatchToSublocations(ev.object, ev)
     obj = ev.object
-    indexer = queryUtility(IIndexing, default=None)
+    indexer = getIndexer()
     if obj is not None and indexer is not None:
         indexer.reindex(obj)
 
@@ -67,7 +72,7 @@ def dispatchObjectMovedEvent(ob, ev):
 
 def objectTransitioned(ev):
     obj = ev.object
-    indexer = queryUtility(IIndexing, default=None)
+    indexer = getIndexer()
     if obj is not None and indexer is not None:
         indexer.reindex(obj)
 
