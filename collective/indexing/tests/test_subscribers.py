@@ -23,7 +23,7 @@ ptc.setupPloneSite()
 from zope.component import provideUtility, getGlobalSiteManager
 from transaction import savepoint
 
-from collective.indexing.interfaces import IIndexQueue
+from collective.indexing.interfaces import IIndexing
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
 from collective.indexing.tests import util
 
@@ -42,7 +42,7 @@ class SubscriberTests(ptc.PloneTestCase):
 
     def beforeTearDown(self):
         gsm = getGlobalSiteManager()
-        gsm.unregisterUtility(self.indexer, IIndexQueue)
+        gsm.unregisterUtility(self.indexer, IIndexing)
 
     def testAddObject(self):
         self.portal.invokeFactory('File', id='foo', title='Foo')
