@@ -3,6 +3,8 @@
     xmlns:five="http://namespaces.zope.org/five"
     i18n_domain="collective.indexing">
 
+    <include file="profiles.zcml" />
+
     <subscriber
         handler=".subscribers.objectAdded"
         for="zope.app.event.interfaces.IObjectCreatedEvent"

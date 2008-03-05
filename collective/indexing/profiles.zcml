@@ -1,0 +1,14 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="collective.indexing">
+
+  <genericsetup:registerProfile
+      name="default"
+      title="collective.indexing"
+      directory="profiles/default"
+      description='Abstract framework for queued indexing of portal content'
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+</configure>

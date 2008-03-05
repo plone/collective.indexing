@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<componentregistry>
+ <adapters/>
+ <utilities>
+  <utility
+     interface="collective.indexing.interfaces.IIndexQueueSwitch"
+     factory="collective.indexing.queue.IndexQueueSwitch"/>
+ </utilities>
+</componentregistry>
