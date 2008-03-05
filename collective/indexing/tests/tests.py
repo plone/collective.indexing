@@ -1,34 +1,33 @@
+# integration and functional tests
+# see http://plone.org/documentation/tutorial/testing/writing-a-plonetestcase-unit-integration-test
+# for more information about the following setup
+
 from unittest import TestSuite, makeSuite, main
-
-from zope.component import provideUtility
-from transaction import savepoint
-
 from Products.Five import zcml
 from Products.Five import fiveconfigure
 from Products.PloneTestCase import PloneTestCase as ptc
-from Products.PloneTestCase.layer import PloneSite
+from Products.PloneTestCase.layer import onsetup
+
+@onsetup
+def setup_product():
+    fiveconfigure.debug_mode = True
+    import collective.indexing
+    zcml.load_config('configure.zcml', collective.indexing)
+    fiveconfigure.debug_mode = False
+
+setup_product()
 ptc.setupPloneSite()
 
-import collective.indexing
+
+# test-specific imports go here...
+from zope.component import provideUtility
+from transaction import savepoint
+
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
 from collective.indexing.tests import util
 
 
-class TestCase(ptc.PloneTestCase):
-    class layer(PloneSite):
-        @classmethod
-        def setUp(cls):
-            fiveconfigure.debug_mode = True
-            zcml.load_config('configure.zcml',
-                             collective.indexing)
-            fiveconfigure.debug_mode = False
-
-        @classmethod
-        def tearDown(cls):
-            pass
-
-
-class SubscriberTests(TestCase):
+class SubscriberTests(ptc.PloneTestCase):
 
     def afterSetUp(self):
         self.setRoles(('Manager',))
@@ -107,3 +106,4 @@ def test_suite():
 
 if __name__ == '__main__':
     main(defaultTest='test_suite')
+
