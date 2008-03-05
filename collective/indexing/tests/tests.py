@@ -1,7 +1,7 @@
 from unittest import TestSuite, makeSuite, main
 
 from zope.component import provideUtility
-from transaction import savepoint, commit, abort
+from transaction import savepoint
 
 from Products.Five import zcml
 from Products.Five import fiveconfigure
@@ -10,7 +10,6 @@ from Products.PloneTestCase.layer import PloneSite
 ptc.setupPloneSite()
 
 import collective.indexing
-from collective.indexing.transactions import QueueTM
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
 from collective.indexing.tests import util
 
@@ -101,48 +100,9 @@ class SubscriberTests(TestCase):
         self.assertEqual(self.queue, [(REINDEX, self.folder, None)])
 
 
-class QueueTransactionManagerTests(TestCase):
-
-    def afterSetUp(self):
-        self.setRoles(('Manager',))
-        self.queue = util.MockQueue()
-        self.tman = QueueTM(self.queue)
-        self.queue.hook = self.tman._register   # set up the transaction manager hook
-
-    def testFlushQueueOnCommit(self):
-        self.queue.index('foo')
-        commit()
-        self.assertEqual(self.queue.getState(), [])
-        self.assertEqual(self.queue.processed, [(INDEX, 'foo', None)])
-
-    def testFlushQueueOnAbort(self):
-        self.queue.index('foo')
-        abort()
-        self.assertEqual(self.queue.getState(), [])
-        self.assertEqual(self.queue.processed, None)
-
-    def testUseSavePoint(self):
-        self.queue.index('foo')
-        savepoint()
-        self.queue.reindex('bar')
-        commit()
-        self.assertEqual(self.queue.getState(), [])
-        self.assertEqual(self.queue.processed, [(INDEX, 'foo', None), (REINDEX, 'bar', None)])
-
-    def testRollbackSavePoint(self):
-        self.queue.index('foo')
-        sp = savepoint()
-        self.queue.reindex('bar')
-        sp.rollback()
-        commit()
-        self.assertEqual(self.queue.getState(), [])
-        self.assertEqual(self.queue.processed, [(INDEX, 'foo', None)])
-
-
 def test_suite():
     return TestSuite([
         makeSuite(SubscriberTests),
-        makeSuite(QueueTransactionManagerTests),
     ])
 
 if __name__ == '__main__':
