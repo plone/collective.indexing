@@ -20,7 +20,7 @@ ptc.setupPloneSite()
 
 
 # test-specific imports go here...
-from zope.component import provideUtility, getGlobalSiteManager
+from zope.component import provideUtility, getUtilitiesFor, getGlobalSiteManager
 from transaction import savepoint
 
 from collective.indexing.interfaces import IIndexQueue, IIndexing
@@ -115,15 +115,21 @@ class IntegrationTests(ptc.PloneTestCase):
         self.failIf(indexer, 'indexer found?')
         # a direct indexer is provided...
         direct_indexer = util.MockIndexer()
-        provideUtility(direct_indexer)
+        provideUtility(direct_indexer, name='indexer')
         indexer = getIndexer()
         self.failUnless(indexer, 'no indexer found')
         self.assertEqual(indexer, direct_indexer, 'who are you?')
+        # a second direct indexer is provided...
+        provideUtility(util.MockIndexer(), name='rexedni')
+        self.assertRaises(AssertionError, getIndexer)
         # queued indexing is enabled...
         provideUtility(IndexQueueSwitch(), IIndexQueueSwitch)
         indexer = getIndexer()
         self.failUnless(indexer, 'no indexer found')
         self.failUnless(IIndexQueue.providedBy(indexer), 'non-queued indexer found')
+        # and we've got two indexers to dispatch things to...
+        indexers = list(getUtilitiesFor(IIndexing))
+        self.assertEqual(len(indexers), 2)
 
 
 def test_suite():

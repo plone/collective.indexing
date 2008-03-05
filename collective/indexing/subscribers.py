@@ -1,5 +1,5 @@
 from logging import getLogger
-from zope.component import queryUtility
+from zope.component import queryUtility, getUtilitiesFor
 from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent, Attributes
 from zope.app.container.contained import dispatchToSublocations
@@ -15,7 +15,13 @@ def getIndexer():
     switch = queryUtility(IIndexQueueSwitch)
     if switch is not None:          # when switched on...
         return IndexQueue()         # return queue using indexer or...
-    return queryUtility(IIndexing)  # directly return unqueued indexer...
+    indexers = list(getUtilitiesFor(IIndexing))
+    if len(indexers) == 1:
+        return indexers[0][1]       # directly return unqueued indexer...
+    elif not indexers:
+        return None                 # or none...
+    else:
+        assert len(indexers) < 1, 'cannot use multiple direct indexers; please enable queueing'
 
 
 def objectAdded(ev):
