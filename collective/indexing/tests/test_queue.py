@@ -158,10 +158,16 @@ class QueueReducerTests(TestCase):
 class QueueThreadTests(TestCase):
     """ thread tests modeled after zope.thread doctests """
 
-    def testLocalQueues(self):
+    def setUp(self):
         provideUtility(IndexQueueSwitch(), IIndexQueueSwitch)
-        me = getIndexer()               # first a queued indexer is set up...
-        self.failUnless(IIndexQueue.providedBy(me), 'non-queued indexer found')
+        self.me = getIndexer()
+        self.failUnless(IIndexQueue.providedBy(self.me), 'non-queued indexer found')
+
+    def tearDown(self):
+        self.me.clear()
+
+    def testLocalQueues(self):
+        me = self.me                    # get the queued indexer...
         other = []
         def runner():                   # and a callable for the thread to run...
             me.reindex('bar')
@@ -175,6 +181,40 @@ class QueueThreadTests(TestCase):
         self.assertEqual(other, [(REINDEX, 'bar', None)])
         self.assertEqual(me.getState(), [(INDEX, 'foo', None)])
         thread.join()                   # finally the threads are re-united...
+
+    def testQueuesOnTwoThreads(self):
+        me = self.me                    # get the queued indexer...
+        first = []
+        def runner1():                  # and callables for the first...
+            me.index('foo')
+            first[:] = me.getState()
+        thread1 = Thread(target=runner1)
+        second = []
+        def runner2():                  # and second thread
+            me.index('bar')
+            second[:] = me.getState()
+        thread2 = Thread(target=runner2)
+        self.assertEqual(first,  [])    # clean table before we start...
+        self.assertEqual(second, [])
+        self.assertEqual(me.getState(), [])
+        thread1.start()                 # do stuff here...
+        self.assertEqual(first,  [(INDEX, 'foo', None)])
+        self.assertEqual(second, [])
+        self.assertEqual(me.getState(), [])
+        thread2.start()                 # and there...
+        self.assertEqual(first,  [(INDEX, 'foo', None)])
+        self.assertEqual(second, [(INDEX, 'bar', None)])
+        self.assertEqual(me.getState(), [])
+        thread1.join()                  # re-unite with first thread and...
+        me.unindex('f00')               # let something happening on our side
+        self.assertEqual(first,  [(INDEX, 'foo', None)])
+        self.assertEqual(second, [(INDEX, 'bar', None)])
+        self.assertEqual(me.getState(), [(UNINDEX, 'f00', None)])
+        thread2.join()                  # also re-unite the second and...
+        me.unindex('f00')               # let something happening again...
+        self.assertEqual(first,  [(INDEX, 'foo', None)])
+        self.assertEqual(second, [(INDEX, 'bar', None)])
+        self.assertEqual(me.getState(), [(UNINDEX, 'f00', None), (UNINDEX, 'f00', None)])
 
 
 def test_suite():
