@@ -162,14 +162,14 @@ class QueueThreadTests(TestCase):
         provideUtility(IndexQueueSwitch(), IIndexQueueSwitch)
         me = getIndexer()               # first a queued indexer is set up...
         self.failUnless(IIndexQueue.providedBy(me), 'non-queued indexer found')
-        log = []
+        other = []
         def runner():                   # and a callable for the thread to run...
             me.reindex('bar')
-            log.extend(me.getState())
+            other[:] = me.getState()
         thread = Thread(target=runner)  # another thread is created...
         thread.start()                  # and started...
         thread.join()                   # wait until it's finished and check...
-        self.assertEqual(log, [(REINDEX, 'bar', None)])
+        self.assertEqual(other, [(REINDEX, 'bar', None)])
         self.assertEqual(me.getState(), [])
 
 
