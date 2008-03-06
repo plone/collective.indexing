@@ -168,12 +168,12 @@ class QueueThreadTests(TestCase):
         # but we need a callable for the thread to execute first...
         def runner():
             me.reindex('bar')
-            log.append(me.getState())
+            log.extend(me.getState())
             # log.append(sorted(me.__dict__.items()))
         thread = Thread(target=runner)
         thread.start()
         thread.join()
-        self.assertEqual(log, [[(REINDEX, 'bar', None)]])
+        self.assertEqual(log, [(REINDEX, 'bar', None)])
         self.assertEqual(me.getState(), [])
 
 
