@@ -5,7 +5,7 @@ version = '0.1'
 
 setup(name='collective.indexing',
       version=version,
-      description="Abstract framework for queue indexing of portal content",
+      description="Abstract framework for queued indexing of portal content",
       long_description=open("README.txt").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
