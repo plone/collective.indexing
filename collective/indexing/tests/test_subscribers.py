@@ -28,7 +28,7 @@ from collective.indexing.interfaces import IIndexQueueSwitch
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
 from collective.indexing.queue import IndexQueueSwitch
 from collective.indexing.utils import getIndexer
-from collective.indexing.tests import util
+from collective.indexing.tests import utils
 
 
 class SubscriberTests(ptc.PloneTestCase):
@@ -39,7 +39,7 @@ class SubscriberTests(ptc.PloneTestCase):
         self.folder = self.portal.folder1
         self.portal.invokeFactory('File', id='file1', title='File 1')
         self.file = self.portal.file1
-        self.indexer = util.MockIndexer()
+        self.indexer = utils.MockIndexer()
         self.queue = self.indexer.queue
         provideUtility(self.indexer)
 
@@ -114,13 +114,13 @@ class IntegrationTests(ptc.PloneTestCase):
         indexer = getIndexer()
         self.failIf(indexer, 'indexer found?')
         # a direct indexer is provided...
-        direct_indexer = util.MockIndexer()
+        direct_indexer = utils.MockIndexer()
         provideUtility(direct_indexer, name='indexer')
         indexer = getIndexer()
         self.failUnless(indexer, 'no indexer found')
         self.assertEqual(indexer, direct_indexer, 'who are you?')
         # a second direct indexer is provided...
-        provideUtility(util.MockIndexer(), name='rexedni')
+        provideUtility(utils.MockIndexer(), name='rexedni')
         self.assertRaises(AssertionError, getIndexer)
         # queued indexing is enabled...
         provideUtility(IndexQueueSwitch(), IIndexQueueSwitch)

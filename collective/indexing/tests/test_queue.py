@@ -10,7 +10,7 @@ from collective.indexing.interfaces import IQueueReducer
 from collective.indexing.reducer import QueueReducer
 from collective.indexing.queue import IndexQueue
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
-from collective.indexing.tests import util
+from collective.indexing.tests import utils
 
 
 class QueueTests(CleanUp, TestCase):
@@ -52,7 +52,7 @@ class QueueTests(CleanUp, TestCase):
 
     def testQueueProcessor(self):
         queue = self.queue
-        proc = util.MockQueueProcessor()
+        proc = utils.MockQueueProcessor()
         provideUtility(proc, IIndexQueueProcessor)
         queue.index('foo')
         self.assertEqual(queue.process(), 1)    # also do the processing...
@@ -62,8 +62,8 @@ class QueueTests(CleanUp, TestCase):
 
     def testMultipleQueueProcessors(self):
         queue = self.queue
-        proc1 = util.MockQueueProcessor()
-        proc2 = util.MockQueueProcessor()
+        proc1 = utils.MockQueueProcessor()
+        proc2 = utils.MockQueueProcessor()
         provideUtility(proc1, IIndexQueueProcessor, name='proc1')
         provideUtility(proc2, IIndexQueueProcessor, name='proc2')
         queue.index('foo')
@@ -76,7 +76,7 @@ class QueueTests(CleanUp, TestCase):
 
     def testQueueOperations(self):
         queue = self.queue
-        proc = util.MockQueueProcessor()
+        proc = utils.MockQueueProcessor()
         provideUtility(proc, IIndexQueueProcessor)
         queue.index('foo')
         queue.reindex('foo')

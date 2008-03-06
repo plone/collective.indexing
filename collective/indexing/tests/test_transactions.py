@@ -3,13 +3,13 @@ from transaction import savepoint, commit, abort
 
 from collective.indexing.transactions import QueueTM
 from collective.indexing.config import INDEX, REINDEX
-from collective.indexing.tests import util
+from collective.indexing.tests import utils
 
 
 class QueueTransactionManagerTests(TestCase):
 
     def setUp(self):
-        self.queue = util.MockQueue()
+        self.queue = utils.MockQueue()
         self.tman = QueueTM(self.queue)
         self.queue.hook = self.tman._register   # set up the transaction manager hook
 
