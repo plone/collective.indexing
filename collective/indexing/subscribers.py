@@ -1,31 +1,10 @@
 from logging import getLogger
-from zope.component import queryUtility, getUtilitiesFor
 from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent, Attributes
 from zope.app.container.contained import dispatchToSublocations
-from collective.indexing.interfaces import IIndexing
-from collective.indexing.interfaces import IIndexQueueSwitch
-from collective.indexing.transactions import QueueTM
-from collective.indexing.queue import IndexQueue
+from collective.indexing.utils import getIndexer
 
 logger = getLogger('collective.indexing.subscribers')
-
-
-def getIndexer():
-    """ look for and return an indexer """
-    switch = queryUtility(IIndexQueueSwitch)
-    if switch is not None:          # when switched on...
-        queue = IndexQueue()        # create a (thread-local) queue object...
-        tm = QueueTM(queue)         # create a transaction manager for it...
-        queue.setHook(tm._register) # set up the hook...
-        return queue                # and return queue (using the indexers) or...
-    indexers = list(getUtilitiesFor(IIndexing))
-    if len(indexers) == 1:
-        return indexers[0][1]       # directly return unqueued indexer...
-    elif not indexers:
-        return None                 # or none...
-    else:
-        assert len(indexers) < 1, 'cannot use multiple direct indexers; please enable queueing'
 
 
 def objectAdded(ev):

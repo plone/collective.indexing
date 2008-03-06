@@ -26,8 +26,8 @@ from transaction import savepoint
 from collective.indexing.interfaces import IIndexQueue, IIndexing
 from collective.indexing.interfaces import IIndexQueueSwitch
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
-from collective.indexing.subscribers import getIndexer
 from collective.indexing.queue import IndexQueueSwitch
+from collective.indexing.utils import getIndexer
 from collective.indexing.tests import util
 
 
