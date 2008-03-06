@@ -1,4 +1,5 @@
 from unittest import TestSuite, makeSuite, main, TestCase
+from threading import Thread
 
 from zope.interface import implements
 from zope.component import provideUtility
@@ -6,10 +7,12 @@ from zope.testing.cleanup import CleanUp
 
 from collective.indexing.interfaces import IIndexQueue
 from collective.indexing.interfaces import IIndexQueueProcessor
+from collective.indexing.interfaces import IIndexQueueSwitch
 from collective.indexing.interfaces import IQueueReducer
 from collective.indexing.reducer import QueueReducer
-from collective.indexing.queue import IndexQueue
+from collective.indexing.queue import IndexQueue, IndexQueueSwitch
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
+from collective.indexing.utils import getIndexer
 from collective.indexing.tests import utils
 
 
@@ -17,6 +20,9 @@ class QueueTests(CleanUp, TestCase):
 
     def setUp(self):
         self.queue = IndexQueue()
+
+    def tearDown(self):
+        self.queue.clear()
 
     def testInterface(self):
         self.failUnless(IIndexQueue.providedBy(self.queue))
@@ -149,10 +155,33 @@ class QueueReducerTests(TestCase):
         self.failUnlessEqual(reducer.optimize(queue), [(REINDEX, 'A', None)])
 
 
+class QueueThreadTests(TestCase):
+    """ thread tests modeled after zope.thread doctests """
+
+    def testLocalQueues(self):
+        # a queued indexer first is set up...
+        provideUtility(IndexQueueSwitch(), IIndexQueueSwitch)
+        me = getIndexer()
+        self.failUnless(IIndexQueue.providedBy(me), 'non-queued indexer found')
+        # something's going on in another thread...
+        log = []
+        # but we need a callable for the thread to execute first...
+        def runner():
+            me.reindex('bar')
+            log.append(me.getState())
+            # log.append(sorted(me.__dict__.items()))
+        thread = Thread(target=runner)
+        thread.start()
+        thread.join()
+        self.assertEqual(log, [[(REINDEX, 'bar', None)]])
+        self.assertEqual(me.getState(), [])
+
+
 def test_suite():
     return TestSuite([
         makeSuite(QueueTests),
         makeSuite(QueueReducerTests),
+        makeSuite(QueueThreadTests),
     ])
 
 if __name__ == '__main__':

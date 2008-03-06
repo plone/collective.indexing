@@ -9,13 +9,36 @@ from collective.indexing.interfaces import IQueueReducer
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
 
 
-class IndexQueue(local):
-    """ a thread-local indexing queue """
+# a thread-local object holding data for the queue
+localData = local()
+
+# helper functions to get/set local values or initialize them
+def getLocal(name, factory):
+    value = getattr(localData, name, None)
+    if value is None:
+        value = factory()
+        setattr(localData, name, value)
+    return value
+
+def setLocal(name, value):
+    setattr(localData, name, value)
+
+
+class IndexQueue(object):
+    """ an indexing queue """
     implements(IIndexQueue)
 
-    def __init__(self):
-        self.queue = []
-        self.hook = lambda: 42  # avoid need to check for `None` everywhere...
+    @property
+    def queue(self):
+        """ return a thread-local list used to hold the queue items """
+        return getLocal('queue', list)
+
+    @property
+    def hook(self):
+        """ return a thread-local variable used to hold the tm hook;
+            the default is set to an arbitrary callable to avoid having
+            to check for `None` everywhere the hook is called """
+        return getLocal('hook', lambda: lambda: 42)
 
     def index(self, obj, attributes=None):
         assert obj is not None, 'invalid object'
@@ -34,18 +57,19 @@ class IndexQueue(local):
 
     def setHook(self, hook):
         assert callable(hook), 'hook must be callable'
-        self.hook = hook
+        setLocal('hook', hook)
 
     def getState(self):
         return list(self.queue)     # better return a copy... :)
 
     def setState(self, state):
-        self.queue = state
+        assert isinstance(state, list), 'state must be a list'
+        setLocal('queue', state)
 
     def optimize(self):
         reducer = queryUtility(IQueueReducer)
         if reducer is not None:
-            self.queue = reducer.optimize(list(self.queue))
+            self.setState(reducer.optimize(self.getState()))
 
     def process(self):
         utilities = list(getUtilitiesFor(IIndexQueueProcessor))

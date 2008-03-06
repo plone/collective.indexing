@@ -1,4 +1,7 @@
 TODO:
 - tests for threaded queue indexers
+- add thread-local connection handling and signal handlers (from story.py)
+- add debugging output
+- integrate more transaction / threading tests from enfold code
 - cmfmultiplex monkey patch / default adapter for filling the queue
 - default processor implementation indexing in the catalog
