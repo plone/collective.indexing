@@ -1,5 +1,5 @@
 from unittest import TestSuite, makeSuite, main, TestCase
-from threading import Thread
+from threading import Thread, currentThread
 
 from zope.interface import implements
 from zope.component import provideUtility
@@ -215,6 +215,28 @@ class QueueThreadTests(TestCase):
         self.assertEqual(first,  [(INDEX, 'foo', None)])
         self.assertEqual(second, [(INDEX, 'bar', None)])
         self.assertEqual(me.getState(), [(UNINDEX, 'f00', None), (UNINDEX, 'f00', None)])
+
+    def testManyThreads(self):
+        me = self.me                    # get the queued indexer...
+        queues = {}                     # container for local queues
+        def makeRunner(name, idx):
+            def runner():
+                for n in range(idx):    # index idx times
+                    me.index(name)
+                queues[currentThread()] = me.queue
+            return runner
+        threads = []
+        for idx in range(99):
+            threads.append(Thread(target=makeRunner('t%d' % idx, idx)))
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+        for idx, thread in enumerate(threads):
+            tid = 't%d' % idx
+            queue = queues[thread]
+            names = [ name for op, name, attrs in queue ]
+            self.assertEquals(names, [tid] * idx)
 
 
 def test_suite():
