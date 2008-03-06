@@ -1,3 +1,4 @@
+from logging import getLogger
 from persistent import Persistent
 from threading import local
 from zope.interface import implements
@@ -7,6 +8,8 @@ from collective.indexing.interfaces import IIndexQueueSwitch
 from collective.indexing.interfaces import IIndexQueueProcessor
 from collective.indexing.interfaces import IQueueReducer
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
+
+debug = getLogger('collective.indexing.queue').debug
 
 
 # a thread-local object holding data for the queue
@@ -43,21 +46,25 @@ class IndexQueue(object):
 
     def index(self, obj, attributes=None):
         assert obj is not None, 'invalid object'
+        debug('adding index operation for %r', obj)
         self.queue.append((INDEX, obj, attributes))
         self.hook()
 
     def reindex(self, obj, attributes=None):
         assert obj is not None, 'invalid object'
+        debug('adding reindex operation for %r', obj)
         self.queue.append((REINDEX, obj, attributes))
         self.hook()
 
     def unindex(self, obj):
         assert obj is not None, 'invalid object'
+        debug('adding unindex operation for %r', obj)
         self.queue.append((UNINDEX, obj, None))
         self.hook()
 
     def setHook(self, hook):
         assert callable(hook), 'hook must be callable'
+        debug('setting hook to %r', hook)
         setLocal('hook', hook)
 
     def getState(self):
@@ -65,6 +72,7 @@ class IndexQueue(object):
 
     def setState(self, state):
         assert isinstance(state, list), 'state must be a list'
+        debug('setting queue state to %r', state)
         setLocal('queue', state)
 
     def optimize(self):
@@ -74,6 +82,7 @@ class IndexQueue(object):
 
     def process(self):
         utilities = list(getUtilitiesFor(IIndexQueueProcessor))
+        debug('processing queue using %r', utilities)
         processed = 0
         for name, util in utilities:
             util.begin()
@@ -89,11 +98,14 @@ class IndexQueue(object):
                     raise 'InvalidQueueOperation', op
             processed += 1
         for name, util in utilities:
+            debug('committing queue using %r', util)
             util.commit()
+        debug('finished processing %d items...', processed)
         self.clear()
         return processed
 
     def clear(self):
+        debug('clearing %d queue item(s)', len(self.queue))
         del self.queue[:]
 
 

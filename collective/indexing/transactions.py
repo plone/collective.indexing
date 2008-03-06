@@ -2,9 +2,7 @@ from logging import getLogger
 from threading import local
 from transaction import get as getTransaction
 from Shared.DC.ZRDB.TM import TM
-
 from collective.indexing.interfaces import IIndexQueue
-
 
 logger = getLogger('collective.indexing.transactions')
 
@@ -63,7 +61,7 @@ class QueueTM(TM, local):
             if self.queue.getState():
                 logger.debug('processing queue...')
                 processed = self.queue.process()
-                logger.debug('%d items processed during queue run' % processed)
+                logger.debug('%d item(s) processed during queue run', processed)
         except:
             logger.exception('exception during QueueTM._finish')
 
