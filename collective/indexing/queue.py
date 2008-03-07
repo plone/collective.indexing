@@ -1,6 +1,5 @@
 from logging import getLogger
 from persistent import Persistent
-from threading import local
 from zope.interface import implements
 from zope.component import queryUtility, getUtilitiesFor
 from collective.indexing.interfaces import IIndexQueue
@@ -8,24 +7,9 @@ from collective.indexing.interfaces import IIndexQueueSwitch
 from collective.indexing.interfaces import IIndexQueueProcessor
 from collective.indexing.interfaces import IQueueReducer
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
+from collective.indexing.local import getLocal, setLocal
 
 debug = getLogger('collective.indexing.queue').debug
-
-
-# a thread-local object holding data for the queue
-localData = local()
-marker = []
-
-# helper functions to get/set local values or initialize them
-def getLocal(name, factory):
-    value = getattr(localData, name, marker)
-    if value is marker:
-        value = factory()
-        setLocal(name, value)
-    return value
-
-def setLocal(name, value):
-    setattr(localData, name, value)
 
 
 class IndexQueue(object):
