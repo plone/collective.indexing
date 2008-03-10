@@ -1,0 +1,47 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    i18n_domain="collective.indexing">
+
+    <subscriber
+        handler=".subscribers.objectAdded"
+        for="zope.app.event.interfaces.IObjectCreatedEvent"
+        trusted="y" />
+
+    <subscriber
+        handler=".subscribers.objectAdded"
+        for="zope.app.container.interfaces.IObjectAddedEvent"
+        trusted="y" />
+
+    <subscriber
+        handler=".subscribers.objectModified"
+        for="zope.app.event.interfaces.IObjectModifiedEvent"
+        trusted="y" />
+
+    <subscriber
+        handler=".subscribers.objectCopied"
+        for="zope.app.event.interfaces.IObjectCopiedEvent"
+        trusted="y" />
+
+    <subscriber
+        handler=".subscribers.objectRemoved"
+        for="zope.app.container.interfaces.IObjectRemovedEvent"
+        trusted="y" />
+
+    <subscriber
+        handler=".subscribers.objectMoved"
+        for="zope.app.container.interfaces.IObjectMovedEvent"
+        trusted="y" />
+
+    <subscriber
+        handler=".subscribers.dispatchObjectMovedEvent"
+        for="OFS.interfaces.IItem
+             zope.app.container.interfaces.IObjectMovedEvent"
+        trusted="y" />
+
+    <subscriber
+        handler=".subscribers.objectTransitioned"
+        for="Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+        trusted="y" />
+
+</configure>
