@@ -32,7 +32,7 @@ def unindexObject(self):
         indexer.unindex(obj)
 
 
-def reindexObject(self, idxs=[]):
+def reindexObject(self, idxs=None):
     obj = filterTemporaryItems(self)
     indexer = getIndexer()
     if obj is not None and indexer is not None:

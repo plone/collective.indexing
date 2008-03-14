@@ -1,5 +1,4 @@
 
 # apply the monkey patches...
-# TODO: things work TTW, but the tests are failing, so this is disabled atm...
-# from collective.indexing import monkey
+from collective.indexing import monkey
 

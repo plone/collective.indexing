@@ -53,12 +53,14 @@ class SubscriberTests(ptc.PloneTestCase):
 
     def testUpdateObject(self):
         self.file.update(title='Foo')
-        self.assertEqual(self.queue, [])    # `update()` doesn't fire an event
+        # `update()` doesn't fire an event, so there's only one operation
+        # queued up via `CatalogMultiplex`
+        self.assertEqual(self.queue, [(REINDEX, self.file, None)])
 
     def testModifyObject(self):
         self.file.processForm(values={'title': 'Foo'})
         self.assertEqual(self.file.Title(), 'Foo')
-        self.assertEqual(self.queue, [(REINDEX, self.file, None)])
+        self.assertEqual(self.queue, [(REINDEX, self.file, None), (REINDEX, self.file, None)])
 
     def testRemoveObject(self):
         file1 = self.portal.file1
@@ -86,8 +88,10 @@ class SubscriberTests(ptc.PloneTestCase):
         self.assert_((REINDEX, self.portal.folder1, None) in self.queue, self.queue)
         self.assert_((REINDEX, self.portal.folder2.file2, None) in self.queue, self.queue)
         self.assert_((REINDEX, self.portal.folder2, None) in self.queue, self.queue)
-        # there should be no 'unindex', since it's still the same object...
-        self.failIf((UNINDEX, original, None) in self.queue, self.queue)
+        # 'unindex' is called via `CatalogMultiplex`, so it's the first operation...
+        self.assert_(self.queue[0], (UNINDEX, original, None))
+        # but otherwise there should be no 'unindex', since it's still the same object...
+        self.failIf((UNINDEX, original, None) in self.queue[1:], self.queue)
         self.assertEqual(original, self.portal.folder2.file2)
 
     def testCopyObject(self):
@@ -104,7 +108,7 @@ class SubscriberTests(ptc.PloneTestCase):
 
     def testPublishObject(self):
         self.portal.portal_workflow.doActionFor(self.folder, 'publish')
-        self.assertEqual(self.queue, [(REINDEX, self.folder, None)])
+        self.assertEqual(self.queue, [(REINDEX, self.folder, None), (REINDEX, self.folder, ['review_state'])])
 
 
 class IntegrationTests(ptc.PloneTestCase):
