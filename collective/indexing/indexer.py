@@ -1,3 +1,4 @@
+from persistent import Persistent
 from zope.interface import implements
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
 from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
@@ -26,7 +27,7 @@ class IPortalCatalogQueueProcessor(IIndexQueueProcessor):
         the `CatalogMultiplex` and `CMFCatalogAware` mixin classes """
 
 
-class PortalCatalogQueueProcessor(object):
+class PortalCatalogQueueProcessor(Persistent):
     implements(IPortalCatalogQueueProcessor)
 
     def index(self, obj, attributes=None):
