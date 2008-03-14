@@ -7,8 +7,21 @@ from collective.indexing.utils import getIndexer
 debug = getLogger('collective.indexing.subscribers').debug
 
 
+def filterTemporaryItems(obj):
+    """ check if the item is of temporary nature, i.e. still handled
+        by the `portal_factory`;  if not so return it, else return None """
+    isTemporary = getattr(obj, 'isTemporary', None)
+    if isTemporary is not None:
+        try:
+            if obj.isTemporary():
+                return None
+        except TypeError:
+            return None # `isTemporary` on the `FactoryTool` expects 2 args
+    return obj
+
+
 def objectAdded(ev):
-    obj = ev.object
+    obj = filterTemporaryItems(ev.object)
     indexer = getIndexer()
     if obj is not None and indexer is not None:
         debug('object added event for %r, indexing using %r', obj, indexer)
@@ -16,7 +29,7 @@ def objectAdded(ev):
 
 
 def objectModified(ev):
-    obj = ev.object
+    obj = filterTemporaryItems(ev.object)
     indexer = getIndexer()
     if obj is None or indexer is None:
         return
@@ -40,7 +53,7 @@ def objectCopied(ev):
 
 
 def objectRemoved(ev):
-    obj = ev.object
+    obj = filterTemporaryItems(ev.object)
     indexer = getIndexer()
     if obj is not None and indexer is not None:
         debug('object removed event for %r, unindexing using %r', obj, indexer)
@@ -54,7 +67,7 @@ def objectMoved(ev):
     if ev.newParent is ev.oldParent:
         # it's a renaming operation
         dispatchToSublocations(ev.object, ev)
-    obj = ev.object
+    obj = filterTemporaryItems(ev.object)
     indexer = getIndexer()
     if obj is not None and indexer is not None:
         debug('object moved event for %r, reindexing using %r', obj, indexer)
@@ -69,7 +82,7 @@ def dispatchObjectMovedEvent(ob, ev):
 
 
 def objectTransitioned(ev):
-    obj = ev.object
+    obj = filterTemporaryItems(ev.object)
     indexer = getIndexer()
     if obj is not None and indexer is not None:
         debug('object transitioned event for %r, reindexing using %r', obj, indexer)

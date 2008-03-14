@@ -7,15 +7,7 @@
 from collective.indexing.utils import getIndexer
 from collective.indexing.indexer import catalogMultiplexMethods
 from collective.indexing.indexer import catalogAwareMethods
-
-
-def filterTemporaryItems(obj):
-    """ check if the item is of temporary nature, i.e. still handled
-        by the `portal_factory`;  if not so return it, else return None """
-    isTemporary = getattr(obj, 'isTemporary', None)
-    if isTemporary is None or obj.isTemporary():
-        return None
-    return obj
+from collective.indexing.subscribers import filterTemporaryItems
 
 
 def indexObject(self):
