@@ -62,6 +62,9 @@ as a `PLIP`_ for inclusion into `Plone`_ 3.2.
 
   .. _`PLIP`: http://plone.org/documentation/glossary/plip
 
+The code was written with emphasis on minimalism, clarity and maintainability.
+It comes with extensive tests covering the code base at more than 95%.
+
 For outstanding issues and features remaining to be implemented please see the
 `to-do list`__ included in the package.
 

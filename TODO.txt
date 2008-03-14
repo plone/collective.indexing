@@ -1,4 +1,33 @@
-TODO:
-- cmfmultiplex monkey patch / default adapter for filling the queue
-- default processor implementation indexing in the catalog
-- integrate more transaction / threading tests from enfold code
+To-Do's
+=======
+
+Issues
+------
+
+- at the moment there are no known issues or bugs
+
+Features
+--------
+
+- implementation of an index processor backend using the standard cmf
+  catalog
+
+- monkey patch for adapterization of ``CMFCore.CMFCatalogAware`` and
+  ``Archetypes.CatalogMultiplex`` in order to make the to be used indexing
+  backend easily pluggable, so that queueing and/or dispatching becomes
+  entirely configurable via zcml
+
+- hook up these two to use the catalog processor as the indexing backend,
+  but queue and optimize all operations
+
+Miscellaneous
+-------------
+
+- creation of a PLIP targeted at Plone 3.2 regarding the above mentioned
+  adapterization of ``CMFCore.CMFCatalogAware`` and
+  ``Archetypes.CatalogMultiplex``;  the default configuration would then
+  be to hook up the catalog processor directly, i.e. without queueing etc
+
+- integrate more of the tests regarding transactions and threading from
+  enfold.solr
+
