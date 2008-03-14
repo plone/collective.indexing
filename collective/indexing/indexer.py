@@ -1,15 +1,48 @@
 from zope.interface import implements
-from persistent import Persistent
+from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
+from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
 from collective.indexing.interfaces import IIndexQueueProcessor
-from Products.Archetypes.interfaces import IBaseContent
 
 
-class ICatalogMultiplexQueueProcessor(IIndexQueueProcessor):
-    """ an index queue processor for solr """
+# container to hold references to the original indexing methods
+# these are populated by `collective.indexing.monkey`
+catalogMultiplexMethods = {}
+catalogAwareMethods = {}
 
 
-class CatalogMultiplexQueueProcessor(object):
-    implements(ICatalogMultiplexQueueProcessor)
+def getDispatcher(obj, name):
+    """ return named indexing method according on the used mixin class """
+    if isinstance(obj, CatalogMultiplex):
+        op = catalogMultiplexMethods.get(name, None)
+    elif isinstance(obj, CMFCatalogAware):
+        op = catalogAwareMethods.get(name, None)
+    else:
+        op = None
+    return op
+
+
+class IPortalCatalogQueueProcessor(IIndexQueueProcessor):
+    """ an index queue processor for the standard portal catalog via
+        the `CatalogMultiplex` and `CMFCatalogAware` mixin classes """
+
+
+class PortalCatalogQueueProcessor(object):
+    implements(IPortalCatalogQueueProcessor)
+
+    def index(self, obj, attributes=None):
+        op = getDispatcher(obj, 'index')
+        if op is not None:
+            op(obj)
+
+    def reindex(self, obj, attributes=None):
+        op = getDispatcher(obj, 'reindex')
+        if op is not None:
+            op(obj, attributes or [])
+
+    def unindex(self, obj):
+        op = getDispatcher(obj, 'unindex')
+        if op is not None:
+            op(obj)
 
     def begin(self):
         pass
@@ -17,23 +50,3 @@ class CatalogMultiplexQueueProcessor(object):
     def commit(self):
         pass
 
-    def __url(self, obj):
-        return '/'.join( obj.getPhysicalPath() )
-
-    def index(self, obj, attributes=None):
-        if IBaseContent.providedBy(obj):
-            catalogs = obj.getCatalogs()
-            url = self.__url(obj)
-            for c in catalogs:
-                c.catalog_object(obj, url)
-
-    def reindex(self, obj, attributes=None):
-        self.index(obj, attributes)
-
-    def unindex(self, obj):
-        if IBaseContent.providedBy(obj):
-            catalogs = obj.getCatalogs()
-            url = self.__url(obj)
-            for c in catalogs:
-                if c._catalog.uids.get(url, None) is not None:
-                    c.uncatalog_object(url)

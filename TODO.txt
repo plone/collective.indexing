@@ -10,7 +10,7 @@ Features
 --------
 
 - implementation of an index processor backend using the standard cmf
-  catalog
+  catalog (done, but tests missing)
 
 - monkey patch for adapterization of ``CMFCore.CMFCatalogAware`` and
   ``Archetypes.CatalogMultiplex`` in order to make the to be used indexing

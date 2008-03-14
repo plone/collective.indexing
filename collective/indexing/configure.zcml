@@ -7,8 +7,8 @@
     <include file="subscribers.zcml" />
 
     <utility
-        factory="collective.indexing.reducer.QueueReducer"
-        provides="collective.indexing.interfaces.IQueueReducer"
+        factory=".reducer.QueueReducer"
+        provides=".interfaces.IQueueReducer"
         />
 
 </configure>
