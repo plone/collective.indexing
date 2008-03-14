@@ -70,6 +70,7 @@ class IndexQueue(object):
         processed = 0
         for name, util in utilities:
             util.begin()
+        self.optimize()
         for op, obj, attributes in self.queue:
             for name, util in utilities:
                 if op == INDEX:

@@ -57,7 +57,6 @@ class QueueTM(TM, local):
 
     def _finish(self):
         try:
-            self.queue.optimize()
             if self.queue.getState():
                 logger.debug('processing queue...')
                 processed = self.queue.process()
