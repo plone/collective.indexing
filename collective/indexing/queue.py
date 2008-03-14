@@ -70,6 +70,7 @@ class IndexQueue(object):
         processed = 0
         for name, util in utilities:
             util.begin()
+        # TODO: must the queue be handled independently for each processor?
         self.optimize()
         for op, obj, attributes in self.queue:
             for name, util in utilities:

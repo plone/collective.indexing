@@ -30,9 +30,6 @@ class IIndexQueue(IIndexing):
     def setState(state):
         """ set the state of the queue, i.e. its contents """
 
-    def optimize():
-        """ optimize the queue, i.e. clean up duplicates etc """
-
     def process():
         """ process the contents of the queue, i.e. start indexing;
             returns the number of processed queue items """
