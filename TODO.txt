@@ -9,10 +9,6 @@ Issues
   added the first one disappears from the catalog again;  the actual objects
   _do_ exist, but somehow don't get added to the catalog (or just temporarily)
 
-- transaction manager shouldn't register themselves multiple times, but
-  instead check if they're wrapping the same queue object and if the hook
-  was already set before
-
 .. - at the moment there are no known issues or bugs
 
 Features
