@@ -3,6 +3,7 @@
 # for more information about the following setup
 
 from unittest import TestSuite, makeSuite, main
+from Testing import ZopeTestCase as ztc
 from Products.Five import zcml
 from Products.Five import fiveconfigure
 from Products.PloneTestCase import PloneTestCase as ptc
@@ -140,6 +141,9 @@ def test_suite():
     return TestSuite([
         makeSuite(SubscriberTests),
         makeSuite(IntegrationTests),
+        ztc.FunctionalDocFileSuite(
+           'browser.txt', package='collective.indexing.tests',
+           test_class=ptc.FunctionalTestCase),
     ])
 
 if __name__ == '__main__':

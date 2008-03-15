@@ -31,6 +31,7 @@ def reindexObject(self, idxs=None):
         indexer.reindex(obj, idxs)
 
 
+# set up dispatcher containers for the original methods and
 # hook up the new methods if that hasn't been done before...
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
 from Products.Archetypes.CatalogMultiplex import CatalogMultiplex

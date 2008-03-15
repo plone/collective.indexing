@@ -1,0 +1,67 @@
+This file provides a couple of functional tests for `collective.indexing` in
+order to make sure the combination of queueing, hooking into the transaction
+machinery, monkey-patches, interaction with the portal catalog, several event
+subscribers, thread-local variables etc is actually working... :)
+
+First the package has to be quick-installed in the portal and a testbrowser
+as well as a logged in user with the necessary permissions are needed:
+
+  >>> portal.portal_quickinstaller.installProduct('collective.indexing')
+  ''
+  >>> self.setRoles(('Manager',))
+  >>> from Products.Five.testbrowser import Browser
+  >>> browser = Browser()
+  >>> browser.open('http://nohost/plone/login_form')
+  >>> from Products.PloneTestCase import PloneTestCase as ptc
+  >>> browser.getControl(name='__ac_name').value = ptc.default_user
+  >>> browser.getControl(name='__ac_password').value = ptc.default_password
+  >>> browser.getControl('Log in').click()
+
+Since the queueing and optimizing of indexing operations is supposed to be
+transparent on the user level, counters are set up to make it possible to
+check if things are in place and working.  The idea here is that the number
+of times something is put into the queue (for indexing) should be greater
+than the number of `index` call made by the queue processor.  Also, non-zero
+numbers show that the queue was used in the first place:
+
+  >>> from collective.indexing.queue import IndexQueue
+  >>> q_index = IndexQueue.index
+  >>> queuedIndex = []
+  >>> def index(self, obj, attributes=None):
+  ...     queuedIndex.append(repr(obj))
+  ...     q_index(self, obj, attributes)
+  >>> IndexQueue.index = index
+
+  >>> from collective.indexing.indexer import PortalCatalogQueueProcessor
+  >>> p_index = PortalCatalogQueueProcessor.index
+  >>> calledIndex = []
+  >>> def index(self, obj, attributes=None):
+  ...     calledIndex.append(repr(obj))
+  ...     p_index(self, obj, attributes)
+  >>> PortalCatalogQueueProcessor.index = index
+
+Now a first news item gets created, ...
+
+  >>> browser.getLink('Home').click()
+  >>> browser.getLink('News Item').click()
+  >>> browser.url
+  'http://nohost/plone/portal_factory/News Item/news_item.../edit'
+  >>> browser.getControl('Title').value = 'first news today'
+  >>> browser.getControl('Save').click()
+  >>> browser.url
+  'http://nohost/plone/first-news-today'
+  >>> browser.contents
+  '...Info...Changes saved...'
+
+which should have resulted in some indexing operations on the queue and the
+queue processor as well.  The latter should also have fewer operations, since
+Plone calls them redundantly after all:
+
+  >>> self.failUnless(queuedIndex, 'indexing queue not used?')
+  >>> self.failUnless(calledIndex, 'queue processor not used?')
+  >>> self.failUnless(len(queuedIndex) > len(calledIndex), 'not optimizing?')
+
+
+.. TODO: next the catalog should be checked to see if the newly created
+..       object got indexed in fact (which should fail atm)...
+
