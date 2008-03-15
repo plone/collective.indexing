@@ -8,6 +8,7 @@ from collective.indexing.interfaces import IIndexQueueProcessor
 from collective.indexing.interfaces import IQueueReducer
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
 from collective.indexing.local import getLocal, setLocal
+from collective.indexing.transactions import QueueTM
 
 debug = getLogger('collective.indexing.queue').debug
 
@@ -15,6 +16,13 @@ debug = getLogger('collective.indexing.queue').debug
 class IndexQueue(object):
     """ an indexing queue """
     implements(IIndexQueue)
+
+    def __init__(self):
+        tm = getLocal('tm')
+        if tm is None:
+            tm = QueueTM(self)          # create a transaction manager...
+            setLocal('tm', tm)          # remember it...
+            self.setHook(tm._register)  # and set up the hook...
 
     @property
     def queue(self):

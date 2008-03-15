@@ -6,10 +6,13 @@ localData = local()
 marker = []
 
 # helper functions to get/set local values or initialize them
-def getLocal(name, factory):
+def getLocal(name, factory=None):
     value = getattr(localData, name, marker)
     if value is marker:
-        value = factory()
+        if callable(factory):
+            value = factory()
+        else:
+            value = factory
         setLocal(name, value)
     return value
 
