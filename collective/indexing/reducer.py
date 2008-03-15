@@ -27,10 +27,7 @@ class QueueReducer(object):
 
                 # Handle attributes, None means all fields, and takes presedence
                 if isinstance(attr, (tuple,list)) and isinstance(iattr, (tuple,list)):
-                    tmp = {}
-                    tmp.update(dict.fromkeys(attr))
-                    tmp.update(dict.fromkeys(iattr))
-                    attr = tuple(tmp.keys())
+                    attr = tuple(set(attr + iattr))
                 else:
                     attr = None
 
