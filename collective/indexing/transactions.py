@@ -25,6 +25,7 @@ class QueueTM(TM, local):
     _finalize = False
 
     def __init__(self, queue):
+        logger.debug('initializing tm %r for queue %r...', self, queue)
         local.__init__(self)
         assert IIndexQueue.providedBy(queue), queue
         self.queue = queue
@@ -36,6 +37,7 @@ class QueueTM(TM, local):
                 self._begin()
                 self._registered = True
                 self._finalize = False
+                logger.debug('registered tm %r (queue %r).', self, self.queue)
             except:
                 logger.exception('exception during _register '
                                  '(registered=%s, finalize=%s)' %

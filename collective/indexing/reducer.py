@@ -14,7 +14,7 @@ class QueueReducer(object):
         """ remove redundant entries from queue;
             queue is of the form [(operator, object, attributes), ...] """
         res = {}
-        debug('start reducing %d item(s)...', len(queue))
+        debug('start reducing %d item(s): %r', len(queue), queue)
         for iop, obj, iattr in queue:
             op, attr = res.get(obj, (0,iattr))
             # If we are going to delete an item that was added in this transaction, ignore it
