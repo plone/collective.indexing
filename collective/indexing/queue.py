@@ -96,6 +96,7 @@ class IndexQueue(object):
             util.commit()
         debug('finished processing %d items...', processed)
         self.clear()
+        setLocal('tm', None)    # release transaction manager...
         return processed
 
     def clear(self):
