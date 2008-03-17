@@ -8,8 +8,11 @@ debug = getLogger('collective.indexing.subscribers').debug
 
 
 def filterTemporaryItems(obj):
-    """ check if the item is of temporary nature, i.e. still handled
-        by the `portal_factory`;  if not so return it, else return None """
+    """ check if the item has an acquisition chain set up and is not of
+        temporary nature, i.e. still handled by the `portal_factory`;  if
+        so return it, else return None """
+    if getattr(obj, 'aq_parent', None) is None:
+        return None
     isTemporary = getattr(obj, 'isTemporary', None)
     if isTemporary is not None:
         try:
