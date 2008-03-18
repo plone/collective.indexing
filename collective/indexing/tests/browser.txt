@@ -87,7 +87,6 @@ the hook into the transaction machinery:
   >>> browser.url
   'http://nohost/plone/portal_factory/News Item/news_item.../edit'
   >>> browser.getControl('Title').value = 'second news today'
-  >>> browser.handleErrors = False
   >>> browser.getControl('Save').click()
   >>> browser.url
   'http://nohost/plone/second-news-today'
@@ -116,4 +115,29 @@ And the search should of course also return the new news:
   '...Search results...2 items matching your search terms...
    ...second news today...
    ...first news today...'
+
+Now let's try some other operations, for example moving items around.  The
+change of location should be correctly reflected by the catalog:
+
+  >>> browser.getLink('Home').click()
+  >>> browser.getLink('Contents').click()
+  >>> form = browser.getForm(name='folderContentsForm')
+  >>> form.getControl('first news today').selected = True
+  >>> form.getControl('Cut').click()
+  >>> browser.contents
+  '...Info...1 item(s) cut...'
+
+  >>> browser.getLink('Home').click()
+  >>> browser.getLink(url='createObject?type_name=Folder').click()
+  >>> browser.getControl('Title').value = 'a folder'
+  >>> browser.getControl('Save').click()
+
+  >>> browser.getLink('Contents').click()
+  >>> browser.url
+  'http://nohost/plone/a-folder/folder_contents'
+  >>> browser.getControl('Paste').click()
+  >>> browser.contents
+  '...Info...Item(s) pasted...'
+  >>> browser.getControl('first news today')
+  <ItemControl ... optionValue='/plone/a-folder/first-news-today' ...>
 

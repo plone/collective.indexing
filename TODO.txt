@@ -4,10 +4,8 @@ To-Do's
 Issues
 ------
 
-- indexing with the catalog doesn't work atm:  adding objects ttw seems to
-  index them at first, but when the next object (e.g. another folder) is
-  added the first one disappears from the catalog again;  the actual objects
-  _do_ exist, but somehow don't get added to the catalog (or just temporarily)
+- moving items doesn't update their indexes properly, i.e. the old items
+  still show up in the catalog, but not the new ones...
 
 .. - at the moment there are no known issues or bugs
 
