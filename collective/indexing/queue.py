@@ -8,15 +8,19 @@ from collective.indexing.interfaces import IIndexQueueSwitch
 from collective.indexing.interfaces import IIndexQueueProcessor
 from collective.indexing.interfaces import IQueueReducer
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
-from collective.indexing.local import getLocal
 from collective.indexing.transactions import QueueTM
 
 debug = getLogger('collective.indexing.queue').debug
 
 
+localQueue = None
+
 def getQueue():
     # return a (thread-local) queue object...
-    return getLocal('queue', IndexQueue)
+    global localQueue
+    if localQueue is None:
+        localQueue = IndexQueue()
+    return localQueue
 
 
 class IndexQueue(local):
