@@ -63,6 +63,7 @@ class QueueTM(TM, local):
                 logger.debug('processing queue...')
                 processed = self.queue.process()
                 logger.debug('%d item(s) processed during queue run', processed)
+            self.queue.clear()
         except:
             logger.exception('exception during QueueTM.commit')
 
