@@ -96,12 +96,12 @@ class IndexQueue(object):
             util.commit()
         debug('finished processing %d items...', processed)
         self.clear()
-        setLocal('tm', None)    # release transaction manager...
         return processed
 
     def clear(self):
         debug('clearing %d queue item(s)', len(self.queue))
         del self.queue[:]
+        setLocal('tm', None)    # release transaction manager...
 
 
 class IndexQueueSwitch(Persistent):
