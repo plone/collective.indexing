@@ -60,8 +60,60 @@ Plone calls them redundantly after all:
   >>> self.failUnless(queuedIndex, 'indexing queue not used?')
   >>> self.failUnless(calledIndex, 'queue processor not used?')
   >>> self.failUnless(len(queuedIndex) > len(calledIndex), 'not optimizing?')
+  >>> self.assertEqual(len(calledIndex), 1)
 
+Let's make sure the new item has actually been indexed, that is added to the
+portal catalog:
 
-.. TODO: next the catalog should be checked to see if the newly created
-..       object got indexed in fact (which should fail atm)...
+  >>> catalog = portal.portal_catalog
+  >>> [ brain.getObject() for brain in catalog(portal_type='News Item') ]
+  [<ATNewsItem at /plone/first-news-today>]
+
+Being in the catalog would also make it show up in the global section
+navigation as a link:
+
+  >>> browser.getLink('Home').click()
+  >>> browser.getLink('first news today')
+  <Link text='first news today' url='http://nohost/plone/first-news-today'>
+  >>> browser.contents
+  '...<ul id="portal-globalnav"...
+   ...first news today...
+   ...<ul id="portal-personaltools"...'
+
+Another news item gets created to make sure there are no problems with
+the hook into the transaction machinery:
+
+  >>> browser.getLink('News Item').click()
+  >>> browser.url
+  'http://nohost/plone/portal_factory/News Item/news_item.../edit'
+  >>> browser.getControl('Title').value = 'second news today'
+  >>> browser.handleErrors = False
+  >>> browser.getControl('Save').click()
+  >>> browser.url
+  'http://nohost/plone/second-news-today'
+  >>> browser.contents
+  '...Info...Changes saved...'
+
+Now both should show up in the global sections:
+
+  >>> browser.getLink('first news today')
+  <Link text='first news today' url='http://nohost/plone/first-news-today'>
+  >>> browser.getLink('second news today')
+  <Link text='second news today' url='http://nohost/plone/second-news-today'>
+  >>> browser.contents
+  '...<ul id="portal-globalnav"...
+   ...first news today...
+   ...second news today...
+   ...<ul id="portal-personaltools"...'
+
+And the search should of course also return the new news:
+
+  >>> browser.getControl('Search Site').value = 'today'
+  >>> browser.getForm(name='searchform').submit()
+  >>> browser.url
+  'http://nohost/plone/search?SearchableText=today'
+  >>> browser.contents
+  '...Search results...2 items matching your search terms...
+   ...second news today...
+   ...first news today...'
 

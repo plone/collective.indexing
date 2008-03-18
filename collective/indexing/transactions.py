@@ -57,12 +57,15 @@ class QueueTM(TM, local):
             logger.debug('emptying unprocessed queue due to abort()...')
             self.queue.clear()
 
-    def _finish(self):
+    def commit(self, transaction):
         try:
             if self.queue.getState():
                 logger.debug('processing queue...')
                 processed = self.queue.process()
                 logger.debug('%d item(s) processed during queue run', processed)
         except:
-            logger.exception('exception during QueueTM._finish')
+            logger.exception('exception during QueueTM.commit')
+
+    def _finish(self):
+        pass
 
