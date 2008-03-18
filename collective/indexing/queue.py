@@ -16,7 +16,7 @@ debug = getLogger('collective.indexing.queue').debug
 localQueue = None
 
 def getQueue():
-    # return a (thread-local) queue object...
+    """ return a (thread-local) queue object, create one if necessary """
     global localQueue
     if localQueue is None:
         localQueue = IndexQueue()
@@ -37,7 +37,7 @@ class IndexQueue(local):
             method gets called back just before the transaction is about to
             be committed """
         if self.tmhook is None:
-            self.tmhook = QueueTM(self)._register
+            self.tmhook = QueueTM(self).register
         self.tmhook()
 
     def index(self, obj, attributes=None):

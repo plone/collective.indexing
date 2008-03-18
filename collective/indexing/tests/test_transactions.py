@@ -11,7 +11,7 @@ class QueueTransactionManagerTests(TestCase):
     def setUp(self):
         self.queue = utils.MockQueue()
         self.tman = QueueTM(self.queue)
-        self.queue.hook = self.tman._register   # set up the transaction manager hook
+        self.queue.hook = self.tman.register    # set up the transaction manager hook
 
     def testFlushQueueOnCommit(self):
         self.queue.index('foo')

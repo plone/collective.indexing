@@ -1,7 +1,8 @@
 from logging import getLogger
 from threading import local
+from transaction.interfaces import ISavepointDataManager
 from transaction import get as getTransaction
-from Shared.DC.ZRDB.TM import TM
+from zope.interface import implements
 from collective.indexing.interfaces import IIndexQueue
 
 logger = getLogger('collective.indexing.transactions')
@@ -18,55 +19,54 @@ class QueueSavepoint:
         self.queue.setState(self.state)
 
 
-class QueueTM(TM, local):
+class QueueTM(local):
     """ transaction manager hook for the indexing queue """
-
-    _registered = False
-    _finalize = False
+    implements(ISavepointDataManager)
 
     def __init__(self, queue):
         logger.debug('initializing tm %r for queue %r...', self, queue)
         local.__init__(self)
+        self.registered = False
+        self.vote = False
         assert IIndexQueue.providedBy(queue), queue
         self.queue = queue
 
-    def _register(self):
-        if not self._registered:
+    def register(self):
+        if not self.registered:
             try:
                 getTransaction().join(self)
-                self._begin()
-                self._registered = True
-                self._finalize = False
+                self.registered = True
                 logger.debug('registered tm %r (queue %r).', self, self.queue)
             except:
-                logger.exception('exception during _register '
-                                 '(registered=%s, finalize=%s)' %
-                                  (self._registered, self._finalize))
+                logger.exception('exception during register (registered=%s)', self.registered)
 
     def savepoint(self):
         return QueueSavepoint(self.queue)
 
-    def _begin(self):
-        self._reset()
-
-    def _reset(self):
+    def tpc_begin(self, transaction):
         pass
-
-    def _abort(self):
-        if self.queue.getState():
-            logger.debug('emptying unprocessed queue due to abort()...')
-            self.queue.clear()
 
     def commit(self, transaction):
-        try:
-            if self.queue.getState():
-                logger.debug('processing queue...')
-                processed = self.queue.process()
-                logger.debug('%d item(s) processed during queue run', processed)
-            self.queue.clear()
-        except:
-            logger.exception('exception during QueueTM.commit')
+        if self.queue.getState():
+            logger.debug('processing queue...')
+            processed = self.queue.process()
+            logger.debug('%d item(s) processed during queue run', processed)
+        self.queue.clear()
 
-    def _finish(self):
+    def tpc_vote(self, transaction):
         pass
+
+    def tpc_finish(self, transaction):
+        self.registered = False
+
+    def tpc_abort(self, transaction):
+        if self.queue.getState():
+            logger.debug('emptying unprocessed queue due to abort()...')
+        self.queue.clear()
+        self.registered = False
+
+    abort = tpc_abort
+
+    def sortKey(self):
+        return id(self)
 
