@@ -1,4 +1,5 @@
 from logging import getLogger
+from threading import local
 from persistent import Persistent
 from zope.interface import implements
 from zope.component import queryUtility, getUtilitiesFor
@@ -7,34 +8,33 @@ from collective.indexing.interfaces import IIndexQueueSwitch
 from collective.indexing.interfaces import IIndexQueueProcessor
 from collective.indexing.interfaces import IQueueReducer
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
-from collective.indexing.local import getLocal, setLocal
+from collective.indexing.local import getLocal
 from collective.indexing.transactions import QueueTM
 
 debug = getLogger('collective.indexing.queue').debug
 
 
-class IndexQueue(object):
+def getQueue():
+    # return a (thread-local) queue object...
+    return getLocal('queue', IndexQueue)
+
+
+class IndexQueue(local):
     """ an indexing queue """
     implements(IIndexQueue)
 
     def __init__(self):
-        tm = getLocal('tm')
-        if tm is None:
-            tm = QueueTM(self)          # create a transaction manager...
-            setLocal('tm', tm)          # remember it...
-            self.setHook(tm._register)  # and set up the hook...
+        self.queue = []
+        self.tmhook = None
 
-    @property
-    def queue(self):
-        """ return a thread-local list used to hold the queue items """
-        return getLocal('queue', list)
-
-    @property
     def hook(self):
-        """ return a thread-local variable used to hold the tm hook;
-            the default is set to an arbitrary callable to avoid having
-            to check for `None` everywhere the hook is called """
-        return getLocal('hook', lambda: lambda: 42)
+        """ register a hook into the transaction machinery if that hasn't
+            already been done;  this is to make sure the queue's processing
+            method gets called back just before the transaction is about to
+            be committed """
+        if self.tmhook is None:
+            self.tmhook = QueueTM(self)._register
+        self.tmhook()
 
     def index(self, obj, attributes=None):
         assert obj is not None, 'invalid object'
@@ -57,7 +57,7 @@ class IndexQueue(object):
     def setHook(self, hook):
         assert callable(hook), 'hook must be callable'
         debug('setting hook to %r', hook)
-        setLocal('hook', hook)
+        self.tmhook = hook
 
     def getState(self):
         return list(self.queue)     # better return a copy... :)
@@ -65,7 +65,7 @@ class IndexQueue(object):
     def setState(self, state):
         assert isinstance(state, list), 'state must be a list'
         debug('setting queue state to %r', state)
-        setLocal('queue', state)
+        self.queue = state
 
     def optimize(self):
         reducer = queryUtility(IQueueReducer)
@@ -101,7 +101,7 @@ class IndexQueue(object):
     def clear(self):
         debug('clearing %d queue item(s)', len(self.queue))
         del self.queue[:]
-        setLocal('tm', None)    # release transaction manager...
+        self.tmhook = None      # release transaction manager...
 
 
 class IndexQueueSwitch(Persistent):
