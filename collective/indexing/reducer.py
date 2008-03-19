@@ -16,10 +16,11 @@ class QueueReducer(object):
         res = {}
         debug('start reducing %d item(s): %r', len(queue), queue)
         for iop, obj, iattr in queue:
-            op, attr = res.get(obj, (0,iattr))
+            oid = getattr(obj, 'UID', lambda: id(obj))()
+            op, dummy, attr = res.get(oid, (0, obj, iattr))
             # If we are going to delete an item that was added in this transaction, ignore it
             if op == INDEX and iop == UNINDEX:
-                del res[obj]
+                del res[oid]
             else:
                 # Operators are -1, 0 or 1 which makes it safe to add them
                 op += iop
@@ -31,8 +32,8 @@ class QueueReducer(object):
                 else:
                     attr = None
 
-                res[obj] = (op, attr)
+                res[oid] = (op, obj, attr)
 
         debug('finished reducing; %d item(s) in queue...', len(res))
-        return [(op, obj, attr) for obj, (op, attr) in res.items()] # almost Perl!
+        return res.values()
 

@@ -4,13 +4,13 @@ To-Do's
 Issues
 ------
 
-- moving items doesn't update their indexes properly, i.e. the old items
-  still show up in the catalog, but not the new ones...
-
-.. - at the moment there are no known issues or bugs
+- at the moment there are no known issues or bugs
 
 Features
 --------
+
+- more functional tests covering the different subscribers
+  (copy, remove, modify, publish)
 
 - implementation of an index processor backend using the standard cmf
   catalog (done, but tests missing)
