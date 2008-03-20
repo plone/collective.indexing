@@ -1,33 +1,39 @@
 from setuptools import setup, find_packages
-import os
+from os.path import join
 
-version = '0.1'
+version = '1.0a1'
+readme = open("README.txt").read()
+history = open(join('docs', 'HISTORY.txt')).read()
 
-setup(name='collective.indexing',
-      version=version,
-      description="Abstract framework for queued indexing of portal content",
-      long_description=open("README.txt").read() + "\n" +
-                       open(os.path.join("docs", "HISTORY.txt")).read(),
-      # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
-      classifiers=[
-        "Framework :: Plone",
-        "Programming Language :: Python",
-        "Topic :: Software Development :: Libraries :: Python Modules",
-        ],
-      keywords='',
-      author='Plone Foundation',
-      author_email='plone-developers@lists.sourceforge.net',
-      url='http://svn.plone.org/svn/plone/plone.example',
-      license='GPL',
-      packages=find_packages(exclude=['ez_setup']),
-      namespace_packages=['collective'],
-      include_package_data=True,
-      zip_safe=False,
-      install_requires=[
-          'setuptools',
-          # -*- Extra requirements: -*-
+setup(name = 'collective.indexing',
+      version = version,
+      description = 'Abstract framework for queued indexing of portal content',
+      long_description = readme[readme.find('\n\n'):] + '\n' + history,
+      classifiers = [
+        'Development Status :: 3 - Alpha',
+        'Environment :: Web Environment',
+        'Framework :: Plone',
+        'Framework :: CMF',
+        'Intended Audience :: Developers',
+        'Intended Audience :: System Administrators',
+        'Intended Audience :: Other Audience',
+        'License :: OSI Approved :: GNU General Public License (GPL)',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Topic :: Software Development :: Libraries :: Python Modules',
       ],
-      entry_points="""
-      # -*- Entry points: -*-
-      """,
-      )
+      keywords = 'plone cmf zope indexing queueing catalog asynchronous',
+      author = 'Plone Foundation',
+      author_email = 'plone-developers@lists.sourceforge.net',
+      url = 'http://plone.org/products/collective.indexing',
+      download_url = 'http://cheeseshop.python.org/pypi/collective.indexing/',
+      license = 'GPL',
+      packages = find_packages(exclude=['ez_setup']),
+      namespace_packages = ['collective'],
+      include_package_data = True,
+      platforms = 'Any',
+      zip_safe = False,
+      install_requires = ['setuptools',],
+      entry_points = '',
+)
+

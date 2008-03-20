@@ -132,6 +132,9 @@ change of location should be correctly reflected by the catalog:
   >>> browser.getControl('Title').value = 'a folder'
   >>> browser.getControl('Save').click()
 
+  >>> uid = portal['first-news-today'].UID()
+  >>> folder = portal['a-folder']
+
   >>> browser.getLink('Contents').click()
   >>> browser.url
   'http://nohost/plone/a-folder/folder_contents'
@@ -140,4 +143,40 @@ change of location should be correctly reflected by the catalog:
   '...Info...Item(s) pasted...'
   >>> browser.getControl('first news today')
   <ItemControl ... optionValue='/plone/a-folder/first-news-today' ...>
+  >>> portal['first-news-today']
+  Traceback (most recent call last):
+  ...
+  KeyError: 'first-news-today'
+  >>> folder['first-news-today']
+  <ATNewsItem at /plone/a-folder/first-news-today>
+  >>> uid == folder['first-news-today'].UID()
+  True
+
+Copying an item should also work:
+
+  >>> browser.getLink('Home').click()
+  >>> browser.getLink('Contents').click()
+  >>> form = browser.getForm(name='folderContentsForm')
+  >>> form.getControl('second news today').selected = True
+  >>> form.getControl('Copy').click()
+  >>> browser.contents
+  '...Info...1 item(s) copied...'
+
+  >>> browser.getLink('a folder').click()
+  >>> browser.getLink('Contents').click()
+  >>> browser.getControl('Paste').click()
+  >>> browser.contents
+  '...Info...Item(s) pasted...
+   ...a folder...
+   ...Up one level...
+   ...first news today...
+   ...second news today...'
+  >>> browser.getControl('second news today')
+  <ItemControl ... optionValue='/plone/a-folder/second-news-today' ...>
+  >>> portal['second-news-today']
+  <ATNewsItem at /plone/second-news-today>
+  >>> folder['second-news-today']
+  <ATNewsItem at /plone/a-folder/second-news-today>
+  >>> portal['second-news-today'].UID() == folder['second-news-today'].UID()
+  False
 

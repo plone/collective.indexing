@@ -4,13 +4,15 @@ To-Do's
 Issues
 ------
 
-- at the moment there are no known issues or bugs
+- update README.txt to reflect latest changes
+
+.. - at the moment there are no known issues or bugs
 
 Features
 --------
 
 - more functional tests covering the different subscribers
-  (copy, remove, modify, publish)
+  (remove, modify, publish)
 
 - implementation of an index processor backend using the standard cmf
   catalog (done, but tests missing)
