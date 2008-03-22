@@ -16,7 +16,10 @@ class QueueReducer(object):
         res = {}
         debug('start reducing %d item(s): %r', len(queue), queue)
         for iop, obj, iattr in queue:
-            oid = getattr(obj, 'UID', lambda: id(obj))()
+            oid = hash(obj)
+            func = getattr(obj, 'getPhysicalPath', None)
+            if callable(func):
+                oid = oid, func()
             op, dummy, attr = res.get(oid, (0, obj, iattr))
             # If we are going to delete an item that was added in this transaction, ignore it
             if op == INDEX and iop == UNINDEX:

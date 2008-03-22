@@ -12,7 +12,7 @@ Features
 --------
 
 - more functional tests covering the different subscribers
-  (remove, modify, publish)
+  (modify, publish)
 
 - implementation of an index processor backend using the standard cmf
   catalog (done, but tests missing)

@@ -93,7 +93,14 @@ the hook into the transaction machinery:
   >>> browser.contents
   '...Info...Changes saved...'
 
-Now both should show up in the global sections:
+Now both should be in the catalog and show up in the global sections:
+
+  >>> self.assertEqual(len(calledIndex), 2)
+  >>> path = lambda obj: '/'.join(obj.getPhysicalPath()) 
+  >>> def sort(brains):
+  ...     return sorted([ brain.getObject() for brain in brains ], key=path)
+  >>> sort(catalog(portal_type='News Item'))
+  [<ATNewsItem at /plone/first-news-today>, <ATNewsItem at /plone/second-news-today>]
 
   >>> browser.getLink('first news today')
   <Link text='first news today' url='http://nohost/plone/first-news-today'>
@@ -117,7 +124,34 @@ And the search should of course also return the new news:
    ...first news today...'
 
 Now let's try some other operations, for example moving items around.  The
-change of location should be correctly reflected by the catalog:
+change of location should be correctly reflected by the catalog.  First some
+preparations including more counters for reindexing and unindexing operations:
+
+  >>> browser.getLink('Home').click()
+  >>> browser.getLink(url='createObject?type_name=Folder').click()
+  >>> browser.getControl('Title').value = 'a folder'
+  >>> browser.getControl('Save').click()
+
+  >>> self.assertEqual(len(calledIndex), 3)
+  >>> calledIndex[:] = []
+  >>> uid = portal['first-news-today'].UID()
+  >>> folder = portal['a-folder']
+
+  >>> p_reindex = PortalCatalogQueueProcessor.reindex
+  >>> calledReindex = []
+  >>> def reindex(self, obj, attributes=None):
+  ...     calledReindex.append(repr(obj))
+  ...     p_reindex(self, obj, attributes)
+  >>> PortalCatalogQueueProcessor.reindex = reindex
+
+  >>> p_unindex = PortalCatalogQueueProcessor.unindex
+  >>> calledUnindex = []
+  >>> def unindex(self, obj):
+  ...     calledUnindex.append(repr(obj))
+  ...     p_unindex(self, obj)
+  >>> PortalCatalogQueueProcessor.unindex = unindex
+
+Now the item can be moved to the newly created folder:
 
   >>> browser.getLink('Home').click()
   >>> browser.getLink('Contents').click()
@@ -127,14 +161,7 @@ change of location should be correctly reflected by the catalog:
   >>> browser.contents
   '...Info...1 item(s) cut...'
 
-  >>> browser.getLink('Home').click()
-  >>> browser.getLink(url='createObject?type_name=Folder').click()
-  >>> browser.getControl('Title').value = 'a folder'
-  >>> browser.getControl('Save').click()
-
-  >>> uid = portal['first-news-today'].UID()
-  >>> folder = portal['a-folder']
-
+  >>> browser.getLink('a folder').click()
   >>> browser.getLink('Contents').click()
   >>> browser.url
   'http://nohost/plone/a-folder/folder_contents'
@@ -143,14 +170,24 @@ change of location should be correctly reflected by the catalog:
   '...Info...Item(s) pasted...'
   >>> browser.getControl('first news today')
   <ItemControl ... optionValue='/plone/a-folder/first-news-today' ...>
+
+Afterwards various aspects are checked:
+
   >>> portal['first-news-today']
   Traceback (most recent call last):
   ...
   KeyError: 'first-news-today'
-  >>> folder['first-news-today']
-  <ATNewsItem at /plone/a-folder/first-news-today>
+  >>> folder.objectValues()
+  [<ATNewsItem at /plone/a-folder/first-news-today>]
   >>> uid == folder['first-news-today'].UID()
   True
+  >>> calledIndex
+  ['<ATNewsItem at /plone/a-folder/first-news-today>']
+  >>> self.assertEqual(len(calledReindex), 2)
+  >>> calledUnindex
+  ['<ATNewsItem at /plone/first-news-today>']
+  >>> sort(catalog(Title='first'))
+  [<ATNewsItem at /plone/a-folder/first-news-today>]
 
 Copying an item should also work:
 
@@ -173,10 +210,36 @@ Copying an item should also work:
    ...second news today...'
   >>> browser.getControl('second news today')
   <ItemControl ... optionValue='/plone/a-folder/second-news-today' ...>
+
   >>> portal['second-news-today']
   <ATNewsItem at /plone/second-news-today>
   >>> folder['second-news-today']
   <ATNewsItem at /plone/a-folder/second-news-today>
   >>> portal['second-news-today'].UID() == folder['second-news-today'].UID()
   False
+  >>> self.assertEqual(len(calledIndex), 2)
+  >>> '<ATNewsItem at /plone/a-folder/second-news-today>' in calledIndex
+  True
+  >>> self.assertEqual(len(calledReindex), 3)
+  >>> self.assertEqual(len(calledUnindex), 1)
+  >>> sort(catalog(Title='second'))
+  [<ATNewsItem at /plone/a-folder/second-news-today>, <ATNewsItem at /plone/second-news-today>]
+
+Removing an item should uncatalog it, of course:
+
+  >>> sort(catalog(Title='first'))
+  [<ATNewsItem at /plone/a-folder/first-news-today>]
+  >>> form = browser.getForm(name='folderContentsForm')
+  >>> form.getControl('first news today').selected = True
+  >>> form.getControl('Delete').click()
+  >>> browser.contents
+  '...Info...Item(s) deleted...'
+
+  >>> self.assertEqual(len(calledIndex), 2)
+  >>> self.assertEqual(len(calledReindex), 4)
+  >>> self.assertEqual(len(calledUnindex), 2)
+  >>> calledUnindex[-1]
+  '<ATNewsItem at /plone/a-folder/first-news-today>'
+  >>> sort(catalog(Title='first'))
+  []
 
