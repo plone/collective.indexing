@@ -262,3 +262,23 @@ Modifying an item should trigger a reindex operation:
   >>> sort(catalog(Title='latest'))
   [<ATFolder at /plone/a-folder>]
 
+Publishing should do the same:
+
+  >>> info = self.portal.portal_workflow.getInfoFor
+  >>> info(self.portal['a-folder'], 'review_state')
+  'private'
+  >>> sort(catalog(Title='latest', review_state='published'))
+  []
+
+  >>> browser.getLink('Publish').click()
+
+  >>> self.assertEqual(len(calledIndex), 2)
+  >>> self.assertEqual(len(calledReindex), 6)
+  >>> self.assertEqual(len(calledUnindex), 2)
+  >>> calledReindex[-1]
+  '<ATFolder at /plone/a-folder>'
+  >>> info(self.portal['a-folder'], 'review_state')
+  'published'
+  >>> sort(catalog(Title='latest', review_state='published'))
+  [<ATFolder at /plone/a-folder>]
+

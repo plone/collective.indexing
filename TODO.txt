@@ -11,12 +11,6 @@ Issues
 Features
 --------
 
-- more functional tests covering the different subscribers
-  (publish)
-
-- implementation of an index processor backend using the standard cmf
-  catalog (done, but tests missing)
-
 - monkey patch for adapterization of ``CMFCore.CMFCatalogAware`` and
   ``Archetypes.CatalogMultiplex`` in order to make the to be used indexing
   backend easily pluggable, so that queueing and/or dispatching becomes
