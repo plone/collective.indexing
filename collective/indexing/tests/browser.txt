@@ -243,3 +243,22 @@ Removing an item should uncatalog it, of course:
   >>> sort(catalog(Title='first'))
   []
 
+Modifying an item should trigger a reindex operation:
+
+  >>> sort(catalog(Title='folder'))
+  [<ATFolder at /plone/a-folder>]
+
+  >>> browser.getLink('Edit').click()
+  >>> browser.getControl('Title').value = 'latest news'
+  >>> browser.getControl('Save').click()
+
+  >>> self.assertEqual(len(calledIndex), 2)
+  >>> self.assertEqual(len(calledReindex), 5)
+  >>> self.assertEqual(len(calledUnindex), 2)
+  >>> calledReindex[-1]
+  '<ATFolder at /plone/a-folder>'
+  >>> sort(catalog(Title='folder'))
+  []
+  >>> sort(catalog(Title='latest'))
+  [<ATFolder at /plone/a-folder>]
+

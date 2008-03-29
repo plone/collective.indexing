@@ -4,7 +4,7 @@ To-Do's
 Issues
 ------
 
-- update README.txt to reflect latest changes
+- update README.txt to reflect latest changes and future plans
 
 .. - at the moment there are no known issues or bugs
 
@@ -12,7 +12,7 @@ Features
 --------
 
 - more functional tests covering the different subscribers
-  (modify, publish)
+  (publish)
 
 - implementation of an index processor backend using the standard cmf
   catalog (done, but tests missing)
