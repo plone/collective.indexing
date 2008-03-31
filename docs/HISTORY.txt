@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0 — Released March 31, 2008
+1.0a1 — Released March 31, 2008
 -----------------------------
 
 * Initial release
