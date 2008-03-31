@@ -7,7 +7,7 @@ history = open(join('docs', 'HISTORY.txt')).read()
 
 setup(name = 'collective.indexing',
       version = version,
-      description = 'Abstract framework for queued indexing of portal content',
+      description = 'Abstract framework for queueing, optimizing and dispatching index operations for portal content.',
       long_description = readme[readme.find('\n\n'):] + '\n' + history,
       classifiers = [
         'Development Status :: 3 - Alpha',
