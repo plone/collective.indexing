@@ -4,9 +4,7 @@ To-Do's
 Issues
 ------
 
-- update README.txt to reflect latest changes and future plans
-
-.. - at the moment there are no known issues or bugs
+- at the moment there are no known issues or bugs
 
 Features
 --------
@@ -15,9 +13,6 @@ Features
   ``Archetypes.CatalogMultiplex`` in order to make the to be used indexing
   backend easily pluggable, so that queueing and/or dispatching becomes
   entirely configurable via zcml
-
-- hook up these two to use the catalog processor as the indexing backend,
-  but queue and optimize all operations
 
 Miscellaneous
 -------------

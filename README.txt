@@ -26,41 +26,41 @@ has already been started in the form of `collective.solr`_.
   .. _`Solr`: http://lucene.apache.org/solr/
   .. _`Xapian`: http://www.xapian.org/
   .. _`Google Search Appliance`: http://www.google.com/enterprise/gsa/
-  .. _`collective.solr`: http://dev.plone.org/collective/log/collective.solr/
-
-
-.. Motivation
-.. ----------
-.. 
-.. to be written...
+  .. _`collective.solr`: http://dev.plone.org/collective/browser/collective.solr/
 
 
 Current Status
 --------------
 
-In conjunction with `collective.solr`_ the package currently provides a
+The implementation is considered to be nearly finished.  The package can be
+installed in a Plone 3.x site to enable indexing operations to be queued,
+optimized and dispatched to the standard portal catalog on the zope
+transaction boundary thereby improving the Plone's out-of-the-box
+performance_.  A buildout_ is provided for your convenience.
+
+  .. _performance: http://www.jarn.com/blog/plone-indexing-performance
+  .. _buildout: http://svn.plone.org/svn/collective/collective.indexing/buildout
+
+At the moment the package requires "monkey patches" to the mixin classes
+currently used to hook up indexing, i.e. ``CMFCatalogAware`` (from `CMF`_)
+and ``CatalogMultiplex`` (from `Archetypes`_).  It is planned to make these
+classes "pluggable" by use of adapters, allowing `collective.indexing` to
+hook in in clean ways.  This will be proposed as a `PLIP`_ for inclusion
+into `Plone`_ 3.2.
+
+  .. _`Archetypes`: http://plone.org/products/archetypes
+  .. _`PLIP`: http://plone.org/documentation/glossary/plip
+
+In conjunction with `collective.solr`_ the package also provides a
 working solution for integration of `Solr`_ with `Plone`_.  Based on a schema
-`configurable`__ at `buildout`_ level indexing operations are queued,
-optimized and dispatched to a `Solr`_ instance on the zope transaction
-boundary.  This allows for minimal and very efficient indexing of standard
-`Plone`_ content items based on `Archetypes`_.  Providing support for other
-content types is rather trivial and will be support soon.
+`configurable`__ at `zc.buildout`_ level indexing operations can be dispatched
+a `Solr`_ instance in addition or alternatively to the standard catalog.  This
+allows for minimal and very efficient indexing of standard `Plone`_ content
+items based on `Archetypes`_.  Providing support for other content types is
+rather trivial and will be support soon.
 
   .. __: http://svn.plone.org/svn/collective/buildout/collective.recipe.solrinstance/trunk/README.txt
-  .. _`buildout`: http://pypi.python.org/pypi/zc.buildout
-  .. _`Archetypes`: http://plone.org/products/archetypes
-
-Other current plans are to support the default plone catalog as a backend to
-allow `collective.indexing`_ to become a worthwhile add-on package for current
-versions of `Plone`_, effectively speeding up write operations on hopefully
-any given `Plone`_ site.  In addition, changes to the ``CMFCatalogAware``
-(from `CMF`_) and ``CatalogMultiplex`` (from `Archetypes`_) mixin classes are
-planned, making them "pluggable" by use of adapters.  That way these classes
-will provide means for `collective.indexing` to hook in in clean ways.  The
-changes will at first be provided by a "monkey patch", but later on proposed
-as a `PLIP`_ for inclusion into `Plone`_ 3.2.
-
-  .. _`PLIP`: http://plone.org/documentation/glossary/plip
+  .. _`zc.buildout`: http://pypi.python.org/pypi/zc.buildout
 
 The code was written with emphasis on minimalism, clarity and maintainability.
 It comes with extensive tests covering the code base at more than 95%.
@@ -68,13 +68,13 @@ It comes with extensive tests covering the code base at more than 95%.
 For outstanding issues and features remaining to be implemented please see the
 `to-do list`__ included in the package.
 
-  .. __: http://dev.plone.org/collective/browser/collective.indexing/trunk/TODO.txt
+  .. __: http://svn.plone.org/svn/collective/collective.indexing/trunk/TODO.txt
 
 
 Credits
 -------
 
-This code is inspired by `enfold.indexing`_ and `enfold.solr`_ by `Enfold
+This code was inspired by `enfold.indexing`_ and `enfold.solr`_ by `Enfold
 Systems`_ as well as `work done at the snowsprint'08`__.  The
 ``TransactionManager`` pattern is taken from `enfold.solr`_.  Development was
 kindly sponsored by `Elkjøp`_.
