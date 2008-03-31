@@ -2,7 +2,7 @@ Changelog
 =========
 
 1.0a1 — Released March 31, 2008
------------------------------
+-------------------------------
 
 * Initial release
   [tesdal, witsch]
