@@ -4,9 +4,7 @@ To-Do's
 Issues
 ------
 
-- make sure indexing works when catalog gets updated via the zmi
-
-.. - at the moment there are no known issues or bugs
+- at the moment there are no known issues or bugs
 
 Features
 --------

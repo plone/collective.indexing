@@ -4,6 +4,9 @@ Changelog
 1.0a2 - Unreleased
 ------------------
 
+* Fixed monkey patches so that normal indexing remains functional when queued
+  indexing has been deactivated (or the GS profile had not been applied yet).
+  [witsch]
 
 1.0a1 - Released March 31, 2008
 -------------------------------
