@@ -44,6 +44,8 @@ class InstallationTests(ptc.PloneTestCase):
         self.assertEqual(self.remove(), ['foo'])
         commit()
         self.assertEqual(self.fileIds(), [])
+        self.portal.portal_quickinstaller.uninstallProducts(('collective.indexing',))
+        commit()
 
 
 def test_suite():
