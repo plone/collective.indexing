@@ -27,23 +27,33 @@ class IPortalCatalogQueueProcessor(IIndexQueueProcessor):
         the `CatalogMultiplex` and `CMFCatalogAware` mixin classes """
 
 
+def index(obj, attributes=None):
+    op = getDispatcher(obj, 'index')
+    if op is not None:
+        op(obj)
+
+def reindex(obj, attributes=None):
+    op = getDispatcher(obj, 'reindex')
+    if op is not None:
+        op(obj, attributes or [])
+
+def unindex(obj):
+    op = getDispatcher(obj, 'unindex')
+    if op is not None:
+        op(obj)
+
+
 class PortalCatalogQueueProcessor(Persistent):
     implements(IPortalCatalogQueueProcessor)
 
     def index(self, obj, attributes=None):
-        op = getDispatcher(obj, 'index')
-        if op is not None:
-            op(obj)
+        index(obj, attributes)
 
     def reindex(self, obj, attributes=None):
-        op = getDispatcher(obj, 'reindex')
-        if op is not None:
-            op(obj, attributes or [])
+        reindex(obj, attributes)
 
     def unindex(self, obj):
-        op = getDispatcher(obj, 'unindex')
-        if op is not None:
-            op(obj)
+        unindex(obj)
 
     def begin(self):
         pass
