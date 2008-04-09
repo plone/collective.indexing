@@ -22,11 +22,6 @@ def getDispatcher(obj, name):
     return op
 
 
-class IPortalCatalogQueueProcessor(IIndexQueueProcessor):
-    """ an index queue processor for the standard portal catalog via
-        the `CatalogMultiplex` and `CMFCatalogAware` mixin classes """
-
-
 def index(obj, attributes=None):
     op = getDispatcher(obj, 'index')
     if op is not None:
@@ -41,6 +36,11 @@ def unindex(obj):
     op = getDispatcher(obj, 'unindex')
     if op is not None:
         op(obj)
+
+
+class IPortalCatalogQueueProcessor(IIndexQueueProcessor):
+    """ an index queue processor for the standard portal catalog via
+        the `CatalogMultiplex` and `CMFCatalogAware` mixin classes """
 
 
 class PortalCatalogQueueProcessor(Persistent):
