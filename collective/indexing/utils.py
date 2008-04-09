@@ -4,10 +4,13 @@ from collective.indexing.interfaces import IIndexQueueSwitch
 from collective.indexing.queue import getQueue
 
 
+def isActive():
+    return queryUtility(IIndexQueueSwitch) is not None
+
+
 def getIndexer():
     """ look for and return an indexer """
-    switch = queryUtility(IIndexQueueSwitch)
-    if switch is not None:          # when switched on...
+    if isActive():                  # when switched on...
         return getQueue()           # return a (thread-local) queue object...
     indexers = list(getUtilitiesFor(IIndexing))
     if len(indexers) == 1:
