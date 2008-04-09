@@ -3,6 +3,8 @@
     xmlns:five="http://namespaces.zope.org/five"
     i18n_domain="collective.indexing">
 
+    <five:registerPackage package="." initialize=".initialize" />
+
     <include file="profiles.zcml" />
     <include file="subscribers.zcml" />
 

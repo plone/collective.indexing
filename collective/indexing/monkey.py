@@ -4,13 +4,16 @@
 # will be added to the queue or, if disabled, directly dispatched to the
 # default indexer (using the original methods)
 
-from collective.indexing.utils import getIndexer
+from collective.indexing.utils import isActive, getIndexer
 from collective.indexing.indexer import catalogMultiplexMethods
 from collective.indexing.indexer import catalogAwareMethods
+from collective.indexing.indexer import index, reindex, unindex
 from collective.indexing.subscribers import filterTemporaryItems
 
 
 def indexObject(self):
+    if not isActive():
+        return index(self)
     obj = filterTemporaryItems(self)
     indexer = getIndexer()
     if obj is not None and indexer is not None:
@@ -18,6 +21,8 @@ def indexObject(self):
 
 
 def unindexObject(self):
+    if not isActive():
+        return unindex(self)
     obj = filterTemporaryItems(self)
     indexer = getIndexer()
     if obj is not None and indexer is not None:
@@ -25,6 +30,8 @@ def unindexObject(self):
 
 
 def reindexObject(self, idxs=None):
+    if not isActive():
+        return reindex(self, idxs)
     obj = filterTemporaryItems(self)
     indexer = getIndexer()
     if obj is not None and indexer is not None:
