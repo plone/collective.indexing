@@ -54,14 +54,13 @@ class SubscriberTests(ptc.PloneTestCase):
 
     def testUpdateObject(self):
         self.file.update(title='Foo')
-        # `update()` doesn't fire an event, so there's only one operation
-        # queued up via `CatalogMultiplex`
-        self.assertEqual(self.queue, [(REINDEX, self.file, None)])
+        # `update()` doesn't fire an event, so the queue remains empty
+        self.assertEqual(self.queue, [])
 
     def testModifyObject(self):
         self.file.processForm(values={'title': 'Foo'})
         self.assertEqual(self.file.Title(), 'Foo')
-        self.assertEqual(self.queue, [(REINDEX, self.file, None), (REINDEX, self.file, None)])
+        self.assertEqual(self.queue, [(REINDEX, self.file, None)])
 
     def testRemoveObject(self):
         file1 = self.portal.file1
@@ -109,7 +108,7 @@ class SubscriberTests(ptc.PloneTestCase):
 
     def testPublishObject(self):
         self.portal.portal_workflow.doActionFor(self.folder, 'publish')
-        self.assertEqual(self.queue, [(REINDEX, self.folder, None), (REINDEX, self.folder, ['review_state'])])
+        self.assertEqual(self.queue, [(REINDEX, self.folder, None)])
 
 
 class IntegrationTests(ptc.PloneTestCase):
