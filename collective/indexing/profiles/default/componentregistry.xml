@@ -7,6 +7,7 @@
      factory="collective.indexing.queue.IndexQueueSwitch"/>
   <utility
      interface="collective.indexing.indexer.IPortalCatalogQueueProcessor"
+     name="portal-catalog"
      factory="collective.indexing.indexer.PortalCatalogQueueProcessor"/>
  </utilities>
 </componentregistry>
