@@ -282,3 +282,27 @@ Publishing should do the same:
   >>> sort(catalog(Title='latest', review_state='published'))
   [<ATFolder at /plone/a-folder>]
 
+Renaming should also work:
+
+  >>> portal['a-folder']
+  <ATFolder at /plone/a-folder>
+
+  >>> browser.getLink('Rename').click()
+  >>> browser.getControl('New Short Name').value = 'some-news'
+  >>> browser.getControl('Rename All').click()
+  >>> browser.contents
+  '...Info...Renamed ...a-folder... to ...some-news...'
+
+  >>> portal['a-folder']
+  Traceback (most recent call last):
+  ...
+  KeyError: 'a-folder'
+  >>> portal['some-news']
+  <ATFolder at /plone/some-news>
+
+  >>> calledReindex[-2:]
+  ['<ATFolder at /plone/some-news>', '<PloneSite at /plone>']
+
+  >>> sort(catalog(getId='some-news'))
+  [<ATFolder at /plone/some-news>]
+
