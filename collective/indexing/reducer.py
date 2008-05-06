@@ -31,7 +31,7 @@ class QueueReducer(object):
 
                 # Handle attributes, None means all fields, and takes presedence
                 if isinstance(attr, (tuple,list)) and isinstance(iattr, (tuple,list)):
-                    attr = tuple(set(attr + iattr))
+                    attr = tuple(set(attr).union(iattr))
                 else:
                     attr = None
 
