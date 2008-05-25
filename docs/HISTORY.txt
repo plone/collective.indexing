@@ -1,8 +1,18 @@
 Changelog
 =========
 
-1.0a2 - Unreleased
-------------------
+1.0a2 - Released May 25, 2008
+-----------------------------
+
+* Fix bug regarding different types in the queue reducer logic.
+  [fschulze]
+
+* Fixed renaming of content items by replacing `PloneTool.reindexOnReorder`
+  with a saner version that doesn't rely on the catalog.
+  [witsch]
+
+* Various fixes, cleanups and optimizations.
+  [witsch]
 
 * Fixed monkey patches so that normal indexing remains functional when queued
   indexing has been deactivated (or the GS profile had not been applied yet).
