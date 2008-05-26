@@ -6,6 +6,8 @@ subscribers, thread-local variables etc is actually working... :)
 First the package has to be quick-installed in the portal and a testbrowser
 as well as a logged in user with the necessary permissions are needed:
 
+  >>> from Products.PloneTestCase import PloneTestCase as ptc
+  >>> ptc.installPackage('collective.indexing')
   >>> portal.portal_quickinstaller.installProduct('collective.indexing')
   ''
   >>> self.setRoles(('Manager',))
