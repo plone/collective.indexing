@@ -72,7 +72,7 @@ def reindexOnReorder(self, parent):
     mtool = getToolByName(self, 'portal_membership')
     if mtool.checkPermission(ModifyPortalContent, parent):
         for obj in parent.objectValues():
-            if has(obj, 'reindexObject') and has(obj, 'getObjPositionInParent'):
+            if has(obj, 'reindexObject'):
                 obj.reindexObject(['getObjPositionInParent'])
 
 if getFSVersionTuple() < (3,1):
