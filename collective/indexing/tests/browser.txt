@@ -300,8 +300,13 @@ Renaming should also work:
   >>> portal['some-news']
   <ATFolder at /plone/some-news>
 
-  >>> calledReindex[-2:]
-  ['<ATFolder at /plone/some-news>', '<PloneSite at /plone>']
+  >>> self.assertEqual(len(calledIndex), 3)
+  >>> self.assertEqual(len(calledReindex), 10)
+  >>> self.assertEqual(len(calledUnindex), 2)
+  >>> calledIndex[-1:]
+  ['<ATNewsItem at /plone/some-news/second-news-today>']
+  >>> sorted(calledReindex[-4:])
+  ['<ATDocument at /plone/front-page>', '<ATFolder at /plone/some-news>', '<ATNewsItem at /plone/second-news-today>', '<PloneSite at /plone>']
 
   >>> sort(catalog(getId='some-news'))
   [<ATFolder at /plone/some-news>]

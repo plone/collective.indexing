@@ -3,6 +3,10 @@ Changelog
 
 1.0a3 - Unreleased
 ------------------
+
+* The bad monkey smacked back with a vengeance, but was finally tamed.
+  [witsch]
+
 * Smacked a bad monkey that was checking for nonexisting attribute
   getObjPositionInParent.
   [tesdal]
