@@ -3,7 +3,9 @@ Changelog
 
 1.0a3 - Unreleased
 ------------------
-
+* Smacked a bad monkey that was checking for nonexisting attribute
+  getObjPositionInParent.
+  [tesdal]
 
 1.0a2 - Released May 25, 2008
 -----------------------------
