@@ -187,7 +187,7 @@ Afterwards various aspects are checked:
   ['<ATNewsItem at /plone/a-folder/first-news-today>']
   >>> self.assertEqual(len(calledReindex), 2)
   >>> calledUnindex
-  ['<ATNewsItem at /plone/first-news-today>']
+  ['<PathWrapper at /plone/first-news-today>']
   >>> sort(catalog(Title='first'))
   [<ATNewsItem at /plone/a-folder/first-news-today>]
 
@@ -241,7 +241,7 @@ Removing an item should uncatalog it, of course:
   >>> self.assertEqual(len(calledReindex), 4)
   >>> self.assertEqual(len(calledUnindex), 2)
   >>> calledUnindex[-1]
-  '<ATNewsItem at /plone/a-folder/first-news-today>'
+  '<PathWrapper at /plone/a-folder/first-news-today>'
   >>> sort(catalog(Title='first'))
   []
 
@@ -284,8 +284,11 @@ Publishing should do the same:
   >>> sort(catalog(Title='latest', review_state='published'))
   [<ATFolder at /plone/a-folder>]
 
-Renaming should also work:
+Renaming should also work, but let's reset the counters first:
 
+  >>> calledIndex[:] = []
+  >>> calledReindex[:] = []
+  >>> calledUnindex[:] = []
   >>> portal['a-folder']
   <ATFolder at /plone/a-folder>
 
@@ -302,14 +305,15 @@ Renaming should also work:
   >>> portal['some-news']
   <ATFolder at /plone/some-news>
 
-  >>> self.assertEqual(len(calledIndex), 3)
-  >>> self.assertEqual(len(calledReindex), 10)
-  >>> self.assertEqual(len(calledUnindex), 2)
-  >>> calledIndex[-1:]
-  ['<ATNewsItem at /plone/some-news/second-news-today>']
-  >>> sorted(calledReindex[-4:])
-  ['<ATDocument at /plone/front-page>', '<ATFolder at /plone/some-news>', '<ATNewsItem at /plone/second-news-today>', '<PloneSite at /plone>']
+  >>> sorted(calledIndex)
+  ['<ATFolder at /plone/some-news>', '<ATNewsItem at /plone/some-news/second-news-today>']
+  >>> sorted(calledReindex)
+  ['<ATDocument at /plone/front-page>', '<ATNewsItem at /plone/second-news-today>', '<PloneSite at /plone>']
+  >>> sorted(calledUnindex)
+  ['<PathWrapper at /plone/a-folder/second-news-today>', '<PathWrapper at /plone/a-folder>']
 
+  >>> sort(catalog(getId='a-folder'))
+  []
   >>> sort(catalog(getId='some-news'))
   [<ATFolder at /plone/some-news>]
 

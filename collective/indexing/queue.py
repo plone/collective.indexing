@@ -3,6 +3,8 @@ from threading import local
 from persistent import Persistent
 from zope.interface import implements
 from zope.component import queryUtility, getUtilitiesFor
+from Acquisition import aq_base
+
 from collective.indexing.interfaces import IIndexQueue
 from collective.indexing.interfaces import IIndexQueueSwitch
 from collective.indexing.interfaces import IIndexQueueProcessor
@@ -21,6 +23,37 @@ def getQueue():
     if localQueue is None:
         localQueue = IndexQueue()
     return localQueue
+
+
+def wrap(obj):
+    """ the indexing key, i.e. the path to the object in the case of the
+        portal catalog, might have changed while the unindex operation was
+        delayed, for example due to renaming the object;  it was probably not
+        such a good idea to use a key that can change in the first place, but
+        to work around this a proxy object is used, which can provide the
+        original path;  of course, access to other attributes must still be
+        possible, since alternate indexers (i.e. solr etc) might use another
+        unique key, usually the object's uid;  also the inheritence tree
+        must match """
+    if getattr(aq_base(obj), 'getPhysicalPath', None) is None:
+        return obj
+
+    class PathWrapper(obj.__class__):
+
+        def __init__(self):
+            self.context = obj
+            self.path = obj.getPhysicalPath()
+
+        def __getattr__(self, name):
+            return getattr(self.context, name)
+
+        def __hash__(self):
+            return hash(self.context)   # make the wrapper transparent...
+
+        def getPhysicalPath(self):
+            return self.path
+
+    return PathWrapper()
 
 
 class IndexQueue(local):
@@ -55,7 +88,7 @@ class IndexQueue(local):
     def unindex(self, obj):
         assert obj is not None, 'invalid object'
         debug('adding unindex operation for %r', obj)
-        self.queue.append((UNINDEX, obj, None))
+        self.queue.append((UNINDEX, wrap(obj), None))
         self.hook()
 
     def setHook(self, hook):

@@ -4,6 +4,9 @@ Changelog
 1.0a3 - Unreleased
 ------------------
 
+* Fix leftover index entry after renaming an object.
+  [witsch]
+
 * The bad monkey smacked back with a vengeance, but was finally tamed.
   [witsch]
 

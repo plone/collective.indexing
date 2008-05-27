@@ -4,8 +4,6 @@ To-Do's
 Issues
 ------
 
-- fix unindexing after renaming an object
-
 - prevent certain content types from being indexed, i.e. topic criterions
 
 - make sure indexing works when catalog gets updated via the zmi
