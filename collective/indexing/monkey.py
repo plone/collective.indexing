@@ -74,7 +74,7 @@ monkeyMethods.update({
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.permissions import ModifyPortalContent
 from Products.CMFPlone.PloneTool import PloneTool
-from Products.CMFPlone.utils import getFSVersionTuple, base_hasattr as has
+from Products.CMFPlone.utils import getFSVersionTuple
 
 def reindexOnReorder(self, parent):
     """ Catalog ordering support """
