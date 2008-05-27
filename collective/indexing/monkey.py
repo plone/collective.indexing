@@ -7,6 +7,7 @@
 from collective.indexing.utils import isActive, getIndexer
 from collective.indexing.indexer import catalogMultiplexMethods
 from collective.indexing.indexer import catalogAwareMethods
+from collective.indexing.indexer import monkeyMethods
 from collective.indexing.indexer import index, reindex, unindex
 from collective.indexing.subscribers import filterTemporaryItems
 
@@ -53,6 +54,14 @@ for module, container in ((CMFCatalogAware, catalogAwareMethods),
         module.indexObject = indexObject
         module.reindexObject = reindexObject
         module.unindexObject = unindexObject
+
+
+# also record the new methods in order to be able to compare them
+monkeyMethods.update({
+    'index': indexObject,
+    'reindex': reindexObject,
+    'unindex': unindexObject,
+})
 
 
 # before plone 3.1 renaming an item triggers a call to `reindexOnReorder`,

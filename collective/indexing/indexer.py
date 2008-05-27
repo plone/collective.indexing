@@ -5,10 +5,11 @@ from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
 from collective.indexing.interfaces import IIndexQueueProcessor
 
 
-# container to hold references to the original indexing methods
+# container to hold references to the original and "monkeyed" indexing methods
 # these are populated by `collective.indexing.monkey`
 catalogMultiplexMethods = {}
 catalogAwareMethods = {}
+monkeyMethods = {}
 
 
 def getDispatcher(obj, name):
@@ -19,6 +20,11 @@ def getDispatcher(obj, name):
         op = catalogAwareMethods.get(name, None)
     else:
         op = None
+    if callable(op):
+        method = getattr(obj.__class__, op.__name__).im_func
+        monkey = monkeyMethods.get(name, None)
+        if monkey is not None and method is not monkey:
+            op = method     # return object's own method to be used...
     return op
 
 

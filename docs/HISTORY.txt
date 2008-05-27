@@ -4,6 +4,10 @@ Changelog
 1.0a3 - Unreleased
 ------------------
 
+* Respect overridden indexing methods to prevent erroneous indexing and
+  generally allow special handling.
+  [witsch]
+
 * Fix leftover index entry after renaming an object.
   [witsch]
 

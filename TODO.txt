@@ -4,8 +4,6 @@ To-Do's
 Issues
 ------
 
-- prevent certain content types from being indexed, i.e. topic criterions
-
 - make sure indexing works when catalog gets updated via the zmi
 
 .. - at the moment there are no known issues or bugs

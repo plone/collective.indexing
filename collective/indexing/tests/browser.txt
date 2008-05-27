@@ -317,3 +317,26 @@ Renaming should also work, but let's reset the counters first:
   >>> sort(catalog(getId='some-news'))
   [<ATFolder at /plone/some-news>]
 
+Adding a criterion to a collection shouldn't catalog the criterion:
+
+  >>> browser.getLink('Home').click()
+  >>> browser.getLink(url='createObject?type_name=Topic').click()
+  >>> browser.getControl(name='title').value = 'a collection'
+  >>> browser.getControl('Save').click()
+  >>> browser.getLink('Criteria').click()
+  >>> browser.getForm(name='criteria_select').getControl('Item Type').selected = True
+  >>> browser.getForm(name='criteria_select').getControl('Select content types').selected = True
+  >>> browser.getControl('Add criteria').click()
+
+  >>> portal['a-collection']
+  <ATTopic at /plone/a-collection>
+  >>> portal['a-collection'].objectIds()
+  ['syndication_information', 'crit__Type_ATPortalTypeCriterion']
+  >>> catalog(portal_type='ATPortalTypeCriterion')
+  []
+
+Also the portal site object itself should never be indexed:
+
+  >>> catalog(portal_type='Plone Site')
+  []
+
