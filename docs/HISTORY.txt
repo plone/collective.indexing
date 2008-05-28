@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.0a3 - Unreleased
-------------------
+1.0a3 - Released May 28, 2008
+-----------------------------
 
 * Respect overridden indexing methods to prevent erroneous indexing and
   generally allow special handling.
