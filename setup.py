@@ -10,7 +10,7 @@ setup(name = 'collective.indexing',
       description = 'Abstract framework for queueing, optimizing and dispatching index operations for portal content.',
       long_description = readme[readme.find('\n\n'):] + '\n' + history,
       classifiers = [
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Framework :: Plone',
         'Intended Audience :: Developers',
