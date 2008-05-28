@@ -43,6 +43,7 @@ def wrap(obj):
         def __init__(self):
             self.context = obj
             self.path = obj.getPhysicalPath()
+            self.REQUEST = getattr(obj, 'REQUEST', None)
 
         def __getattr__(self, name):
             return getattr(self.context, name)
