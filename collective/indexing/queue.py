@@ -3,7 +3,7 @@ from threading import local
 from persistent import Persistent
 from zope.interface import implements
 from zope.component import queryUtility, getUtilitiesFor
-from Acquisition import aq_base
+from Acquisition import aq_base, aq_inner
 
 from collective.indexing.interfaces import IIndexQueue
 from collective.indexing.interfaces import IIndexQueueSwitch
@@ -46,7 +46,7 @@ def wrap(obj):
             self.REQUEST = getattr(obj, 'REQUEST', None)
 
         def __getattr__(self, name):
-            return getattr(self.context, name)
+            return getattr(aq_inner(self.context), name)
 
         def __hash__(self):
             return hash(self.context)   # make the wrapper transparent...
