@@ -4,6 +4,9 @@ Changelog
 1.0b3 - Unreleased
 ------------------
 
+* Fix an issue where objects providing their own `__setattr__` could
+  potentially not be deleted.
+  [witsch]
 
 1.0b2 - Released June 2nd, 2008
 -------------------------------

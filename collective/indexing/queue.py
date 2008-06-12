@@ -41,9 +41,10 @@ def wrap(obj):
     class PathWrapper(obj.__class__):
 
         def __init__(self):
-            self.context = obj
-            self.path = obj.getPhysicalPath()
-            self.REQUEST = getattr(obj, 'REQUEST', None)
+            self.__dict__.update(dict(
+                context = obj,
+                path = obj.getPhysicalPath(),
+                REQUEST = getattr(obj, 'REQUEST', None)))
 
         def __getattr__(self, name):
             return getattr(aq_inner(self.context), name)

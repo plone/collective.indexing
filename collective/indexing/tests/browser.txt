@@ -340,3 +340,11 @@ Also the portal site object itself should never be indexed:
   >>> catalog(portal_type='Plone Site')
   []
 
+The fix for renaming items introduced a wrapper class, which turned out to
+cause problems with objects implementing their own custom version of the
+attribute setter method `__setattr__`.  This prevented skin directories from
+being removed from `portal_skins` for example.  Let's make sure this works
+again now:
+
+  >>> portal.portal_skins.manage_delObjects('plone_styles')
+
