@@ -1,8 +1,12 @@
 Changelog
 =========
 
-1.0b3 - Unreleased
+1.0b4 - Unreleased
 ------------------
+
+
+1.0b3 - Released June 18th, 2008
+--------------------------------
 
 * Fix an issue where objects providing their own `__setattr__` could
   potentially not be deleted.
