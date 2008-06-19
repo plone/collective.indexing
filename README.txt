@@ -19,6 +19,11 @@ dedicated search engine solutions like `Solr`_, `Xapian`_ or `Google Search
 Appliance`_.  One backend implementation designed to be used with this package
 has already been started in the form of `collective.solr`_.
 
+If you are using CacheSetup make sure that you have CMFSquidTool 1.5 or
+later: older versions do not handle purge requests being generated during
+transaction commit and will produce internal errors.
+
+
   .. _`collective.indexing`: http://dev.plone.org/collective/browser/collective.indexing/
   .. _`Plone`: http://www.plone.org/
   .. _`CMF`: http://www.zope.org/Products/CMF/
