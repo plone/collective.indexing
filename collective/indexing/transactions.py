@@ -34,7 +34,9 @@ class QueueTM(local):
     def register(self):
         if not self.registered:
             try:
-                getTransaction().join(self)
+                transaction = getTransaction()
+                transaction.join(self)
+                transaction.addBeforeCommitHook(self.before_commit)
                 self.registered = True
                 logger.debug('registered tm %r (queue %r).', self, self.queue)
             except:
@@ -47,6 +49,9 @@ class QueueTM(local):
         pass
 
     def commit(self, transaction):
+        pass
+
+    def before_commit(self):
         if self.queue.getState():
             logger.debug('processing queue...')
             processed = self.queue.process()

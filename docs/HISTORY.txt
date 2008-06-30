@@ -4,6 +4,11 @@ Changelog
 1.0b4 - Unreleased
 ------------------
 
+* Perform processing of the queue during "active" state of the transaction
+  as additional changes are forbidden in "committing" state.  Those changes
+  can for example be caused by indexes writing back data to content items,
+  such as the modification time.
+  [witsch, mj]
 
 1.0b3 - Released June 18th, 2008
 --------------------------------
