@@ -1,8 +1,12 @@
 Changelog
 =========
 
-1.0b4 - Unreleased
+1.0b5 - Unreleased
 ------------------
+
+
+1.0b4 - Released June 30th, 2008
+--------------------------------
 
 * Perform processing of the queue during "active" state of the transaction
   as additional changes are forbidden in "committing" state.  Those changes
