@@ -1,5 +1,6 @@
 from unittest import TestSuite, makeSuite, main, TestCase
 from threading import Thread, currentThread
+from time import sleep
 
 from zope.interface import implements
 from zope.component import provideUtility
@@ -198,10 +199,12 @@ class QueueThreadTests(TestCase):
         self.assertEqual(second, [])
         self.assertEqual(me.getState(), [])
         thread1.start()                 # do stuff here...
+        sleep(0.01)                     # allow thread to do work
         self.assertEqual(first,  [(INDEX, 'foo', None)])
         self.assertEqual(second, [])
         self.assertEqual(me.getState(), [])
         thread2.start()                 # and there...
+        sleep(0.01)                     # allow thread to do work
         self.assertEqual(first,  [(INDEX, 'foo', None)])
         self.assertEqual(second, [(INDEX, 'bar', None)])
         self.assertEqual(me.getState(), [])
@@ -230,6 +233,7 @@ class QueueThreadTests(TestCase):
             threads.append(Thread(target=makeRunner('t%d' % idx, idx)))
         for thread in threads:
             thread.start()
+            sleep(0.01)                 # just in case
         for thread in threads:
             thread.join()
         for idx, thread in enumerate(threads):

@@ -30,7 +30,7 @@ class InstallationTests(ptc.PloneTestCase):
         self.assertEqual(self.remove(), [])
         # now the package is installed, which shouldn't change things,
         # even though queued indexing hasn't been activated yet...
-        ptc.installPackage('collective.indexing')
+        ptc.installPackage('collective.indexing', quiet=1)
         self.failIf(isActive())
         self.assertEqual(self.create(), ['foo'])
         self.assertEqual(self.remove(), [])

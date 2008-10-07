@@ -4,6 +4,9 @@ Changelog
 1.0b5 - Unreleased
 ------------------
 
+* Fix testQueuesOnTwoThreads on Linux by sleeping for a moment so threads can
+  do their work.
+  [stefan]
 
 1.0b4 - Released June 30th, 2008
 --------------------------------
