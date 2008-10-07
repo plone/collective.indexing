@@ -7,7 +7,7 @@ First the package has to be quick-installed in the portal and a testbrowser
 as well as a logged in user with the necessary permissions are needed:
 
   >>> from Products.PloneTestCase import PloneTestCase as ptc
-  >>> ptc.installPackage('collective.indexing')
+  >>> ptc.installPackage('collective.indexing', quiet=1)
   >>> portal.portal_quickinstaller.installProduct('collective.indexing')
   ''
   >>> self.setRoles(('Manager',))
