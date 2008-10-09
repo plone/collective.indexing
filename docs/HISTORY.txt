@@ -4,6 +4,9 @@ Changelog
 1.0b5 - Unreleased
 ------------------
 
+* Added processQueue function to process a queue immediately.
+  [stefan]
+
 * Fixed testModifyObject in Plone 3.1 by clearing the file's creation flag
   in afterSetUp.
   [stefan]
