@@ -38,5 +38,6 @@ class QueueReducer(object):
                 res[oid] = (op, obj, attr)
 
         debug('finished reducing; %d item(s) in queue...', len(res))
-        return res.values()
+        # Sort so unindex operations come first
+        return sorted(res.values())
 

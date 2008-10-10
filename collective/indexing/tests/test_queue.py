@@ -155,6 +155,21 @@ class QueueReducerTests(TestCase):
         queue = [(REINDEX, 'A', ('a','b')), (UNINDEX, 'A', None), (INDEX, 'A', None)]
         self.failUnlessEqual(reducer.optimize(queue), [(REINDEX, 'A', None)])
 
+    def testReduceQueueSortsByOpcode(self):
+        reducer = QueueReducer()
+
+        queue = [(INDEX, 'C', None), (UNINDEX, 'B', None)]
+        self.failUnlessEqual(reducer.optimize(queue),
+                    [(UNINDEX, 'B', None), (INDEX, 'C', None)])
+
+        queue = [(REINDEX, 'A', None), (UNINDEX, 'B', None)]
+        self.failUnlessEqual(reducer.optimize(queue),
+                    [(UNINDEX, 'B', None), (REINDEX, 'A', None)])
+
+        queue = [(REINDEX, 'A', None), (UNINDEX, 'B', None), (INDEX, 'C', None)]
+        self.failUnlessEqual(reducer.optimize(queue),
+                    [(UNINDEX, 'B', None), (REINDEX, 'A', None), (INDEX, 'C', None)])
+
 
 class QueueThreadTests(TestCase):
     """ thread tests modeled after zope.thread doctests """

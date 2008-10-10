@@ -4,6 +4,10 @@ Changelog
 1.0b5 - Unreleased
 ------------------
 
+* Made sure QueueReducer sorts results by opcode. Unindex operations must
+  be handled before (re)index operations.
+  [stefan]
+
 * Added processQueue function to process a queue immediately.
   [stefan]
 
