@@ -348,3 +348,10 @@ again now:
 
   >>> portal.portal_skins.manage_delObjects('plone_styles')
 
+Also, clean up the monkey patches:
+
+  >>> IndexQueue.index = q_index
+  >>> PortalCatalogQueueProcessor.index = p_index
+  >>> PortalCatalogQueueProcessor.reindex = p_reindex
+  >>> PortalCatalogQueueProcessor.unindex = p_unindex
+

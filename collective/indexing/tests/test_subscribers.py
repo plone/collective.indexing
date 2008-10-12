@@ -126,16 +126,23 @@ class IntegrationTests(ptc.PloneTestCase):
         self.failUnless(indexer, 'no indexer found')
         self.assertEqual(indexer, direct_indexer, 'who are you?')
         # a second direct indexer is provided...
-        provideUtility(utils.MockIndexer(), name='rexedni')
+        mock_indexer = utils.MockIndexer()
+        provideUtility(mock_indexer, name='rexedni')
         self.assertRaises(AssertionError, getIndexer)
         # queued indexing is enabled...
-        provideUtility(IndexQueueSwitch(), IIndexQueueSwitch)
+        switch = IndexQueueSwitch()
+        provideUtility(switch, IIndexQueueSwitch)
         indexer = getIndexer()
         self.failUnless(indexer, 'no indexer found')
         self.failUnless(IIndexQueue.providedBy(indexer), 'non-queued indexer found')
         # and we've got two indexers to dispatch things to...
         indexers = list(getUtilitiesFor(IIndexing))
         self.assertEqual(len(indexers), 2)
+        # finally, clean up registrations
+        unregister = getGlobalSiteManager().unregisterUtility
+        unregister(direct_indexer, name='indexer')
+        unregister(mock_indexer, name='rexedni')
+        unregister(switch, IIndexQueueSwitch)
 
 
 def test_suite():
