@@ -1,24 +1,5 @@
-# integration and functional tests
-# see http://plone.org/documentation/tutorial/testing/writing-a-plonetestcase-unit-integration-test
-# for more information about the following setup
-
-from unittest import TestSuite, makeSuite, main
-from Testing import ZopeTestCase as ztc
-from Products.Five import zcml
-from Products.Five import fiveconfigure
-from Products.PloneTestCase import PloneTestCase as ptc
-from Products.PloneTestCase.layer import onsetup
-
-@onsetup
-def setup_product():
-    fiveconfigure.debug_mode = True
-    import collective.indexing
-    zcml.load_config('configure.zcml', collective.indexing)
-    fiveconfigure.debug_mode = False
-
-setup_product()
-ptc.setupPloneSite()
-
+from unittest import defaultTestLoader
+from collective.indexing.tests.base import IndexingTestCase
 
 # test-specific imports go here...
 from zope.component import provideUtility, getUtilitiesFor, getGlobalSiteManager
@@ -32,7 +13,7 @@ from collective.indexing.utils import getIndexer
 from collective.indexing.tests import utils
 
 
-class SubscriberTests(ptc.PloneTestCase):
+class SubscriberTests(IndexingTestCase):
 
     def afterSetUp(self):
         self.setRoles(('Manager',))
@@ -113,7 +94,7 @@ class SubscriberTests(ptc.PloneTestCase):
         self.assertEqual(self.queue, [(REINDEX, self.folder, None)])
 
 
-class IntegrationTests(ptc.PloneTestCase):
+class IntegrationTests(IndexingTestCase):
 
     def testGetIndexer(self):
         # no indexer should be found initially...
@@ -146,14 +127,5 @@ class IntegrationTests(ptc.PloneTestCase):
 
 
 def test_suite():
-    return TestSuite([
-        makeSuite(SubscriberTests),
-        makeSuite(IntegrationTests),
-        ztc.FunctionalDocFileSuite(
-           'browser.txt', package='collective.indexing.tests',
-           test_class=ptc.FunctionalTestCase),
-    ])
-
-if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    return defaultTestLoader.loadTestsFromName(__name__)
 

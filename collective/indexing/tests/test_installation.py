@@ -1,4 +1,4 @@
-from unittest import TestSuite, makeSuite, main
+from unittest import defaultTestLoader
 from Products.PloneTestCase import PloneTestCase as ptc
 
 ptc.setupPloneSite()
@@ -49,10 +49,5 @@ class InstallationTests(ptc.PloneTestCase):
 
 
 def test_suite():
-    return TestSuite([
-        makeSuite(InstallationTests),
-    ])
-
-if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    return defaultTestLoader.loadTestsFromName(__name__)
 
