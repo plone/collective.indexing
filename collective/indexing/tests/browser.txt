@@ -98,7 +98,7 @@ the hook into the transaction machinery:
 Now both should be in the catalog and show up in the global sections:
 
   >>> self.assertEqual(len(calledIndex), 2)
-  >>> path = lambda obj: '/'.join(obj.getPhysicalPath()) 
+  >>> path = lambda obj: '/'.join(obj.getPhysicalPath())
   >>> def sort(brains):
   ...     return sorted([ brain.getObject() for brain in brains ], key=path)
   >>> sort(catalog(portal_type='News Item'))
