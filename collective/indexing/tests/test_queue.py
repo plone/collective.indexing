@@ -160,15 +160,15 @@ class QueueReducerTests(TestCase):
 
         queue = [(INDEX, 'C', None), (UNINDEX, 'B', None)]
         self.failUnlessEqual(reducer.optimize(queue),
-                    [(UNINDEX, 'B', None), (INDEX, 'C', None)])
+            [(UNINDEX, 'B', None), (INDEX, 'C', None)])
 
         queue = [(REINDEX, 'A', None), (UNINDEX, 'B', None)]
         self.failUnlessEqual(reducer.optimize(queue),
-                    [(UNINDEX, 'B', None), (REINDEX, 'A', None)])
+            [(UNINDEX, 'B', None), (REINDEX, 'A', None)])
 
         queue = [(REINDEX, 'A', None), (UNINDEX, 'B', None), (INDEX, 'C', None)]
         self.failUnlessEqual(reducer.optimize(queue),
-                    [(UNINDEX, 'B', None), (REINDEX, 'A', None), (INDEX, 'C', None)])
+            [(UNINDEX, 'B', None), (REINDEX, 'A', None), (INDEX, 'C', None)])
 
 
 class QueueThreadTests(TestCase):
