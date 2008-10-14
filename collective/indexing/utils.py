@@ -20,3 +20,30 @@ def getIndexer():
     else:
         assert len(indexers) < 1, 'cannot use multiple direct indexers; please enable queueing'
 
+
+# patch CatalogTool.searchResults to flush the queue before issuing a query
+from collective.indexing.queue import processQueue
+from Products.CMFPlone.CatalogTool import CatalogTool
+
+
+def searchResults(self, REQUEST=None, **kw):
+    """Flush the queue before querying the catalog"""
+    if isActive():
+        processQueue()
+
+    return self.__af_old_searchResults(REQUEST, **kw)
+
+
+def enableAutoFlush(enable):
+    """Monkey-patch searchResults"""
+    if enable:
+        if not hasattr(CatalogTool, '__af_old_searchResults'):
+            CatalogTool.__af_old_searchResults = CatalogTool.searchResults
+            CatalogTool.searchResults = searchResults
+            CatalogTool.__call__ = searchResults
+    else:
+        if hasattr(CatalogTool, '__af_old_searchResults'):
+            CatalogTool.searchResults = CatalogTool.__af_old_searchResults
+            CatalogTool.__call__ = CatalogTool.__af_old_searchResults
+            delattr(CatalogTool, '__af_old_searchResults')
+

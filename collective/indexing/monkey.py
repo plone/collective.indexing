@@ -64,6 +64,12 @@ monkeyMethods.update({
 })
 
 
+# patch CatalogTool.searchResults to flush the queue before issuing a query
+from collective.indexing.utils import enableAutoFlush
+from collective.indexing.config import AUTO_FLUSH
+enableAutoFlush(AUTO_FLUSH)
+
+
 # before plone 3.1 renaming an item triggers a call to `reindexOnReorder`,
 # which uses the catalog to update the `getObjPositionInParent` index for
 # all objects in the given folder;  with queued indexing any renamed object's
