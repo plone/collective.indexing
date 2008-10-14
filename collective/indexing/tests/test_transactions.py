@@ -1,4 +1,4 @@
-from unittest import TestCase, TestSuite, makeSuite, main
+from unittest import defaultTestLoader, main, TestCase
 from transaction import savepoint, commit, abort
 
 from collective.indexing.transactions import QueueTM
@@ -44,9 +44,7 @@ class QueueTransactionManagerTests(TestCase):
 
 
 def test_suite():
-    return TestSuite([
-        makeSuite(QueueTransactionManagerTests),
-    ])
+    return defaultTestLoader.loadTestsFromName(__name__)
 
 if __name__ == '__main__':
     main(defaultTest='test_suite')

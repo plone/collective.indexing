@@ -1,4 +1,4 @@
-from unittest import TestSuite, makeSuite, main, TestCase
+from unittest import defaultTestLoader, main, TestCase
 from threading import Thread, currentThread
 from time import sleep
 
@@ -259,11 +259,7 @@ class QueueThreadTests(TestCase):
 
 
 def test_suite():
-    return TestSuite([
-        makeSuite(QueueTests),
-        makeSuite(QueueReducerTests),
-        makeSuite(QueueThreadTests),
-    ])
+    return defaultTestLoader.loadTestsFromName(__name__)
 
 if __name__ == '__main__':
     main(defaultTest='test_suite')
