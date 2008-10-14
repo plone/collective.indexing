@@ -49,7 +49,7 @@ class MockQueue(MockIndexer):
         pass
 
     def process(self):
-        self.processed = self.queue
+        self.processed = list(self.queue)
         self.clear()
         return len(self.processed)
 
