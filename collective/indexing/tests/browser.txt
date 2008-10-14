@@ -11,13 +11,8 @@ as well as a logged in user with the necessary permissions are needed:
   >>> portal.portal_quickinstaller.installProduct('collective.indexing')
   ''
   >>> self.setRoles(('Manager',))
-  >>> from Products.Five.testbrowser import Browser
-  >>> browser = Browser()
-  >>> browser.open('http://nohost/plone/login_form')
-  >>> from Products.PloneTestCase import PloneTestCase as ptc
-  >>> browser.getControl(name='__ac_name').value = ptc.default_user
-  >>> browser.getControl(name='__ac_password').value = ptc.default_password
-  >>> browser.getControl('Log in').click()
+  >>> browser = self.getBrowser()
+  >>> browser.open('http://nohost/plone/')
 
 Since the queueing and optimizing of indexing operations is supposed to be
 transparent on the user level, counters are set up to make it possible to
@@ -44,7 +39,6 @@ numbers show that the queue was used in the first place:
 
 Now a first news item gets created, ...
 
-  >>> browser.getLink('Home').click()
   >>> browser.getLink('News Item').click()
   >>> browser.url
   'http://nohost/plone/portal_factory/News Item/news_item.../edit'
