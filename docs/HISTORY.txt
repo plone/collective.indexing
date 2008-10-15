@@ -8,6 +8,9 @@ Changelog
   issuing a query (aka auto-flush).
   [stefan]
 
+* Fix test isolation issues and improve test setup.
+  [witsch]
+
 * Made sure QueueReducer sorts results by opcode. Unindex operations must
   be handled before (re)index operations.
   [stefan]
