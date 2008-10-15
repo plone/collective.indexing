@@ -7,7 +7,7 @@ ptc.setupPloneSite()
 # test-specific imports go here...
 from transaction import commit
 from collective.indexing.utils import isActive
-from collective.indexing.utils import enableAutoFlush
+from collective.indexing.monkey import setAutoFlush
 from collective.indexing.config import AUTO_FLUSH
 
 
@@ -20,7 +20,7 @@ class InstallationTests(ptc.Sandboxed, ptc.PloneTestCase):
 
     def beforeTearDown(self):
         # reset to default
-        enableAutoFlush(AUTO_FLUSH)
+        setAutoFlush(AUTO_FLUSH)
 
     def fileIds(self):
         catalog = self.portal.portal_catalog
@@ -50,7 +50,7 @@ class InstallationTests(ptc.Sandboxed, ptc.PloneTestCase):
         # without auto-flush we must commit to update the catalog
         ptc.installPackage('collective.indexing', quiet=True)
         self.failIf(isActive())
-        enableAutoFlush(False)
+        setAutoFlush(False)
         # the profile gets applied, i.e. the package is quick-installed
         # again, things should get indexed, but only at transaction commit
         self.portal.portal_quickinstaller.installProduct('collective.indexing')
@@ -66,7 +66,7 @@ class InstallationTests(ptc.Sandboxed, ptc.PloneTestCase):
         # with auto-flush enabled the catalog is always up-to-date
         ptc.installPackage('collective.indexing', quiet=True)
         self.failIf(isActive())
-        enableAutoFlush(True)
+        setAutoFlush(True)
         # no commits required now
         self.portal.portal_quickinstaller.installProduct('collective.indexing')
         self.failUnless(isActive())

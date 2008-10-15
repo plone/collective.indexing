@@ -64,10 +64,36 @@ monkeyMethods.update({
 })
 
 
+
 # patch CatalogTool.searchResults to flush the queue before issuing a query
-from collective.indexing.utils import enableAutoFlush
+from Products.CMFPlone.CatalogTool import CatalogTool
+from collective.indexing.queue import processQueue
+
+
+def searchResults(self, REQUEST=None, **kw):
+    """ flush the queue before querying the catalog """
+    if isActive():
+        processQueue()
+    return self.__af_old_searchResults(REQUEST, **kw)
+
+
+def setAutoFlush(enable=True):
+    """ apply or revert monkey-patch for `searchResults` """
+    if enable:
+        if not hasattr(CatalogTool, '__af_old_searchResults'):
+            CatalogTool.__af_old_searchResults = CatalogTool.searchResults
+            CatalogTool.searchResults = searchResults
+            CatalogTool.__call__ = searchResults
+    else:
+        if hasattr(CatalogTool, '__af_old_searchResults'):
+            CatalogTool.searchResults = CatalogTool.__af_old_searchResults
+            CatalogTool.__call__ = CatalogTool.__af_old_searchResults
+            delattr(CatalogTool, '__af_old_searchResults')
+
+# auto-flush is enabled by default, so...
 from collective.indexing.config import AUTO_FLUSH
-enableAutoFlush(AUTO_FLUSH)
+setAutoFlush(AUTO_FLUSH)
+
 
 
 # before plone 3.1 renaming an item triggers a call to `reindexOnReorder`,

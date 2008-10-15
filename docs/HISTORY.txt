@@ -4,6 +4,9 @@ Changelog
 1.0b5 - Unreleased
 ------------------
 
+* Refactor auto-flush monkey-patch to not interfere with testing.
+  [witsch]
+
 * Patched CatalogTool.searchResults to process the indexing queue before
   issuing a query (aka auto-flush).
   [stefan]
