@@ -1,8 +1,12 @@
 Changelog
 =========
 
-1.0b5 - Unreleased
+1.0b6 - Unreleased
 ------------------
+
+
+1.0b5 - Released October 16th, 2008
+-----------------------------------
 
 * Fix transaction handling to properly abort indexing operations.
   [witsch]
