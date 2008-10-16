@@ -67,13 +67,12 @@ monkeyMethods.update({
 
 # patch CatalogTool.searchResults to flush the queue before issuing a query
 from Products.CMFPlone.CatalogTool import CatalogTool
-from collective.indexing.queue import processQueue
+from collective.indexing.utils import autoFlushQueue
 
 
 def searchResults(self, REQUEST=None, **kw):
     """ flush the queue before querying the catalog """
-    if isActive():
-        processQueue()
+    autoFlushQueue()
     return self.__af_old_searchResults(REQUEST, **kw)
 
 

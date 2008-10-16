@@ -25,11 +25,6 @@ def getQueue():
     return localQueue
 
 
-def processQueue():
-    """ process the queue (for this thread) immediately """
-    return getQueue().process()
-
-
 def wrap(obj):
     """ the indexing key, i.e. the path to the object in the case of the
         portal catalog, might have changed while the unindex operation was

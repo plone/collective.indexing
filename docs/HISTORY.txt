@@ -4,6 +4,10 @@ Changelog
 1.0b5 - Unreleased
 ------------------
 
+* Refactor helper method for auto-flushing the queue to make it more easily
+  re-usable.
+  [witsch]
+
 * Enable the monkey patch for `PloneTool.reindexOnReorder` in all versions
   of Plone 3.x as it's not been ported upstream yet.  This fixes
   http://plone.org/products/collective.indexing/issues/1

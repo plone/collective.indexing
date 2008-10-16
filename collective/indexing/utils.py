@@ -2,6 +2,7 @@ from zope.component import queryUtility, getUtilitiesFor
 from collective.indexing.interfaces import IIndexing
 from collective.indexing.interfaces import IIndexQueueSwitch
 from collective.indexing.queue import getQueue
+from collective.indexing.config import AUTO_FLUSH
 
 
 def isActive():
@@ -19,4 +20,11 @@ def getIndexer():
         return None                 # or none...
     else:
         assert len(indexers) < 1, 'cannot use multiple direct indexers; please enable queueing'
+
+
+def autoFlushQueue():
+    """ process the queue (for this thread) immediately if the
+        auto-flushing feature was enabled """
+    if isActive() and AUTO_FLUSH:
+        return getQueue().process()
 
