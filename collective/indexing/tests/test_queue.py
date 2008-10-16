@@ -65,6 +65,8 @@ class QueueTests(CleanUp, TestCase):
         self.assertEqual(queue.process(), 1)    # also do the processing...
         self.assertEqual(queue.getState(), [])
         self.assertEqual(proc.getState(), [(INDEX, 'foo', None)])
+        self.assertEqual(proc.state, 'started') # the real queue won't update the state...
+        queue.commit()
         self.assertEqual(proc.state, 'finished')
 
     def testMultipleQueueProcessors(self):
@@ -78,6 +80,9 @@ class QueueTests(CleanUp, TestCase):
         self.assertEqual(queue.getState(), [])
         self.assertEqual(proc1.getState(), [(INDEX, 'foo', None)])
         self.assertEqual(proc2.getState(), [(INDEX, 'foo', None)])
+        self.assertEqual(proc1.state, 'started')    # the real queue won't...
+        self.assertEqual(proc2.state, 'started')    # update the state...
+        queue.commit()
         self.assertEqual(proc1.state, 'finished')
         self.assertEqual(proc2.state, 'finished')
 
@@ -91,6 +96,8 @@ class QueueTests(CleanUp, TestCase):
         self.assertEqual(queue.process(), 3)    # also do the processing...
         self.assertEqual(queue.getState(), [])
         self.assertEqual(proc.getState(), [(INDEX, 'foo', None), (REINDEX, 'foo', None), (UNINDEX, 'foo', None)])
+        self.assertEqual(proc.state, 'started') # the real queue won't update the state...
+        queue.commit()
         self.assertEqual(proc.state, 'finished')
 
     def testQueueReducer(self):
@@ -118,6 +125,32 @@ class QueueTests(CleanUp, TestCase):
         queue.index('foo', 'bar')
         queue.optimize()
         self.assertEqual(queue.getState(), [(INDEX, 'foo', None)])
+
+    def testQueueAbortBeforeProcessing(self):
+        queue = self.queue
+        proc = utils.MockQueueProcessor()
+        provideUtility(proc, IIndexQueueProcessor)
+        queue.index('foo')
+        queue.reindex('foo')
+        self.assertNotEqual(queue.getState(), [])
+        queue.abort()
+        self.assertEqual(queue.process(), 0)    # nothing left...
+        self.assertEqual(queue.getState(), [])
+        self.assertEqual(proc.getState(), [])
+        self.assertEqual(proc.state, 'started') # the real queue won't update the state...
+
+    def testQueueAbortAfterProcessing(self):
+        queue = self.queue
+        proc = utils.MockQueueProcessor()
+        provideUtility(proc, IIndexQueueProcessor)
+        queue.index('foo')
+        queue.reindex('foo')
+        self.assertEqual(queue.process(), 2)    # also do the processing...
+        self.assertNotEqual(proc.getState(), [])
+        queue.abort()
+        self.assertEqual(queue.getState(), [])
+        self.assertEqual(proc.getState(), [])
+        self.assertEqual(proc.state, 'aborted')
 
 
 class QueueReducerTests(TestCase):

@@ -67,3 +67,6 @@ class PortalCatalogQueueProcessor(Persistent):
     def commit(self):
         pass
 
+    def abort(self):
+        pass
+

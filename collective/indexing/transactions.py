@@ -62,9 +62,11 @@ class QueueTM(local):
         pass
 
     def tpc_finish(self, transaction):
+        self.queue.commit()
         self.registered = False
 
     def tpc_abort(self, transaction):
+        self.queue.abort()
         if self.queue.getState():
             logger.debug('emptying unprocessed queue due to abort()...')
         self.queue.clear()

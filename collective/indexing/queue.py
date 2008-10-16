@@ -130,12 +130,20 @@ class IndexQueue(local):
                 else:
                     raise 'InvalidQueueOperation', op
             processed += 1
-        for name, util in utilities:
-            debug('committing queue using %r', util)
-            util.commit()
         debug('finished processing %d items...', processed)
         self.clear()
         return processed
+
+    def commit(self):
+        for name, util in getUtilitiesFor(IIndexQueueProcessor):
+            debug('committing changes queue using %r', util)
+            util.commit()
+
+    def abort(self):
+        for name, util in getUtilitiesFor(IIndexQueueProcessor):
+            debug('aborting changes queue using %r', util)
+            util.abort()
+        self.clear()
 
     def clear(self):
         debug('clearing %d queue item(s)', len(self.queue))

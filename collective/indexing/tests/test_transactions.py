@@ -9,7 +9,7 @@ from collective.indexing.tests import utils
 class QueueTransactionManagerTests(TestCase):
 
     def setUp(self):
-        self.queue = utils.MockQueue()
+        self.queue = utils.MockQueueProcessor()
         self.tman = QueueTM(self.queue)
         self.queue.hook = self.tman.register    # set up the transaction manager hook
 
@@ -18,12 +18,14 @@ class QueueTransactionManagerTests(TestCase):
         commit()
         self.assertEqual(self.queue.getState(), [])
         self.assertEqual(self.queue.processed, [(INDEX, 'foo', None)])
+        self.assertEqual(self.queue.state, 'finished')
 
     def testFlushQueueOnAbort(self):
         self.queue.index('foo')
         abort()
         self.assertEqual(self.queue.getState(), [])
         self.assertEqual(self.queue.processed, None)
+        self.assertEqual(self.queue.state, 'aborted')
 
     def testUseSavePoint(self):
         self.queue.index('foo')
@@ -32,6 +34,7 @@ class QueueTransactionManagerTests(TestCase):
         commit()
         self.assertEqual(self.queue.getState(), [])
         self.assertEqual(self.queue.processed, [(INDEX, 'foo', None), (REINDEX, 'bar', None)])
+        self.assertEqual(self.queue.state, 'finished')
 
     def testRollbackSavePoint(self):
         self.queue.index('foo')
@@ -41,6 +44,7 @@ class QueueTransactionManagerTests(TestCase):
         commit()
         self.assertEqual(self.queue.getState(), [])
         self.assertEqual(self.queue.processed, [(INDEX, 'foo', None)])
+        self.assertEqual(self.queue.state, 'finished')
 
 
 def test_suite():

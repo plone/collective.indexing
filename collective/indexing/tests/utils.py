@@ -68,3 +68,7 @@ class MockQueueProcessor(MockQueue):
     def commit(self):
         self.state = 'finished'
 
+    def abort(self):
+        self.clear()
+        self.state = 'aborted'
+

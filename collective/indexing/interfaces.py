@@ -52,6 +52,9 @@ class IIndexQueueProcessor(IIndexing):
     def commit():
         """ called after processing of the queue has ended """
 
+    def abort():
+        """ called if processing of the queue needs to be aborted """
+
 
 class IQueueReducer(Interface):
     """ Optimizing the queue by removing redundant queue entries """

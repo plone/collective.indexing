@@ -4,6 +4,9 @@ Changelog
 1.0b5 - Unreleased
 ------------------
 
+* Fix transaction handling to properly abort indexing operations.
+  [witsch]
+
 * Refactor helper method for auto-flushing the queue to make it more easily
   re-usable.
   [witsch]
