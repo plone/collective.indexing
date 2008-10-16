@@ -96,17 +96,16 @@ setAutoFlush(AUTO_FLUSH)
 
 
 
-# before plone 3.1 renaming an item triggers a call to `reindexOnReorder`,
+# in plone 3.x renaming an item triggers a call to `reindexOnReorder`,
 # which uses the catalog to update the `getObjPositionInParent` index for
 # all objects in the given folder;  with queued indexing any renamed object's
 # id will still be present in the catalog at that time, but `getObject` will
 # fail, of course;  however, since using the catalog for this sort of thing
-# was a bad idea in the first place, the method is patched here and has been
-# fixed in plone 3.1 as well...
+# was a bad idea in the first place, the method is patched here and has should
+# hopefully get fixed in plone 3.3 as well...
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.permissions import ModifyPortalContent
 from Products.CMFPlone.PloneTool import PloneTool
-from Products.CMFPlone.utils import getFSVersionTuple
 
 def reindexOnReorder(self, parent):
     """ Catalog ordering support """
@@ -116,6 +115,5 @@ def reindexOnReorder(self, parent):
             if isinstance(obj, CatalogMultiplex) or isinstance(obj, CMFCatalogAware):
                 obj.reindexObject(['getObjPositionInParent'])
 
-if getFSVersionTuple() < (3,1):
-    PloneTool.reindexOnReorder = reindexOnReorder
+PloneTool.reindexOnReorder = reindexOnReorder
 

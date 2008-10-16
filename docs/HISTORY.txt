@@ -4,6 +4,11 @@ Changelog
 1.0b5 - Unreleased
 ------------------
 
+* Enable the monkey patch for `PloneTool.reindexOnReorder` in all versions
+  of Plone 3.x as it's not been ported upstream yet.  This fixes
+  http://plone.org/products/collective.indexing/issues/1
+  [witsch]
+
 * Refactor auto-flush monkey-patch to not interfere with testing.
   [witsch]
 
