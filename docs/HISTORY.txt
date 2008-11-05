@@ -1,8 +1,12 @@
 Changelog
 =========
 
-1.0rc1 - Unreleased
+1.0rc2 - Unreleased
 -------------------
+
+
+1.0rc1 - Released November 5th, 2008
+------------------------------------
 
 * Restored processQueue function as it is conceptually important.
   [stefan]
