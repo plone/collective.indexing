@@ -17,7 +17,7 @@ Features
 Miscellaneous
 -------------
 
-- creation of a PLIP targeted at Plone 3.2 regarding the above mentioned
+- creation of a PLIP targeted at Plone 3.4 regarding the above mentioned
   adapterization of ``CMFCore.CMFCatalogAware`` and
   ``Archetypes.CatalogMultiplex``;  the default configuration would then
   be to hook up the catalog processor directly, i.e. without queueing etc

@@ -19,19 +19,20 @@ dedicated search engine solutions like `Solr`_, `Xapian`_ or `Google Search
 Appliance`_.  One backend implementation designed to be used with this package
 has already been started in the form of `collective.solr`_.
 
-If you are using CacheSetup make sure that you have CMFSquidTool 1.5 or
+If you are using `CacheSetup`_ make sure that you have `CMFSquidTool`_ 1.5 or
 later: older versions do not handle purge requests being generated during
 transaction commit and will produce internal errors.
 
-
-  .. _`collective.indexing`: http://dev.plone.org/collective/browser/collective.indexing/
+  .. _`collective.indexing`: http://plone.org/products/collective.indexing/
   .. _`Plone`: http://www.plone.org/
   .. _`CMF`: http://www.zope.org/Products/CMF/
   .. _`zope3`: http://wiki.zope.org/zope3/Zope3Wiki
   .. _`Solr`: http://lucene.apache.org/solr/
   .. _`Xapian`: http://www.xapian.org/
   .. _`Google Search Appliance`: http://www.google.com/enterprise/gsa/
-  .. _`collective.solr`: http://dev.plone.org/collective/browser/collective.solr/
+  .. _`collective.solr`: http://plone.org/products/collective.solr/
+  .. _`CacheSetup`: http://pypi.python.org/pypi/Products.CacheSetup/
+  .. _`CMFSquidTool`: http://pypi.python.org/pypi/Products.CMFSquidTool/
 
 
 Current Status
@@ -46,15 +47,16 @@ performance_.  A buildout_ is provided for your convenience.
   .. _performance: http://www.jarn.com/blog/plone-indexing-performance
   .. _buildout: http://svn.plone.org/svn/collective/collective.indexing/buildout
 
-At the moment the package requires "monkey patches" to the mixin classes
+At the moment the package requires several "monkey patches", to the mixin classes
 currently used to hook up indexing, i.e. ``CMFCatalogAware`` (from `CMF`_)
-and ``CatalogMultiplex`` (from `Archetypes`_).  It is planned to make these
-classes "pluggable" by use of adapters, allowing `collective.indexing` to
-hook in in clean ways.  This will be proposed as a `PLIP`_ for inclusion
-into `Plone`_ 3.2.
+and ``CatalogMultiplex`` (from `Archetypes`_), the portal catalog as well as
+to helper methods in `Plone`_ itself. It is planned to clear these up by
+making the classes "pluggable" via adapterization, allowing
+`collective.indexing`_ to hook in in clean ways. At least two `PLIPs`_ will be
+proposed for inclusion into `Plone`_ 3.4.
 
   .. _`Archetypes`: http://plone.org/products/archetypes
-  .. _`PLIP`: http://plone.org/documentation/glossary/plip
+  .. _`PLIPs`: http://plone.org/documentation/glossary/plip
 
 In conjunction with `collective.solr`_ the package also provides a
 working solution for integration of `Solr`_ with `Plone`_.  Based on a schema
@@ -68,7 +70,8 @@ rather trivial and will be support soon.
   .. _`zc.buildout`: http://pypi.python.org/pypi/zc.buildout
 
 The code was written with emphasis on minimalism, clarity and maintainability.
-It comes with extensive tests covering the code base at more than 95%.
+It comes with extensive tests covering the code base at more than 95%. The
+package is currently in use in several production sites and considered stable.
 
 For outstanding issues and features remaining to be implemented please see the
 `to-do list`__ included in the package.
