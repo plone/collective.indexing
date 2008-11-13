@@ -4,9 +4,6 @@ Changelog
 1.0rc2 - Unreleased
 -------------------
 
-* extend browser.txt doctest, to reproduce issue 
-  http://plone.org/products/collective.indexing/issues/2
-  [mr_savage]
 
 1.0rc1 - Released November 5th, 2008
 ------------------------------------
