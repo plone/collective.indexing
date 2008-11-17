@@ -4,6 +4,8 @@ Changelog
 1.0rc2 - Unreleased
 -------------------
 
+* Restore test regarding package installation.
+  [witsch]
 
 1.0rc1 - Released November 5th, 2008
 ------------------------------------
