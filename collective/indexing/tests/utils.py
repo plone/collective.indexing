@@ -5,6 +5,22 @@ from collective.indexing.interfaces import IIndexQueueProcessor
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
 
 
+class TestHelpers(object):
+
+    def fileIds(self):
+        catalog = self.portal.portal_catalog
+        return [ brain.id for brain in catalog(portal_type='File') ]
+
+    def create(self):
+        self.failIf(self.folder.get('foo'), '"foo" exists?')
+        self.folder.invokeFactory('File', id='foo', title='Foo')
+        return self.fileIds()
+
+    def remove(self):
+        self.folder.manage_delObjects('foo')
+        return self.fileIds()
+
+
 class MockIndexer(object):
     implements(IIndexing)
 

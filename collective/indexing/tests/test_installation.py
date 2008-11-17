@@ -1,5 +1,6 @@
 from unittest import defaultTestLoader
 from Products.PloneTestCase import PloneTestCase as ptc
+from collective.indexing.tests.utils import TestHelpers
 
 ptc.setupPloneSite()
 
@@ -11,7 +12,7 @@ from collective.indexing.monkey import setAutoFlush
 from collective.indexing.config import AUTO_FLUSH
 
 
-class InstallationTests(ptc.Sandboxed, ptc.PloneTestCase):
+class InstallationTests(ptc.Sandboxed, ptc.PloneTestCase, TestHelpers):
 
     def afterSetUp(self):
         # clear logs to avoid id collisions
@@ -21,19 +22,6 @@ class InstallationTests(ptc.Sandboxed, ptc.PloneTestCase):
     def beforeTearDown(self):
         # reset to default
         setAutoFlush(AUTO_FLUSH)
-
-    def fileIds(self):
-        catalog = self.portal.portal_catalog
-        return [ brain.id for brain in catalog(portal_type='File') ]
-
-    def create(self):
-        self.failIf(self.folder.get('foo'), '"foo" exists?')
-        self.folder.invokeFactory('File', id='foo', title='Foo')
-        return self.fileIds()
-
-    def remove(self):
-        self.folder.manage_delObjects('foo')
-        return self.fileIds()
 
     def testInstallation(self):
         # without the product indexing should happen normally...
