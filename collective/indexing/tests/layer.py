@@ -1,4 +1,7 @@
+from Testing.ZopeTestCase import app, close, installPackage
+from Products.CMFCore.utils import getToolByName
 from Products.PloneTestCase.layer import PloneSite
+from transaction import commit
 
 
 class IndexingLayer(PloneSite):
@@ -6,7 +9,16 @@ class IndexingLayer(PloneSite):
 
     @classmethod
     def setUp(cls):
-        pass
+        # install package, import profile...
+        installPackage('collective.indexing', quiet=True)
+        root = app()
+        portal = root.plone
+        profile = 'profile-collective.indexing:default'
+        tool = getToolByName(portal, 'portal_setup')
+        tool.runAllImportStepsFromProfile(profile, purge_old=False)
+        # and commit the changes
+        commit()
+        close(root)
 
     @classmethod
     def tearDown(cls):

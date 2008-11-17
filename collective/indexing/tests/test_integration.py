@@ -1,5 +1,4 @@
 from unittest import defaultTestLoader
-from Products.PloneTestCase import PloneTestCase as ptc
 from collective.indexing.tests.base import IndexingTestCase
 from collective.indexing.tests.layer import IndexingLayer
 from collective.indexing.tests.utils import TestHelpers
@@ -27,13 +26,8 @@ class AutoFlushTests(IndexingTestCase, TestHelpers):
 
     def testNoAutoFlush(self):
         # without auto-flush we must commit to update the catalog
-        ptc.installPackage('collective.indexing', quiet=True)
-        self.failIf(isActive())
-        setAutoFlush(False)
-        # the profile gets applied, i.e. the package is quick-installed
-        # again, things should get indexed, but only at transaction commit
-        self.portal.portal_quickinstaller.installProduct('collective.indexing')
         self.failUnless(isActive())
+        setAutoFlush(False)
         self.assertEqual(self.create(), [])
         commit()
         self.assertEqual(self.fileIds(), ['foo'])
@@ -43,12 +37,9 @@ class AutoFlushTests(IndexingTestCase, TestHelpers):
 
     def testAutoFlush(self):
         # with auto-flush enabled the catalog is always up-to-date
-        ptc.installPackage('collective.indexing', quiet=True)
-        self.failIf(isActive())
+        self.failUnless(isActive())
         setAutoFlush(True)
         # no commits required now
-        self.portal.portal_quickinstaller.installProduct('collective.indexing')
-        self.failUnless(isActive())
         self.assertEqual(self.create(), ['foo'])
         self.assertEqual(self.fileIds(), ['foo'])
         self.assertEqual(self.remove(), [])
