@@ -6,9 +6,21 @@ from collective.indexing.tests.utils import TestHelpers
 
 # test-specific imports go here...
 from transaction import commit
+from Products.CMFCore.utils import getToolByName
+from Products.ATContentTypes.content.event import ATEvent
 from collective.indexing.utils import isActive
 from collective.indexing.monkey import setAutoFlush
 from collective.indexing.config import AUTO_FLUSH
+
+
+# helper for `testRecursiveAutoFlush`, see below
+def getEventType(self):
+    catalog = getToolByName(self, 'portal_catalog')
+    count = len(catalog(portal_type='Event'))
+    if count:
+        return 'Socialized event'
+    else:
+        return 'Lonely event'
 
 
 class AutoFlushTests(IndexingTestCase, TestHelpers):
@@ -44,6 +56,21 @@ class AutoFlushTests(IndexingTestCase, TestHelpers):
         self.assertEqual(self.fileIds(), ['foo'])
         self.assertEqual(self.remove(), [])
         self.assertEqual(self.fileIds(), [])
+
+    def testRecursiveAutoFlush(self):
+        # an indexing helper using the catalog, thereby triggering queue
+        # processing via auto-flush, used to potentially cause an infinite
+        # loop;  hence recursive auto-flushing must be prevented...
+        self.failUnless(isActive())
+        setAutoFlush(True)
+        foo = self.folder[self.folder.invokeFactory('Event', id='foo')]
+        # monkey-patch foo's `sortable_title` method to use the catalog...
+        original = ATEvent.getEventType
+        ATEvent.getEventType = getEventType
+        # now we commit, which triggers indexing...
+        commit()
+        # un-monkey again in the end
+        ATEvent.getEventType = original
 
 
 def test_suite():

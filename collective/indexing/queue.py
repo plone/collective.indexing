@@ -25,9 +25,17 @@ def getQueue():
     return localQueue
 
 
+processing = set()
+
 def processQueue():
     """ process the queue (for this thread) immediately """
-    return getQueue().process()
+    queue = getQueue()
+    processed = 0
+    if not queue in processing:
+        processing.add(queue)
+        processed = queue.process()
+        processing.remove(queue)
+    return processed
 
 
 def wrap(obj):

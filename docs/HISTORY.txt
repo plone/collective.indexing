@@ -4,6 +4,10 @@ Changelog
 1.0rc2 - Unreleased
 -------------------
 
+* Fix issue where, when the "auto flush" feature is enabled, an indexing
+  helper could cause an infinite loop by using the catalog.
+  [witsch]
+
 * Restore and extend test regarding package installation.
   [witsch]
 
