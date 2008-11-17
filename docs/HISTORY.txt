@@ -1,8 +1,12 @@
 Changelog
 =========
 
-1.0rc2 - Unreleased
+1.0rc3 - Unreleased
 -------------------
+
+
+1.0rc2 - Released November 17th, 2008
+-------------------------------------
 
 * Fix issue where, when the "auto flush" feature is enabled, an indexing
   helper could cause an infinite loop by using the catalog.
