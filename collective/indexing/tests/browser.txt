@@ -56,7 +56,7 @@ Plone calls them redundantly after all:
   >>> self.failUnless(queuedIndex, 'indexing queue not used?')
   >>> self.failUnless(calledIndex, 'queue processor not used?')
   >>> self.failUnless(len(queuedIndex) > len(calledIndex), 'not optimizing?')
-  >>> self.assertEqual(len(calledIndex), 1)
+  >>> self.assertEqual(len(calledIndex), 2)
 
 Let's make sure the new item has actually been indexed, that is added to the
 portal catalog:
@@ -91,7 +91,7 @@ the hook into the transaction machinery:
 
 Now both should be in the catalog and show up in the global sections:
 
-  >>> self.assertEqual(len(calledIndex), 2)
+  >>> self.assertEqual(len(calledIndex), 4)
   >>> path = lambda obj: '/'.join(obj.getPhysicalPath())
   >>> def sort(brains):
   ...     return sorted([ brain.getObject() for brain in brains ], key=path)
@@ -128,7 +128,7 @@ preparations including more counters for reindexing and unindexing operations:
   >>> browser.getControl('Title').value = 'a folder'
   >>> browser.getControl('Save').click()
 
-  >>> self.assertEqual(len(calledIndex), 3)
+  >>> self.assertEqual(len(calledIndex), 6)
   >>> calledIndex[:] = []
   >>> uid = portal['first-news-today'].UID()
   >>> folder = portal['a-folder']

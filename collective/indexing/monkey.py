@@ -75,19 +75,34 @@ def searchResults(self, REQUEST=None, **kw):
     autoFlushQueue()
     return self.__af_old_searchResults(REQUEST, **kw)
 
+# patch CatalogTool.unrestrictedsearchResults to flush the queue before issuing a query
+
+def unrestrictedSearchResults(self, REQUEST=None, **kw):
+    """ flush the queue before querying the catalog """
+    autoFlushQueue()
+    return self.__af_old_unrestrictedSearchResults(REQUEST, **kw)
+
 
 def setAutoFlush(enable=True):
-    """ apply or revert monkey-patch for `searchResults` """
+    """ apply or revert monkey-patch for `searchResults`
+    and `unrestrictedSearchResults`
+    """
     if enable:
         if not hasattr(CatalogTool, '__af_old_searchResults'):
             CatalogTool.__af_old_searchResults = CatalogTool.searchResults
             CatalogTool.searchResults = searchResults
             CatalogTool.__call__ = searchResults
+        if not hasattr(CatalogTool, '__af_old_unrestrictedSearchResults'):
+            CatalogTool.__af_old_unrestrictedSearchResults = CatalogTool.unrestrictedSearchResults
+            CatalogTool.unrestrictedSearchResults = unrestrictedSearchResults
     else:
         if hasattr(CatalogTool, '__af_old_searchResults'):
             CatalogTool.searchResults = CatalogTool.__af_old_searchResults
             CatalogTool.__call__ = CatalogTool.__af_old_searchResults
             delattr(CatalogTool, '__af_old_searchResults')
+        if hasattr(CatalogTool, '__af_old_unrestrictedSearchResults'):
+            CatalogTool.unrestrictedSearchResults = CatalogTool.__af_old_unrestrictedSearchResults
+            delattr(CatalogTool, '__af_old_unrestrictedSearchResults')
 
 # auto-flush is enabled by default, so...
 from collective.indexing.config import AUTO_FLUSH
