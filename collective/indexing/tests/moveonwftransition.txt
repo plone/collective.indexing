@@ -1,5 +1,9 @@
 This file provides a couple of functional tests for `collective.indexing` regarding
-the behaviour when moving objects on workflow transitions.
+the behaviour when moving objects on workflow transitions:
+When an object is moved on a workflow transition, `unrestrictedSearchResults` is called.
+To be able to test this, we'll create a content rule which moves an item on a workflow transition.
+We will create a source folder, where we apply our content rule and a destination folder, where
+the content rule's action will move our object into.
 
 First the package has to be quick-installed in the portal and a testbrowser
 as well as a logged in user with the necessary permissions are needed:
@@ -12,10 +16,6 @@ as well as a logged in user with the necessary permissions are needed:
   >>> browser = self.getBrowser()
   >>> browser.open('http://nohost/plone/')
 
-When an object is moved on a workflow transition, `unrestrictedSearchResults` is called.
-To be able to test this, we'll create a content rule which moves an item on a workflow transition.
-We will create a source folder, where we apply our content rule and a destination folder, where
-the content rule's action will move our object into.
 First, we create a source folder, where we are going to assign the content rule:
 
   >>> browser.getLink('Home').click()
