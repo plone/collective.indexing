@@ -4,7 +4,9 @@ To-Do's
 Issues
 ------
 
-- at the moment there are no known issues or bugs
+- please see the dedicated `issue tracker`__ for known issues or bugs
+
+  .. __: http://plone.org/products/collective.indexing/issues
 
 Features
 --------
