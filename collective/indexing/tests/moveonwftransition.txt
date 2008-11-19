@@ -1,12 +1,13 @@
-This file provides a couple of functional tests for `collective.indexing` regarding
-the behaviour when moving objects on workflow transitions:
-When an object is moved on a workflow transition, `unrestrictedSearchResults` is called.
-To be able to test this, we'll create a content rule which moves an item on a workflow transition.
-We will create a source folder, where we apply our content rule and a destination folder, where
-the content rule's action will move our object into.
+This file provides a couple of functional tests for `collective.indexing`
+regarding the behaviour when moving objects on workflow transitions:  When an
+object is moved on a workflow transition, `unrestrictedSearchResults` is
+called. To be able to test this, we'll create a content rule which moves an
+item on a workflow transition. We will create a source folder, where we apply
+our content rule and a destination folder, where the content rule's action
+will move our object into.
 
-First the package has to be quick-installed in the portal and a testbrowser
-as well as a logged in user with the necessary permissions are needed:
+First the package has to be quick-installed in the portal and a testbrowser as
+well as a logged in user with the necessary permissions are needed:
 
   >>> from Products.PloneTestCase import PloneTestCase as ptc
   >>> ptc.installPackage('collective.indexing', quiet=True)
@@ -16,7 +17,8 @@ as well as a logged in user with the necessary permissions are needed:
   >>> browser = self.getBrowser()
   >>> browser.open('http://nohost/plone/')
 
-First, we create a source folder, where we are going to assign the content rule:
+First, we create a source folder, where we are going to assign the content
+rule:
 
   >>> browser.getLink('Home').click()
   >>> browser.getLink(url='createObject?type_name=Folder').click()
@@ -36,8 +38,8 @@ Now, we'll create a folder where we want to move our item in:
   >>> portal['destination-folder']
   <ATFolder at /plone/destination-folder>
 
-Now we create a content rule, which will move the object to our destination folder whenever a
-workflow transition happens:
+Now we create a content rule, which will move the object to our destination
+folder whenever a workflow transition happens:
 
   >>> browser.getLink('Rules').click()
   >>> browser.getLink('content rules control panel').click()
@@ -52,7 +54,8 @@ We're back at the control panel.  Now we'll edit the content rule:
   'http://nohost/plone/@@rules-controlpanel'
   >>> browser.getLink('Move on workflow transition (Workflow state changed)').click()
 
-Now comes the action, we want all objects to be moved to the destination folder:
+Now comes the action, we want all objects to be moved to the destination
+folder:
 
   >>> browser.getControl('Add action').displayValue = ['Move to folder']
   >>> browser.getControl(name='form.button.AddAction').click()
@@ -61,8 +64,8 @@ Now comes the action, we want all objects to be moved to the destination folder:
   >>> browser.getControl(name='form.target_folder').value = ['/destination-folder']
   >>> browser.getControl('Save').click()
 
-We're done with setting up the content rule.  We need to apply the
-rule to the source folder before we try to add an item:
+We're done with setting up the content rule. We need to apply the rule to the
+source folder before we try to add an item:
 
   >>> browser.getLink('Source folder').click()
   >>> browser.getLink('Rules').click()
@@ -88,3 +91,4 @@ The document should have moved into the destination folder now:
 
   >>> browser.url
   'http://nohost/plone/destination-folder/my-doc'
+

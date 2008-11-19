@@ -65,7 +65,8 @@ monkeyMethods.update({
 
 
 
-# patch CatalogTool.searchResults to flush the queue before issuing a query
+# patch CatalogTool.(unrestricted)searchResults to flush the queue
+# before issuing a query
 from Products.CMFPlone.CatalogTool import CatalogTool
 from collective.indexing.utils import autoFlushQueue
 
@@ -75,8 +76,6 @@ def searchResults(self, REQUEST=None, **kw):
     autoFlushQueue()
     return self.__af_old_searchResults(REQUEST, **kw)
 
-# patch CatalogTool.unrestrictedsearchResults to flush the queue before issuing a query
-
 def unrestrictedSearchResults(self, REQUEST=None, **kw):
     """ flush the queue before querying the catalog """
     autoFlushQueue()
@@ -85,8 +84,7 @@ def unrestrictedSearchResults(self, REQUEST=None, **kw):
 
 def setAutoFlush(enable=True):
     """ apply or revert monkey-patch for `searchResults`
-    and `unrestrictedSearchResults`
-    """
+        and `unrestrictedSearchResults` """
     if enable:
         if not hasattr(CatalogTool, '__af_old_searchResults'):
             CatalogTool.__af_old_searchResults = CatalogTool.searchResults
