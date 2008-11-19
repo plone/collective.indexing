@@ -4,12 +4,9 @@ Changelog
 1.0rc3 - Unreleased
 -------------------
 
-* add moveonwftransition.txt doctest, to reproduce issue 
+* Also patch `unrestrictedSearchResults` to flush queued indexing
+  operations before querying the catalog.  This fixes
   http://plone.org/products/collective.indexing/issues/2
-  [mr_savage]
-
-* patch unrestrictedSearchResults in `monkey.py` to 
-  flush queue before querying the catalog
   [mr_savage]
 
 1.0rc2 - Released November 17th, 2008
