@@ -3,13 +3,9 @@ order to make sure the combination of queueing, hooking into the transaction
 machinery, monkey-patches, interaction with the portal catalog, several event
 subscribers, thread-local variables etc is actually working... :)
 
-First the package has to be quick-installed in the portal and a testbrowser
-as well as a logged in user with the necessary permissions are needed:
+First a testbrowser with a logged-in user holding the necessary permissions
+is needed:
 
-  >>> from Products.PloneTestCase import PloneTestCase as ptc
-  >>> ptc.installPackage('collective.indexing', quiet=True)
-  >>> portal.portal_quickinstaller.installProduct('collective.indexing')
-  ''
   >>> self.setRoles(('Manager',))
   >>> browser = self.getBrowser()
   >>> browser.open('http://nohost/plone/')

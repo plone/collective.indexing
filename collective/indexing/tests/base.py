@@ -8,6 +8,8 @@ from Products.Five.testbrowser import Browser
 from Products.PloneTestCase import PloneTestCase as ptc
 from Products.PloneTestCase.layer import onsetup
 
+from collective.indexing.tests.layer import IndexingLayer
+
 
 @onsetup
 def setup_product():
@@ -27,6 +29,8 @@ class IndexingTestCase(ptc.PloneTestCase):
 
 class IndexingFunctionalTestCase(ptc.FunctionalTestCase):
     """ base class for functional tests """
+
+    layer = IndexingLayer
 
     def getBrowser(self, loggedIn=True):
         """ instantiate and return a testbrowser for convenience """

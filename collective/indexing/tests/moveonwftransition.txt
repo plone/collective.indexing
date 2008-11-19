@@ -6,18 +6,14 @@ item on a workflow transition. We will create a source folder, where we apply
 our content rule and a destination folder, where the content rule's action
 will move our object into.
 
-First the package has to be quick-installed in the portal and a testbrowser as
-well as a logged in user with the necessary permissions are needed:
+First a testbrowser with a logged-in user holding the necessary permissions
+is needed:
 
-  >>> from Products.PloneTestCase import PloneTestCase as ptc
-  >>> ptc.installPackage('collective.indexing', quiet=True)
-  >>> portal.portal_quickinstaller.installProduct('collective.indexing')
-  ''
   >>> self.setRoles(('Manager',))
   >>> browser = self.getBrowser()
   >>> browser.open('http://nohost/plone/')
 
-First, we create a source folder, where we are going to assign the content
+Next we create a source folder, where we are going to assign the content
 rule:
 
   >>> browser.getLink('Home').click()
@@ -28,7 +24,7 @@ rule:
   >>> portal['source-folder']
   <ATFolder at /plone/source-folder>
 
-Now, we'll create a folder where we want to move our item in:
+Now we'll create a folder where we want to move our item to:
 
   >>> browser.getLink('Home').click()
   >>> browser.getLink(url='createObject?type_name=Folder').click()
@@ -38,7 +34,7 @@ Now, we'll create a folder where we want to move our item in:
   >>> portal['destination-folder']
   <ATFolder at /plone/destination-folder>
 
-Now we create a content rule, which will move the object to our destination
+Next we create a content rule, which will move the object to our destination
 folder whenever a workflow transition happens:
 
   >>> browser.getLink('Rules').click()
@@ -83,11 +79,11 @@ Let's go back to the source folder and create a document now:
   >>> browser.url
   'http://nohost/plone/source-folder/my-doc'
 
-Let's do the workflow transition now, which triggers the content rule:
+Let's do the workflow transition, which triggers the content rule:
 
   >>> browser.getLink('Publish').click()
 
-The document should have moved into the destination folder now:
+The document should have moved into the destination folder:
 
   >>> browser.url
   'http://nohost/plone/destination-folder/my-doc'
