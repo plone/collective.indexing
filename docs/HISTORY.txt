@@ -1,8 +1,12 @@
 Changelog
 =========
 
-1.0rc3 - Unreleased
+1.0rc4 - Unreleased
 -------------------
+
+
+1.0rc3 - Released November 19th, 2008
+-------------------------------------
 
 * Also patch `unrestrictedSearchResults` to flush queued indexing
   operations before querying the catalog.  This fixes
