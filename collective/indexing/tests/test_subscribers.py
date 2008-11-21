@@ -19,10 +19,10 @@ class SubscriberTests(IndexingTestCase):
         self.setRoles(('Manager',))
         self.portal.invokeFactory('Folder', id='folder1', title='Folder 1')
         self.folder = self.portal.folder1
-        self.folder.unmarkCreationFlag() # Avoid extraneous events
+        self.folder.unmarkCreationFlag()    # avoid extraneous events...
         self.portal.invokeFactory('File', id='file1', title='File 1')
         self.file = self.portal.file1
-        self.file.unmarkCreationFlag() # Avoid extraneous events
+        self.file.unmarkCreationFlag()      # avoid extraneous events...
         self.indexer = utils.MockIndexer()
         self.queue = self.indexer.queue
         provideUtility(self.indexer)
