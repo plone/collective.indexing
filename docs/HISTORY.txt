@@ -4,6 +4,8 @@ Changelog
 1.0rc4 - Unreleased
 -------------------
 
+* Optimize "auto flushing" to prevent unnecessary component lookups.
+  [witsch]
 
 1.0rc3 - Released November 19th, 2008
 -------------------------------------

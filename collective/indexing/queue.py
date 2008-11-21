@@ -31,7 +31,7 @@ def processQueue():
     """ process the queue (for this thread) immediately """
     queue = getQueue()
     processed = 0
-    if not queue in processing:
+    if queue.length() and not queue in processing:
         processing.add(queue)
         processed = queue.process()
         processing.remove(queue)
@@ -118,6 +118,12 @@ class IndexQueue(local):
         assert isinstance(state, list), 'state must be a list'
         debug('setting queue state to %r', state)
         self.queue = state
+
+    def length(self):
+        """ return number of currently queued items;  please note that
+            we cannot use `__len__` here as this will cause test failures
+            due to the way objects are compared """
+        return len(self.queue)
 
     def optimize(self):
         reducer = queryUtility(IQueueReducer)
