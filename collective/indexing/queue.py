@@ -32,6 +32,7 @@ def processQueue():
     queue = getQueue()
     processed = 0
     if queue.length() and not queue in processing:
+        debug('auto-flushing %d items: %r', queue.length(), queue.getState())
         processing.add(queue)
         processed = queue.process()
         processing.remove(queue)

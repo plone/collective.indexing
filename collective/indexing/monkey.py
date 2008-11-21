@@ -4,12 +4,15 @@
 # will be added to the queue or, if disabled, directly dispatched to the
 # default indexer (using the original methods)
 
+from logging import getLogger
 from collective.indexing.utils import isActive, getIndexer
 from collective.indexing.indexer import catalogMultiplexMethods
 from collective.indexing.indexer import catalogAwareMethods
 from collective.indexing.indexer import monkeyMethods
 from collective.indexing.indexer import index, reindex, unindex
 from collective.indexing.subscribers import filterTemporaryItems
+
+debug = getLogger(__name__).debug
 
 
 def indexObject(self):
@@ -73,11 +76,13 @@ from collective.indexing.utils import autoFlushQueue
 
 def searchResults(self, REQUEST=None, **kw):
     """ flush the queue before querying the catalog """
+    debug('auto-flush for regular search: %r, %r', REQUEST, kw)
     autoFlushQueue()
     return self.__af_old_searchResults(REQUEST, **kw)
 
 def unrestrictedSearchResults(self, REQUEST=None, **kw):
     """ flush the queue before querying the catalog """
+    debug('auto-flush for unrestricted search: %r, %r', REQUEST, kw)
     autoFlushQueue()
     return self.__af_old_unrestrictedSearchResults(REQUEST, **kw)
 
