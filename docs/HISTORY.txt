@@ -4,6 +4,10 @@ Changelog
 1.0rc4 - Unreleased
 -------------------
 
+* Provide a workaround for an issue with indexing objects using stale
+  acquisition chains after moving them in an event subscriber.
+  [witsch]
+
 * Optimize "auto flushing" to prevent unnecessary component lookups.
   [witsch]
 

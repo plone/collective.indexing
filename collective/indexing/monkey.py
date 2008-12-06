@@ -27,7 +27,7 @@ def indexObject(self):
 def unindexObject(self):
     if not isActive():
         return unindex(self)
-    obj = filterTemporaryItems(self)
+    obj = filterTemporaryItems(self, checkId=False)
     indexer = getIndexer()
     if obj is not None and indexer is not None:
         indexer.unindex(obj)

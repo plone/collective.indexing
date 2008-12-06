@@ -2,17 +2,22 @@ from logging import getLogger
 from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent, Attributes
 from zope.app.container.contained import dispatchToSublocations
+from Acquisition import aq_parent, aq_inner, aq_base
 from collective.indexing.utils import getIndexer
 
 debug = getLogger('collective.indexing.subscribers').debug
 
 
-def filterTemporaryItems(obj):
+def filterTemporaryItems(obj, checkId=True):
     """ check if the item has an acquisition chain set up and is not of
         temporary nature, i.e. still handled by the `portal_factory`;  if
         so return it, else return None """
-    if getattr(obj, 'aq_parent', None) is None:
+    parent = aq_parent(aq_inner(obj))
+    if parent is None:
         return None
+    if checkId and getattr(obj, 'getId', None):
+        if getattr(aq_base(parent), obj.getId(), None) is None:
+            return None
     isTemporary = getattr(obj, 'isTemporary', None)
     if isTemporary is not None:
         try:
@@ -56,7 +61,7 @@ def objectCopied(ev):
 
 
 def objectRemoved(ev):
-    obj = filterTemporaryItems(ev.object)
+    obj = filterTemporaryItems(ev.object, checkId=False)
     indexer = getIndexer()
     if obj is not None and indexer is not None:
         debug('object removed event for %r, unindexing using %r', obj, indexer)

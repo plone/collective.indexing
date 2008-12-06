@@ -1,0 +1,73 @@
+This file provides functional tests for an indexing issue with regards to
+multiple event subscribers: given two subscribers for the same event the
+object passed to these will be wrapped in the same acquisition chain.  This
+might become a problem if one of the events moves the object (or, generally
+speaking, alters that acquisition chain) while the other triggers some
+indexing operation on it, for example by modified some of its attributes.
+
+If the modification comes first, things will be fine, but if it happens
+after the move, the now outdated acquisition chain will cause a wrong
+catalog entry to be created (the key used here is the path, which will be
+derived from that chain).  That entry refers to an object that no longer
+exists, at least not at the location referred in the entry.  Of course,
+the catalog brain can later on not get that object anymore causing things
+to break in various ways.
+
+While this is not a problem specific to or caused by `collective.indexing`,
+the package now does provide a workaround for it.  To make sure of that, we
+first have to set up the two event subscribers:
+
+  >>> from zope.component import adapter, provideHandler
+  >>> from Products.Archetypes.event import ObjectInitializedEvent
+  >>> called = []
+  >>> @adapter(ObjectInitializedEvent)
+  ... def move(event):
+  ...   called.append('move')
+  ...   oid = event.object.getId()
+  ...   if folder.get(oid):
+  ...     portal.manage_pasteObjects(folder.manage_cutObjects(ids=(oid,)))
+  >>> provideHandler(move)
+
+The second one doesn't modify anything, but simply causes the reindexing
+operation directly:
+
+  >>> @adapter(ObjectInitializedEvent)
+  ... def reindex(event):
+  ...   called.append('reindex')
+  ...   event.object.reindexObject()
+  >>> provideHandler(reindex)
+
+Now a testbrowser is used to create an object in the user's home folder,
+which will then be move to the site root via the first subscriber defined
+above:
+
+  >>> self.setRoles(('Manager',))
+  >>> browser = self.getBrowser()
+  >>> browser.open(folder.absolute_url())
+  >>> browser.getLink(url='createObject?type_name=Event').click()
+  >>> browser.getControl('Title').value = 'Foo'
+  >>> browser.getControl('Save').click()
+
+Let's make sure the events have been called (in the "correct" order) and the
+object has been properly created (and moved):
+
+  >>> called
+  ['move', 'reindex']
+  >>> 'foo' in folder.objectIds()
+  False
+  >>> 'foo' in portal.objectIds()
+  True
+  >>> portal.foo
+  <ATEvent at /plone/foo>
+  >>> portal.foo.Title()
+  'Foo'
+
+Now it's finally time to check the catalog.  No stale entries from the
+original postion of the object should remain:
+
+  >>> brains = portal.portal_catalog(portal_type='Event')
+  >>> [ brain.Title for brain in brains ]
+  ['Foo']
+  >>> [ brain.getPath() for brain in brains ]
+  ['/plone/foo']
+

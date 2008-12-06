@@ -15,5 +15,8 @@ def test_suite():
         ztc.FunctionalDocFileSuite(
            'moveonwftransition.txt', package='collective.indexing.tests',
            test_class=IndexingFunctionalTestCase, optionflags=optionflags),
+        ztc.FunctionalDocFileSuite(
+           'move-in-subscriber.txt', package='collective.indexing.tests',
+           test_class=IndexingFunctionalTestCase, optionflags=optionflags),
     ])
 
