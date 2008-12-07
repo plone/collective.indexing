@@ -71,3 +71,14 @@ original postion of the object should remain:
   >>> [ brain.getPath() for brain in brains ]
   ['/plone/foo']
 
+Finally, clean up the created objects and registrations so that the test
+doesn't affect others:
+
+  >>> portal.manage_delObjects('foo')
+  >>> from zope.component import getGlobalSiteManager
+  >>> gsm = getGlobalSiteManager()
+  >>> gsm.unregisterHandler(move)
+  True
+  >>> gsm.unregisterHandler(reindex)
+  True
+
