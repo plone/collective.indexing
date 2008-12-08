@@ -1,8 +1,12 @@
 Changelog
 =========
 
-1.0rc4 - Unreleased
+1.0rc5 - Unreleased
 -------------------
+
+
+1.0rc4 - Released December 8th, 2008
+------------------------------------
 
 * Provide a workaround for an issue with indexing objects using stale
   acquisition chains after moving them in an event subscriber.
