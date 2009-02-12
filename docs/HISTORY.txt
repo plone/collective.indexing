@@ -3,7 +3,8 @@ Changelog
 
 1.0rc5 - Unreleased
 -------------------
-
+* Added logging to monkey patches
+  [swampmonkey]
 
 1.0rc4 - Released December 8th, 2008
 ------------------------------------
