@@ -16,7 +16,7 @@ from collective.indexing.tests import utils
 class SubscriberTests(IndexingTestCase):
 
     def afterSetUp(self):
-        self.setRoles(('Manager',))
+        self.setRoles(['Manager'])
         self.portal.invokeFactory('Folder', id='folder1', title='Folder 1')
         self.folder = self.portal.folder1
         self.folder.unmarkCreationFlag()    # avoid extraneous events...
@@ -66,7 +66,7 @@ class SubscriberTests(IndexingTestCase):
         self.queue[:] = []  # clear the queue...
         savepoint()         # need to create a savepoint, because!
         original = self.portal.folder1.file2
-        cookie = self.portal.folder1.manage_cutObjects(ids=('file2',))
+        cookie = self.portal.folder1.manage_cutObjects(ids=['file2'])
         self.portal.folder2.manage_pasteObjects(cookie)
         self.assert_((REINDEX, self.portal.folder1, None) in self.queue, self.queue)
         self.assert_((REINDEX, self.portal.folder2.file2, None) in self.queue, self.queue)
@@ -78,7 +78,7 @@ class SubscriberTests(IndexingTestCase):
         self.assertEqual(original, self.portal.folder2.file2)
 
     def testCopyObject(self):
-        cookie = self.portal.manage_copyObjects(ids=('file1',))
+        cookie = self.portal.manage_copyObjects(ids=['file1'])
         self.folder.manage_pasteObjects(cookie)
         self.assert_((INDEX, self.folder.file1, None) in self.queue)
         self.assert_((REINDEX, self.folder, None) in self.queue)
@@ -128,4 +128,3 @@ class IntegrationTests(IndexingTestCase):
 
 def test_suite():
     return defaultTestLoader.loadTestsFromName(__name__)
-

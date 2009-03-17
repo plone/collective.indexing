@@ -62,4 +62,3 @@ class IQueueReducer(Interface):
     def optimize(queue):
         """ Remove redundant entries from the queue and return optimized queue
         The queue is a list of tuples with (operator, uid, attributes) """
-

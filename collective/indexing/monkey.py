@@ -84,6 +84,7 @@ def searchResults(self, REQUEST=None, **kw):
     autoFlushQueue()
     return self.__af_old_searchResults(REQUEST, **kw)
 
+
 def unrestrictedSearchResults(self, REQUEST=None, **kw):
     """ flush the queue before querying the catalog """
     debug('auto-flush for unrestricted search: %r, %r', REQUEST, kw)
@@ -134,6 +135,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.permissions import ModifyPortalContent
 from Products.CMFPlone.PloneTool import PloneTool
 
+
 def reindexOnReorder(self, parent):
     """ Catalog ordering support """
     mtool = getToolByName(self, 'portal_membership')
@@ -144,4 +146,3 @@ def reindexOnReorder(self, parent):
 
 PloneTool.reindexOnReorder = reindexOnReorder
 info('patched %s', str(PloneTool.reindexOnReorder))
-

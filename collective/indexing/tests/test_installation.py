@@ -42,7 +42,7 @@ class InstallationTests(ptc.PloneTestCase, TestHelpers):
         commit()
         self.assertEqual(self.fileIds(), [])
         # after un-installing the package indexing should be immediate again
-        self.portal.portal_quickinstaller.uninstallProducts(('collective.indexing',))
+        self.portal.portal_quickinstaller.uninstallProducts(['collective.indexing'])
         commit()
         self.failIf(isActive())
         self.assertEqual(self.create(), ['foo'])
@@ -51,4 +51,3 @@ class InstallationTests(ptc.PloneTestCase, TestHelpers):
 
 def test_suite():
     return defaultTestLoader.loadTestsFromName(__name__)
-

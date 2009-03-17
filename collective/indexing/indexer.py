@@ -33,10 +33,12 @@ def index(obj, attributes=None):
     if op is not None:
         op(obj)
 
+
 def reindex(obj, attributes=None):
     op = getDispatcher(obj, 'reindex')
     if op is not None:
         op(obj, attributes or [])
+
 
 def unindex(obj):
     op = getDispatcher(obj, 'unindex')
@@ -69,4 +71,3 @@ class PortalCatalogQueueProcessor(Persistent):
 
     def abort(self):
         pass
-

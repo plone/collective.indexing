@@ -9,7 +9,7 @@ class TestHelpers(object):
 
     def fileIds(self):
         catalog = self.portal.portal_catalog
-        return [ brain.id for brain in catalog(portal_type='File') ]
+        return [brain.id for brain in catalog(portal_type='File')]
 
     def create(self):
         self.failIf(self.folder.get('foo'), '"foo" exists?')
@@ -87,4 +87,3 @@ class MockQueueProcessor(MockQueue):
     def abort(self):
         self.clear()
         self.state = 'aborted'
-

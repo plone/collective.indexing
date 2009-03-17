@@ -28,4 +28,3 @@ def autoFlushQueue():
         auto-flush feature is enabled """
     if isActive() and AUTO_FLUSH:
         return processQueue()
-

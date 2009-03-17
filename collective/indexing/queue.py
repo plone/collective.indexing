@@ -16,6 +16,8 @@ debug = getLogger('collective.indexing.queue').debug
 
 
 localQueue = None
+processing = set()
+
 
 def getQueue():
     """ return a (thread-local) queue object, create one if necessary """
@@ -24,8 +26,6 @@ def getQueue():
         localQueue = IndexQueue()
     return localQueue
 
-
-processing = set()
 
 def processQueue():
     """ process the queue (for this thread) immediately """
@@ -174,4 +174,3 @@ class IndexQueue(local):
 class IndexQueueSwitch(Persistent):
     """ marker utility for switching queued indexing on/off """
     implements(IIndexQueueSwitch)
-

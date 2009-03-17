@@ -19,4 +19,3 @@ def test_suite():
            'move-in-subscriber.txt', package='collective.indexing.tests',
            test_class=IndexingFunctionalTestCase, optionflags=optionflags),
     ])
-

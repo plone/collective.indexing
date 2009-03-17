@@ -4,6 +4,9 @@ Changelog
 1.0rc5 - Unreleased
 -------------------
 
+* Update code to (almost) comply to PEP8 style guide lines.
+  [witsch]
+
 * Added logging to monkey patches.
   [swampmonkey]
 

@@ -13,8 +13,8 @@ from collective.indexing.monkey import setAutoFlush
 from collective.indexing.config import AUTO_FLUSH
 
 
-# helper for `testRecursiveAutoFlush`, see below
 def getEventType(self):
+    """ helper for `testRecursiveAutoFlush`, see below """
     catalog = getToolByName(self, 'portal_catalog')
     count = len(catalog(portal_type='Event'))
     if count:
@@ -75,4 +75,3 @@ class AutoFlushTests(IndexingTestCase, TestHelpers):
 
 def test_suite():
     return defaultTestLoader.loadTestsFromName(__name__)
-

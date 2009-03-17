@@ -76,4 +76,3 @@ class QueueTM(local):
 
     def sortKey(self):
         return id(self)
-

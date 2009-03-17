@@ -40,4 +40,3 @@ class IndexingFunctionalTestCase(ptc.FunctionalTestCase):
             pwd = ptc.default_password
             browser.addHeader('Authorization', 'Basic %s:%s' % (user, pwd))
         return browser
-

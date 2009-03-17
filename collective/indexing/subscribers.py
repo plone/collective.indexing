@@ -95,4 +95,3 @@ def objectTransitioned(ev):
     if obj is not None and indexer is not None:
         debug('object transitioned event for %r, reindexing using %r', obj, indexer)
         indexer.reindex(obj)
-

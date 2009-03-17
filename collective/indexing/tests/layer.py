@@ -23,4 +23,3 @@ class IndexingLayer(PloneSite):
     @classmethod
     def tearDown(cls):
         pass
-

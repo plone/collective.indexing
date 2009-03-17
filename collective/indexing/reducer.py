@@ -27,10 +27,10 @@ class QueueReducer(object):
             else:
                 # Operators are -1, 0 or 1 which makes it safe to add them
                 op += iop
-                op = min(max(op,UNINDEX), INDEX) # operator always between -1 and 1
+                op = min(max(op, UNINDEX), INDEX) # operator always between -1 and 1
 
                 # Handle attributes, None means all fields, and takes presedence
-                if isinstance(attr, (tuple,list)) and isinstance(iattr, (tuple,list)):
+                if isinstance(attr, (tuple, list)) and isinstance(iattr, (tuple, list)):
                     attr = tuple(set(attr).union(iattr))
                 else:
                     attr = None
@@ -40,4 +40,3 @@ class QueueReducer(object):
         debug('finished reducing; %d item(s) in queue...', len(res))
         # Sort so unindex operations come first
         return sorted(res.values())
-

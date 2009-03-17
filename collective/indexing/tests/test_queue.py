@@ -104,7 +104,7 @@ class QueueTests(CleanUp, TestCase):
         class MessyReducer(object):
             implements(IQueueReducer)
             def optimize(self, queue):
-                return [ op for op in queue if not op[0] == UNINDEX ]
+                return [op for op in queue if not op[0] == UNINDEX]
         queue = self.queue
         queue.index('foo')
         queue.reindex('foo')
@@ -173,19 +173,19 @@ class QueueReducerTests(TestCase):
     def testReduceQueueWithAttributes(self):
         reducer = QueueReducer()
 
-        queue = [(REINDEX, 'A', None), (REINDEX, 'A', ('a','b'))]
+        queue = [(REINDEX, 'A', None), (REINDEX, 'A', ('a', 'b'))]
         self.failUnlessEqual(reducer.optimize(queue), [(REINDEX, 'A', None)])
 
-        queue = [(REINDEX, 'A', ('a','b')), (REINDEX, 'A', None)]
+        queue = [(REINDEX, 'A', ('a', 'b')), (REINDEX, 'A', None)]
         self.failUnlessEqual(reducer.optimize(queue), [(REINDEX, 'A', None)])
 
-        queue = [(REINDEX, 'A', ('a','b')), (REINDEX, 'A', ('b','c'))]
+        queue = [(REINDEX, 'A', ('a', 'b')), (REINDEX, 'A', ('b', 'c'))]
         self.failUnlessEqual(reducer.optimize(queue), [(REINDEX, 'A', ('a', 'c', 'b'))])
 
         queue = [(INDEX, 'A', None), (REINDEX, 'A', None)]
         self.failUnlessEqual(reducer.optimize(queue), [(INDEX, 'A', None)])
 
-        queue = [(REINDEX, 'A', ('a','b')), (UNINDEX, 'A', None), (INDEX, 'A', None)]
+        queue = [(REINDEX, 'A', ('a', 'b')), (UNINDEX, 'A', None), (INDEX, 'A', None)]
         self.failUnlessEqual(reducer.optimize(queue), [(REINDEX, 'A', None)])
 
     def testReduceQueueSortsByOpcode(self):
@@ -223,7 +223,8 @@ class QueueThreadTests(TestCase):
             other[:] = me.getState()
         thread = Thread(target=runner)  # another thread is created...
         thread.start()                  # and started...
-        while thread.isAlive(): '...'   # wait until it's done...
+        while thread.isAlive():
+            pass                        # wait until it's done...
         self.assertEqual(other, [(REINDEX, 'bar', None)])
         self.assertEqual(me.getState(), [])
         me.index('foo')                 # something happening on our side...
@@ -243,27 +244,27 @@ class QueueThreadTests(TestCase):
             me.index('bar')
             second[:] = me.getState()
         thread2 = Thread(target=runner2)
-        self.assertEqual(first,  [])    # clean table before we start...
+        self.assertEqual(first, [])     # clean table before we start...
         self.assertEqual(second, [])
         self.assertEqual(me.getState(), [])
         thread1.start()                 # do stuff here...
         sleep(0.01)                     # allow thread to do work
-        self.assertEqual(first,  [(INDEX, 'foo', None)])
+        self.assertEqual(first, [(INDEX, 'foo', None)])
         self.assertEqual(second, [])
         self.assertEqual(me.getState(), [])
         thread2.start()                 # and there...
         sleep(0.01)                     # allow thread to do work
-        self.assertEqual(first,  [(INDEX, 'foo', None)])
+        self.assertEqual(first, [(INDEX, 'foo', None)])
         self.assertEqual(second, [(INDEX, 'bar', None)])
         self.assertEqual(me.getState(), [])
         thread1.join()                  # re-unite with first thread and...
         me.unindex('f00')               # let something happening on our side
-        self.assertEqual(first,  [(INDEX, 'foo', None)])
+        self.assertEqual(first, [(INDEX, 'foo', None)])
         self.assertEqual(second, [(INDEX, 'bar', None)])
         self.assertEqual(me.getState(), [(UNINDEX, 'f00', None)])
         thread2.join()                  # also re-unite the second and...
         me.unindex('f00')               # let something happening again...
-        self.assertEqual(first,  [(INDEX, 'foo', None)])
+        self.assertEqual(first, [(INDEX, 'foo', None)])
         self.assertEqual(second, [(INDEX, 'bar', None)])
         self.assertEqual(me.getState(), [(UNINDEX, 'f00', None), (UNINDEX, 'f00', None)])
 
@@ -287,7 +288,7 @@ class QueueThreadTests(TestCase):
         for idx, thread in enumerate(threads):
             tid = 't%d' % idx
             queue = queues[thread]
-            names = [ name for op, name, attrs in queue ]
+            names = [name for op, name, attrs in queue]
             self.assertEquals(names, [tid] * idx)
 
 
