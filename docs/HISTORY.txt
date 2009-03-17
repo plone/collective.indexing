@@ -3,8 +3,10 @@ Changelog
 
 1.0rc5 - Unreleased
 -------------------
-* Added logging to monkey patches
+
+* Added logging to monkey patches.
   [swampmonkey]
+
 
 1.0rc4 - Released December 8th, 2008
 ------------------------------------
@@ -16,6 +18,7 @@ Changelog
 * Optimize "auto flushing" to prevent unnecessary component lookups.
   [witsch]
 
+
 1.0rc3 - Released November 19th, 2008
 -------------------------------------
 
@@ -23,6 +26,7 @@ Changelog
   operations before querying the catalog.  This fixes
   http://plone.org/products/collective.indexing/issues/2
   [mr_savage]
+
 
 1.0rc2 - Released November 17th, 2008
 -------------------------------------
@@ -34,11 +38,13 @@ Changelog
 * Restore and extend test regarding package installation.
   [witsch]
 
+
 1.0rc1 - Released November 5th, 2008
 ------------------------------------
 
 * Restored processQueue function as it is conceptually important.
   [stefan]
+
 
 1.0b5 - Released October 16th, 2008
 -----------------------------------
@@ -80,6 +86,7 @@ Changelog
   can do their work.
   [stefan]
 
+
 1.0b4 - Released June 30th, 2008
 --------------------------------
 
@@ -89,6 +96,7 @@ Changelog
   such as the modification time.
   [witsch, mj]
 
+
 1.0b3 - Released June 18th, 2008
 --------------------------------
 
@@ -96,17 +104,20 @@ Changelog
   potentially not be deleted.
   [witsch]
 
+
 1.0b2 - Released June 2nd, 2008
 -------------------------------
 
 * Add `aq_inner` to prevent infinite recursion with `safe_hasattr`.
   [witsch]
 
+
 1.0b1 - Released May 28, 2008
 -----------------------------
 
 * Make sure we get REQUEST correctly in PathWrapper.
   [tesdal]
+
 
 1.0a3 - Released May 28, 2008
 -----------------------------
@@ -125,6 +136,7 @@ Changelog
   getObjPositionInParent.
   [tesdal]
 
+
 1.0a2 - Released May 25, 2008
 -----------------------------
 
@@ -141,6 +153,7 @@ Changelog
 * Fixed monkey patches so that normal indexing remains functional when queued
   indexing has been deactivated (or the GS profile had not been applied yet).
   [witsch]
+
 
 1.0a1 - Released March 31, 2008
 -------------------------------
