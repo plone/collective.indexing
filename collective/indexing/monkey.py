@@ -12,7 +12,10 @@ from collective.indexing.indexer import monkeyMethods
 from collective.indexing.indexer import index, reindex, unindex
 from collective.indexing.subscribers import filterTemporaryItems
 
-logger = getLogger('collective.indexing')
+logger = getLogger(__name__)
+debug = logger.debug
+info = logger.info
+
 
 def indexObject(self):
     if not isActive():
@@ -56,10 +59,9 @@ for module, container in ((CMFCatalogAware, catalogAwareMethods),
         module.indexObject = indexObject
         module.reindexObject = reindexObject
         module.unindexObject = unindexObject
-        
-        logger.info("Patching %s" % str(module.indexObject))
-        logger.info("Patching %s" % str(module.reindexObject))
-        logger.info("Patching %s" % str(module.unindexObject))
+        info('patched %s', str(module.indexObject))
+        info('patched %s', str(module.reindexObject))
+        info('patched %s', str(module.unindexObject))
 
 # also record the new methods in order to be able to compare them
 monkeyMethods.update({
@@ -75,15 +77,16 @@ monkeyMethods.update({
 from Products.CMFPlone.CatalogTool import CatalogTool
 from collective.indexing.utils import autoFlushQueue
 
+
 def searchResults(self, REQUEST=None, **kw):
     """ flush the queue before querying the catalog """
-    logger.debug('auto-flush for regular search: %r, %r', REQUEST, kw)
+    debug('auto-flush for regular search: %r, %r', REQUEST, kw)
     autoFlushQueue()
     return self.__af_old_searchResults(REQUEST, **kw)
 
 def unrestrictedSearchResults(self, REQUEST=None, **kw):
     """ flush the queue before querying the catalog """
-    logger.debug('auto-flush for unrestricted search: %r, %r', REQUEST, kw)
+    debug('auto-flush for unrestricted search: %r, %r', REQUEST, kw)
     autoFlushQueue()
     return self.__af_old_unrestrictedSearchResults(REQUEST, **kw)
 
@@ -96,26 +99,28 @@ def setAutoFlush(enable=True):
             CatalogTool.__af_old_searchResults = CatalogTool.searchResults
             CatalogTool.searchResults = searchResults
             CatalogTool.__call__ = searchResults
-            logger.info("Patching CatalogTool.searchResults")
+            info('patched %s', str(CatalogTool.searchResults))
+            info('patched %s', str(CatalogTool.__call__))
         if not hasattr(CatalogTool, '__af_old_unrestrictedSearchResults'):
             CatalogTool.__af_old_unrestrictedSearchResults = CatalogTool.unrestrictedSearchResults
             CatalogTool.unrestrictedSearchResults = unrestrictedSearchResults
-            logger.info("Patching CatalogTool.unrestrictedSearchResults")
+            info('patched %s', str(CatalogTool.unrestrictedSearchResults))
     else:
         if hasattr(CatalogTool, '__af_old_searchResults'):
             CatalogTool.searchResults = CatalogTool.__af_old_searchResults
             CatalogTool.__call__ = CatalogTool.__af_old_searchResults
             delattr(CatalogTool, '__af_old_searchResults')
-            logger.info("Removing patch from CatalogTool.searchResults and CatalogTool.__call__")
+            info('removed patch from %s', str(CatalogTool.searchResults))
+            info('removed patch from %s', str(CatalogTool.__call__))
         if hasattr(CatalogTool, '__af_old_unrestrictedSearchResults'):
             CatalogTool.unrestrictedSearchResults = CatalogTool.__af_old_unrestrictedSearchResults
             delattr(CatalogTool, '__af_old_unrestrictedSearchResults')
-            logger.info("Removing patch from CatalogTool.unrestrictedSearchResults")
-            
+            info('removed patch from %s', str(CatalogTool.unrestrictedSearchResults))
+
 # auto-flush is enabled by default, so...
 from collective.indexing.config import AUTO_FLUSH
 setAutoFlush(AUTO_FLUSH)
-logger.info("setAutoFlush to %s" % AUTO_FLUSH)
+info('setAutoFlush to %s', AUTO_FLUSH)
 
 
 # in plone 3.x renaming an item triggers a call to `reindexOnReorder`,
@@ -138,5 +143,5 @@ def reindexOnReorder(self, parent):
                 obj.reindexObject(['getObjPositionInParent'])
 
 PloneTool.reindexOnReorder = reindexOnReorder
-logger.info("Patching PloneTool.reindexOnReorder")
+info('patched %s', str(PloneTool.reindexOnReorder))
 
