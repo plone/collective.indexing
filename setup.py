@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 from os.path import join
 
-version = open(join('collective', 'indexing', 'version.txt')).read()
+version = open(join('src', 'collective', 'indexing', 'version.txt')).read()
 readme = open("README.txt").read()
 history = open(join('docs', 'HISTORY.txt')).read()
 
@@ -27,7 +27,8 @@ setup(name = 'collective.indexing',
       url = 'http://plone.org/products/collective.indexing',
       download_url = 'http://cheeseshop.python.org/pypi/collective.indexing/',
       license = 'GPL',
-      packages = find_packages(exclude=['ez_setup']),
+      packages = find_packages('src'),
+      package_dir = {'': 'src'},
       namespace_packages = ['collective'],
       include_package_data = True,
       platforms = 'Any',
