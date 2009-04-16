@@ -25,7 +25,7 @@ def getIndexer():
         assert len(indexers) < 1, 'cannot use multiple direct indexers; please enable queueing'
 
 
-def autoFlush():
+def isAutoFlushing():
     config = queryUtility(IIndexingConfig)
     if config is not None:
         return config.auto_flush
@@ -35,5 +35,5 @@ def autoFlush():
 def autoFlushQueue():
     """ process the queue (for this thread) immediately if the
         auto-flush feature is enabled """
-    if isActive() and autoFlush():
+    if isActive() and isAutoFlushing():
         return processQueue()

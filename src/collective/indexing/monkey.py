@@ -120,8 +120,8 @@ def setupAutoFlush(enable=True):
     info('set indexing auto-flushing to %s', enable)
 
 # (de)activate the auto-flush patches according to the setting...
-from collective.indexing.utils import autoFlush
-setupAutoFlush(autoFlush())
+from collective.indexing.utils import isAutoFlushing
+setupAutoFlush(isAutoFlushing())
 
 
 # in plone 3.x renaming an item triggers a call to `reindexOnReorder`,
