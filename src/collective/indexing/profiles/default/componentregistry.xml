@@ -4,7 +4,7 @@
  <utilities>
   <utility
      interface="collective.indexing.interfaces.IIndexingConfig"
-     factory="collective.indexing.config.IndexingConfig"/>
+     factory="collective.indexing.configuration.IndexingConfig"/>
   <utility
      interface="collective.indexing.indexer.IPortalCatalogQueueProcessor"
      name="portal-catalog"
