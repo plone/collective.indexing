@@ -119,7 +119,6 @@ def setupAutoFlush(enable=True):
             CatalogTool.unrestrictedSearchResults = CatalogTool.__af_old_unrestrictedSearchResults
             delattr(CatalogTool, '__af_old_unrestrictedSearchResults')
             info('removed patch from %s', str(CatalogTool.unrestrictedSearchResults))
-    info('set indexing auto-flushing to %s', enable)
 
 # (de)activate the auto-flush patches according to the setting...
 from collective.indexing.utils import isAutoFlushing
