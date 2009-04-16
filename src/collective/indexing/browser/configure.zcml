@@ -1,0 +1,23 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="collective.indexing">
+
+    <browser:resourceDirectory
+        name="collective.indexing.resources"
+        directory="resources" />
+
+    <configure zcml:condition="installed plone.app.controlpanel">
+
+        <adapter factory=".configlet.IndexingControlPanelAdapter" />
+
+        <browser:page
+            name="indexing-controlpanel"
+            for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+            class=".configlet.IndexingControlPanel"
+            permission="cmf.ManagePortal" />
+
+    </configure>
+
+</configure>

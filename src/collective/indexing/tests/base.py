@@ -7,6 +7,7 @@ from Products.Five import fiveconfigure
 from Products.Five.testbrowser import Browser
 from Products.PloneTestCase import PloneTestCase as ptc
 from Products.PloneTestCase.layer import onsetup
+from plone.app.controlpanel.tests.cptc import ControlPanelTestCase
 
 from collective.indexing.tests.layer import IndexingLayer
 
@@ -40,3 +41,9 @@ class IndexingFunctionalTestCase(ptc.FunctionalTestCase):
             pwd = ptc.default_password
             browser.addHeader('Authorization', 'Basic %s:%s' % (user, pwd))
         return browser
+
+
+class IndexingControlPanelTestCase(ControlPanelTestCase):
+    """ base class for control panel tests """
+
+    layer = IndexingLayer
