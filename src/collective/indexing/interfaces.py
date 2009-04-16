@@ -58,10 +58,6 @@ class IIndexQueue(IIndexing):
         """ clear the queue's contents in an ordered fashion """
 
 
-class IIndexQueueSwitch(Interface):
-    """ marker interface for switching queued indexing on/off """
-
-
 class IIndexQueueProcessor(IIndexing):
     """ a queue processor, i.e. an actual implementation of index operations
         for a particular search engine, e.g. the catalog, solr etc """

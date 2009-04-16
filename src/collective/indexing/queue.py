@@ -1,12 +1,10 @@
 from logging import getLogger
 from threading import local
-from persistent import Persistent
 from zope.interface import implements
 from zope.component import queryUtility, getUtilitiesFor
 from Acquisition import aq_base, aq_inner
 
 from collective.indexing.interfaces import IIndexQueue
-from collective.indexing.interfaces import IIndexQueueSwitch
 from collective.indexing.interfaces import IIndexQueueProcessor
 from collective.indexing.interfaces import IQueueReducer
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
@@ -169,8 +167,3 @@ class IndexQueue(local):
         debug('clearing %d queue item(s)', len(self.queue))
         del self.queue[:]
         self.tmhook = None      # release transaction manager...
-
-
-class IndexQueueSwitch(Persistent):
-    """ marker utility for switching queued indexing on/off """
-    implements(IIndexQueueSwitch)

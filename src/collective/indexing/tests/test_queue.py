@@ -8,10 +8,11 @@ from zope.testing.cleanup import CleanUp
 
 from collective.indexing.interfaces import IIndexQueue
 from collective.indexing.interfaces import IIndexQueueProcessor
-from collective.indexing.interfaces import IIndexQueueSwitch
+from collective.indexing.interfaces import IIndexingConfig
 from collective.indexing.interfaces import IQueueReducer
 from collective.indexing.reducer import QueueReducer
-from collective.indexing.queue import IndexQueue, IndexQueueSwitch
+from collective.indexing.queue import IndexQueue
+from collective.indexing.config import IndexingConfig
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
 from collective.indexing.utils import getIndexer
 from collective.indexing.tests import utils
@@ -208,7 +209,7 @@ class QueueThreadTests(TestCase):
     """ thread tests modeled after zope.thread doctests """
 
     def setUp(self):
-        provideUtility(IndexQueueSwitch(), IIndexQueueSwitch)
+        provideUtility(IndexingConfig(), IIndexingConfig)
         self.me = getIndexer()
         self.failUnless(IIndexQueue.providedBy(self.me), 'non-queued indexer found')
 

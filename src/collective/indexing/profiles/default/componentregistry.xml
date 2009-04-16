@@ -3,9 +3,6 @@
  <adapters/>
  <utilities>
   <utility
-     interface="collective.indexing.interfaces.IIndexQueueSwitch"
-     factory="collective.indexing.queue.IndexQueueSwitch"/>
-  <utility
      interface="collective.indexing.interfaces.IIndexingConfig"
      factory="collective.indexing.config.IndexingConfig"/>
   <utility

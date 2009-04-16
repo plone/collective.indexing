@@ -1,13 +1,16 @@
 from zope.component import queryUtility, getUtilitiesFor
 from collective.indexing.interfaces import IIndexing
-from collective.indexing.interfaces import IIndexQueueSwitch
+from collective.indexing.interfaces import IIndexingConfig
 from collective.indexing.queue import getQueue
 from collective.indexing.queue import processQueue
 from collective.indexing.config import AUTO_FLUSH
 
 
 def isActive():
-    return queryUtility(IIndexQueueSwitch) is not None
+    config = queryUtility(IIndexingConfig)
+    if config is not None:
+        return config.active
+    return False
 
 
 def getIndexer():

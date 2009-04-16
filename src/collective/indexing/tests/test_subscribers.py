@@ -6,9 +6,9 @@ from zope.component import provideUtility, getUtilitiesFor, getGlobalSiteManager
 from transaction import savepoint
 
 from collective.indexing.interfaces import IIndexQueue, IIndexing
-from collective.indexing.interfaces import IIndexQueueSwitch
+from collective.indexing.interfaces import IIndexingConfig
+from collective.indexing.config import IndexingConfig
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
-from collective.indexing.queue import IndexQueueSwitch
 from collective.indexing.utils import getIndexer
 from collective.indexing.tests import utils
 
@@ -111,8 +111,8 @@ class IntegrationTests(IndexingTestCase):
         provideUtility(mock_indexer, name='rexedni')
         self.assertRaises(AssertionError, getIndexer)
         # queued indexing is enabled...
-        switch = IndexQueueSwitch()
-        provideUtility(switch, IIndexQueueSwitch)
+        config = IndexingConfig()
+        provideUtility(config, IIndexingConfig)
         indexer = getIndexer()
         self.failUnless(indexer, 'no indexer found')
         self.failUnless(IIndexQueue.providedBy(indexer), 'non-queued indexer found')
@@ -123,7 +123,7 @@ class IntegrationTests(IndexingTestCase):
         unregister = getGlobalSiteManager().unregisterUtility
         unregister(direct_indexer, name='indexer')
         unregister(mock_indexer, name='rexedni')
-        unregister(switch, IIndexQueueSwitch)
+        unregister(config, IIndexingConfig)
 
 
 def test_suite():
