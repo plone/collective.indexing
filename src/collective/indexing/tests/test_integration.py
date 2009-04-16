@@ -9,7 +9,7 @@ from transaction import commit
 from Products.CMFCore.utils import getToolByName
 from Products.ATContentTypes.content.event import ATEvent
 from collective.indexing.utils import isActive
-from collective.indexing.monkey import setAutoFlush
+from collective.indexing.monkey import setupAutoFlush
 from collective.indexing.utils import autoFlush
 
 
@@ -33,12 +33,12 @@ class AutoFlushTests(IndexingTestCase, TestHelpers):
         setup.manage_delObjects(setup.objectIds())
 
     def beforeTearDown(self):
-        setAutoFlush(autoFlush())       # reset to default
+        setupAutoFlush(autoFlush())     # reset to default
 
     def testNoAutoFlush(self):
         # without auto-flush we must commit to update the catalog
         self.failUnless(isActive())
-        setAutoFlush(False)
+        setupAutoFlush(False)
         self.assertEqual(self.create(), [])
         commit()
         self.assertEqual(self.fileIds(), ['foo'])
@@ -49,7 +49,7 @@ class AutoFlushTests(IndexingTestCase, TestHelpers):
     def testAutoFlush(self):
         # with auto-flush enabled the catalog is always up-to-date
         self.failUnless(isActive())
-        setAutoFlush(True)
+        setupAutoFlush(True)
         # no commits required now
         self.assertEqual(self.create(), ['foo'])
         self.assertEqual(self.fileIds(), ['foo'])
@@ -61,7 +61,7 @@ class AutoFlushTests(IndexingTestCase, TestHelpers):
         # processing via auto-flush, used to potentially cause an infinite
         # loop;  hence recursive auto-flushing must be prevented...
         self.failUnless(isActive())
-        setAutoFlush(True)
+        setupAutoFlush(True)
         foo = self.folder[self.folder.invokeFactory('Event', id='foo')]
         # monkey-patch foo's `sortable_title` method to use the catalog...
         original = ATEvent.getEventType

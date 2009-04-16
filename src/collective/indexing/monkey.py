@@ -92,7 +92,7 @@ def unrestrictedSearchResults(self, REQUEST=None, **kw):
     return self.__af_old_unrestrictedSearchResults(REQUEST, **kw)
 
 
-def setAutoFlush(enable=True):
+def setupAutoFlush(enable=True):
     """ apply or revert monkey-patch for `searchResults`
         and `unrestrictedSearchResults` """
     if enable:
@@ -121,7 +121,7 @@ def setAutoFlush(enable=True):
 
 # (de)activate the auto-flush patches according to the setting...
 from collective.indexing.utils import autoFlush
-setAutoFlush(autoFlush())
+setupAutoFlush(autoFlush())
 
 
 # in plone 3.x renaming an item triggers a call to `reindexOnReorder`,

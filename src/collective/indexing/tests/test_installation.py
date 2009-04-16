@@ -8,17 +8,17 @@ ptc.setupPloneSite()
 # test-specific imports go here...
 from transaction import commit
 from collective.indexing.utils import isActive
-from collective.indexing.monkey import setAutoFlush
+from collective.indexing.monkey import setupAutoFlush
 from collective.indexing.utils import autoFlush
 
 
 class InstallationTests(ptc.PloneTestCase, TestHelpers):
 
     def afterSetUp(self):
-        setAutoFlush(False)             # turn off auto-flushing...
+        setupAutoFlush(False)           # turn off auto-flushing...
 
     def beforeTearDown(self):
-        setAutoFlush(autoFlush())       # reset to default
+        setupAutoFlush(autoFlush())     # reset to default
 
     def testInstallation(self):
         # without the product indexing should happen normally...
