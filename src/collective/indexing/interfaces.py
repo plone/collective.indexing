@@ -3,9 +3,9 @@ from zope.interface import Interface
 
 class IIndexing(Interface):
     """ interface for indexing operations, used both for the queue and
-        the 'stores', which perform the actual indexing;  the queue gets
-        registered as a utility while the indexers (portal catalog, solr)
-        are registerd as adapters """
+        the processors, which perform the actual indexing;  the queue gets
+        registered as a utility while the processors (portal catalog, solr)
+        are registered as named utilties """
 
     def index(obj, attributes=None):
         """ queue an index operation for the given object and attributes """
