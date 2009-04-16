@@ -7,7 +7,7 @@ from transaction import savepoint
 
 from collective.indexing.interfaces import IIndexQueue, IIndexing
 from collective.indexing.interfaces import IIndexingConfig
-from collective.indexing.configuration import IndexingConfig
+from collective.indexing.config import IndexingConfig
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
 from collective.indexing.utils import getIndexer
 from collective.indexing.tests import utils
