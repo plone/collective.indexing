@@ -7,18 +7,12 @@ ptc.setupPloneSite()
 
 # test-specific imports go here...
 from transaction import commit
-from collective.indexing.utils import isActive
-from collective.indexing.monkey import setupAutoFlush
-from collective.indexing.utils import isAutoFlushing
+from zope.component import getUtility
+from collective.indexing.interfaces import IIndexingConfig
+from collective.indexing.utils import isActive, isAutoFlushing
 
 
 class InstallationTests(ptc.PloneTestCase, TestHelpers):
-
-    def afterSetUp(self):
-        setupAutoFlush(False)               # turn off auto-flushing...
-
-    def beforeTearDown(self):
-        setupAutoFlush(isAutoFlushing())    # reset to default
 
     def testInstallation(self):
         # without the product indexing should happen normally...
@@ -33,7 +27,10 @@ class InstallationTests(ptc.PloneTestCase, TestHelpers):
         # the profile gets applied, i.e. the package is quick-installed
         # again, things should get indexed, but only at transaction commit
         self.portal.portal_quickinstaller.installProduct('collective.indexing')
+        # for this test we first want to turn off auto-flushing, though...
+        getUtility(IIndexingConfig).auto_flush = False
         self.failUnless(isActive())
+        self.failIf(isAutoFlushing())
         self.assertEqual(self.create(), [])
         commit()
         self.assertEqual(self.fileIds(), ['foo'])

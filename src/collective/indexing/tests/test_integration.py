@@ -6,11 +6,11 @@ from collective.indexing.tests.utils import TestHelpers
 
 # test-specific imports go here...
 from transaction import commit
+from zope.component import getUtility
 from Products.CMFCore.utils import getToolByName
 from Products.ATContentTypes.content.event import ATEvent
+from collective.indexing.interfaces import IIndexingConfig
 from collective.indexing.utils import isActive
-from collective.indexing.monkey import setupAutoFlush
-from collective.indexing.utils import isAutoFlushing
 
 
 def getEventType(self):
@@ -31,14 +31,15 @@ class AutoFlushTests(IndexingTestCase, TestHelpers):
         # clear logs to avoid id collisions
         setup = self.portal.portal_setup
         setup.manage_delObjects(setup.objectIds())
+        self.config = getUtility(IIndexingConfig)
 
     def beforeTearDown(self):
-        setupAutoFlush(isAutoFlushing())    # reset to default
+        self.config.auto_flush = True       # reset to default
 
     def testNoAutoFlush(self):
         # without auto-flush we must commit to update the catalog
         self.failUnless(isActive())
-        setupAutoFlush(False)
+        self.config.auto_flush = False
         self.assertEqual(self.create(), [])
         commit()
         self.assertEqual(self.fileIds(), ['foo'])
@@ -49,7 +50,7 @@ class AutoFlushTests(IndexingTestCase, TestHelpers):
     def testAutoFlush(self):
         # with auto-flush enabled the catalog is always up-to-date
         self.failUnless(isActive())
-        setupAutoFlush(True)
+        self.config.auto_flush = True
         # no commits required now
         self.assertEqual(self.create(), ['foo'])
         self.assertEqual(self.fileIds(), ['foo'])
@@ -61,7 +62,7 @@ class AutoFlushTests(IndexingTestCase, TestHelpers):
         # processing via auto-flush, used to potentially cause an infinite
         # loop;  hence recursive auto-flushing must be prevented...
         self.failUnless(isActive())
-        setupAutoFlush(True)
+        self.config.auto_flush = True
         foo = self.folder[self.folder.invokeFactory('Event', id='foo')]
         # monkey-patch foo's `sortable_title` method to use the catalog...
         original = ATEvent.getEventType
