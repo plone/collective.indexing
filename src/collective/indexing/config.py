@@ -8,9 +8,6 @@ UNINDEX = -1
 REINDEX = 0
 INDEX = 1
 
-# process indexing queue before every query
-AUTO_FLUSH = True
-
 
 class IndexingConfig(Persistent):
     """ utility to hold the configuration related to indexing """
@@ -18,4 +15,4 @@ class IndexingConfig(Persistent):
 
     def __init__(self):
         self.active = True
-        self.auto_flush = True
+        self.auto_flush = True  # process indexing queue before every query

@@ -10,7 +10,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.ATContentTypes.content.event import ATEvent
 from collective.indexing.utils import isActive
 from collective.indexing.monkey import setAutoFlush
-from collective.indexing.config import AUTO_FLUSH
+from collective.indexing.utils import autoFlush
 
 
 def getEventType(self):
@@ -33,8 +33,7 @@ class AutoFlushTests(IndexingTestCase, TestHelpers):
         setup.manage_delObjects(setup.objectIds())
 
     def beforeTearDown(self):
-        # reset to default
-        setAutoFlush(AUTO_FLUSH)
+        setAutoFlush(autoFlush())       # reset to default
 
     def testNoAutoFlush(self):
         # without auto-flush we must commit to update the catalog

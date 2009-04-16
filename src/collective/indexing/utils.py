@@ -3,7 +3,6 @@ from collective.indexing.interfaces import IIndexing
 from collective.indexing.interfaces import IIndexingConfig
 from collective.indexing.queue import getQueue
 from collective.indexing.queue import processQueue
-from collective.indexing.config import AUTO_FLUSH
 
 
 def isActive():
@@ -26,8 +25,15 @@ def getIndexer():
         assert len(indexers) < 1, 'cannot use multiple direct indexers; please enable queueing'
 
 
+def autoFlush():
+    config = queryUtility(IIndexingConfig)
+    if config is not None:
+        return config.auto_flush
+    return True                     # on by default as a safety net...
+
+
 def autoFlushQueue():
     """ process the queue (for this thread) immediately if the
         auto-flush feature is enabled """
-    if isActive() and AUTO_FLUSH:
+    if isActive() and autoFlush():
         return processQueue()
