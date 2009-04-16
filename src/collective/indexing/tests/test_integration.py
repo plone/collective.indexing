@@ -9,6 +9,7 @@ from transaction import commit
 from zope.component import getUtility
 from Products.CMFCore.utils import getToolByName
 from Products.ATContentTypes.content.event import ATEvent
+from Products.CMFPlone.CatalogTool import CatalogTool
 from collective.indexing.interfaces import IIndexingConfig
 from collective.indexing.utils import isActive
 
@@ -71,6 +72,26 @@ class AutoFlushTests(IndexingTestCase, TestHelpers):
         commit()
         # un-monkey again in the end
         ATEvent.getEventType = original
+
+    def testAutoFlushMonkeyPatchChaining(self):
+        # (de)activating auto-flushing shouldn't cause other monkey
+        # patches to be masqueraded or otherwise disabled...
+        # first let's set up another monkey patch...
+        log = []
+        original = CatalogTool.searchResults
+        def searchResults(self, REQUEST=None, **kw):
+            log.append('monkey called')
+            return original(self, REQUEST, **kw)
+        CatalogTool.searchResults = searchResults
+        # next we search something and make sure the monkey's in place...
+        self.assertEqual(len(self.portal.portal_catalog.searchResults(Title='news')), 2)
+        self.assertEqual(log, ['monkey called'])
+        # auto-flushing get deactivated and then activated again...
+        self.config.auto_flush = False
+        self.config.auto_flush = True
+        # after which another search should still our monkey patch...
+        self.assertEqual(len(self.portal.portal_catalog.searchResults(Title='news')), 2)
+        self.assertEqual(log, ['monkey called'] * 2)
 
 
 def test_suite():

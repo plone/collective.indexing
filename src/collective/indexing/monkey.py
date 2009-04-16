@@ -80,15 +80,17 @@ from collective.indexing.utils import autoFlushQueue
 
 def searchResults(self, REQUEST=None, **kw):
     """ flush the queue before querying the catalog """
-    debug('auto-flush for regular search: %r, %r', REQUEST, kw)
-    autoFlushQueue()
+    if isAutoFlushing():
+        debug('auto-flush for regular search: %r, %r', REQUEST, kw)
+        autoFlushQueue()
     return self.__af_old_searchResults(REQUEST, **kw)
 
 
 def unrestrictedSearchResults(self, REQUEST=None, **kw):
     """ flush the queue before querying the catalog """
-    debug('auto-flush for unrestricted search: %r, %r', REQUEST, kw)
-    autoFlushQueue()
+    if isAutoFlushing():
+        debug('auto-flush for unrestricted search: %r, %r', REQUEST, kw)
+        autoFlushQueue()
     return self.__af_old_unrestrictedSearchResults(REQUEST, **kw)
 
 
