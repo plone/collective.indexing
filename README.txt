@@ -38,14 +38,14 @@ transaction commit and will produce internal errors.
 Current Status
 --------------
 
-The implementation is considered to be nearly finished.  The package can be
-installed in a Plone 3.x site to enable indexing operations to be queued,
+The implementation is considered to be ready for production.  The package can
+be installed in a Plone 3.x site to enable indexing operations to be queued,
 optimized and dispatched to the standard portal catalog on the zope
 transaction boundary thereby improving the Plone's out-of-the-box
-performance_.  A buildout_ is provided for your convenience.
+performance_.  A sample buildout_ is provided for your convenience.
 
   .. _performance: http://www.jarn.com/blog/plone-indexing-performance
-  .. _buildout: http://svn.plone.org/svn/collective/collective.indexing/buildout
+  .. _buildout: http://svn.plone.org/svn/collective/collective.indexing/trunk/buildout.cfg
 
 At the moment the package requires several "monkey patches", to the mixin classes
 currently used to hook up indexing, i.e. ``CMFCatalogAware`` (from `CMF`_)
@@ -66,7 +66,7 @@ allows for minimal and very efficient indexing of standard `Plone`_ content
 items based on `Archetypes`_.  Providing support for other content types is
 rather trivial and will be support soon.
 
-  .. __: http://svn.plone.org/svn/collective/buildout/collective.recipe.solrinstance/trunk/README.txt
+  .. __: http://pypi.python.org/pypi/collective.recipe.solrinstance/
   .. _`zc.buildout`: http://pypi.python.org/pypi/zc.buildout
 
 The code was written with emphasis on minimalism, clarity and maintainability.
@@ -74,9 +74,10 @@ It comes with extensive tests covering the code base at more than 95%. The
 package is currently in use in several production sites and considered stable.
 
 For outstanding issues and features remaining to be implemented please see the
-`to-do list`__ included in the package.
+`to-do list`__ included in the package as well as it's `issue tracker`__.
 
   .. __: http://svn.plone.org/svn/collective/collective.indexing/trunk/TODO.txt
+  .. __: http://plone.org/products/collective.indexing/issues
 
 
 FAQs / Troubleshooting
