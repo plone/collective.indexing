@@ -50,7 +50,7 @@ class IPortalCatalogQueueProcessor(IIndexQueueProcessor):
         the `CatalogMultiplex` and `CMFCatalogAware` mixin classes """
 
 
-class PortalCatalogQueueProcessor(object):
+class PortalCatalogProcessor(object):
     implements(IPortalCatalogQueueProcessor)
 
     def index(self, obj, attributes=None):

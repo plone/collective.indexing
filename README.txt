@@ -79,6 +79,27 @@ For outstanding issues and features remaining to be implemented please see the
   .. __: http://svn.plone.org/svn/collective/collective.indexing/trunk/TODO.txt
 
 
+FAQs / Troubleshooting
+----------------------
+
+**"OFS.Uninstalled Could not import class '...' from module '...'" Warnings**
+
+  Symptom
+    When loading your Plone site after a Zope restart, i.e. when browsing it,
+    you're seeing warnings like::
+
+      WARNING OFS.Uninstalled Could not import class 'PortalCatalogQueueProcessor' from module 'collective.indexing.indexer'
+      WARNING OFS.Uninstalled Could not import class 'IndexQueueSwitch' from module 'collective.indexing.queue'
+  Problem
+    Early versions of the package used persistent local utilities, which are
+    still present in your ZODB.  These utilities have meanwhile been replaced
+    and the old instances aren't needed anymore.
+  Solution
+    Please use the ZMI "Components" tab on your site root object, typically
+    located at http://localhost:8080/plone/manage_components, to remove the
+    broken utilities from the XML.  Search for "broken".
+
+
 Credits
 -------
 

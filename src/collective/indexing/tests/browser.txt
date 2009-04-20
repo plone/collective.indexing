@@ -25,13 +25,13 @@ numbers show that the queue was used in the first place:
   ...     q_index(self, obj, attributes)
   >>> IndexQueue.index = index
 
-  >>> from collective.indexing.indexer import PortalCatalogQueueProcessor
-  >>> p_index = PortalCatalogQueueProcessor.index
+  >>> from collective.indexing.indexer import PortalCatalogProcessor
+  >>> p_index = PortalCatalogProcessor.index
   >>> calledIndex = []
   >>> def index(self, obj, attributes=None):
   ...     calledIndex.append(repr(obj))
   ...     p_index(self, obj, attributes)
-  >>> PortalCatalogQueueProcessor.index = index
+  >>> PortalCatalogProcessor.index = index
 
 Now a first news item gets created, ...
 
@@ -129,19 +129,19 @@ preparations including more counters for reindexing and unindexing operations:
   >>> uid = portal['first-news-today'].UID()
   >>> folder = portal['a-folder']
 
-  >>> p_reindex = PortalCatalogQueueProcessor.reindex
+  >>> p_reindex = PortalCatalogProcessor.reindex
   >>> calledReindex = []
   >>> def reindex(self, obj, attributes=None):
   ...     calledReindex.append(repr(obj))
   ...     p_reindex(self, obj, attributes)
-  >>> PortalCatalogQueueProcessor.reindex = reindex
+  >>> PortalCatalogProcessor.reindex = reindex
 
-  >>> p_unindex = PortalCatalogQueueProcessor.unindex
+  >>> p_unindex = PortalCatalogProcessor.unindex
   >>> calledUnindex = []
   >>> def unindex(self, obj):
   ...     calledUnindex.append(repr(obj))
   ...     p_unindex(self, obj)
-  >>> PortalCatalogQueueProcessor.unindex = unindex
+  >>> PortalCatalogProcessor.unindex = unindex
 
 Now the item can be moved to the newly created folder:
 
@@ -341,7 +341,7 @@ again now:
 Also, clean up the monkey patches:
 
   >>> IndexQueue.index = q_index
-  >>> PortalCatalogQueueProcessor.index = p_index
-  >>> PortalCatalogQueueProcessor.reindex = p_reindex
-  >>> PortalCatalogQueueProcessor.unindex = p_unindex
+  >>> PortalCatalogProcessor.index = p_index
+  >>> PortalCatalogProcessor.reindex = p_reindex
+  >>> PortalCatalogProcessor.unindex = p_unindex
 

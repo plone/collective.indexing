@@ -8,6 +8,6 @@
   <utility
      interface="collective.indexing.indexer.IPortalCatalogQueueProcessor"
      name="portal-catalog"
-     factory="collective.indexing.indexer.PortalCatalogQueueProcessor"/>
+     factory="collective.indexing.indexer.PortalCatalogProcessor"/>
  </utilities>
 </componentregistry>
