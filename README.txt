@@ -96,9 +96,11 @@ FAQs / Troubleshooting
     still present in your ZODB.  These utilities have meanwhile been replaced
     and the old instances aren't needed anymore.
   Solution
-    Please use the ZMI "Components" tab on your site root object, typically
-    located at http://localhost:8080/plone/manage_components, to remove the
-    broken utilities from the XML.  Search for "broken".
+    Please simply re-install the package via Plone's control panel or the
+    quick-installer.  Alternatively you can also use the ZMI "Components" tab
+    on your site root object, typically located at
+    http://localhost:8080/plone/manage_components, to remove the broken
+    utilities from the XML.  Search for "broken".
 
 
 Credits
