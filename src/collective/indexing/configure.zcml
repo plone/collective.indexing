@@ -14,4 +14,10 @@
         provides=".interfaces.IQueueReducer"
         />
 
+    <adapter
+        factory=".exportimport.ConfigXMLAdapter"
+        provides="Products.GenericSetup.interfaces.IBody"
+        for=".interfaces.IIndexingConfig
+             Products.GenericSetup.interfaces.ISetupEnviron" />
+
 </configure>

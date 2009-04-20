@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<object name="indexing">
+  <settings>
+    <active value="True" />
+    <auto-flush value="True" />
+  </settings>
+</object>

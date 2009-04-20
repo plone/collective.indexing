@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<export-steps>
+ <export-step id="indexing"
+           handler="collective.indexing.exportimport.exportSettings"
+           title="Indexing configuration">
+  Export settings for queued indexing.
+ </export-step>
+</export-steps>

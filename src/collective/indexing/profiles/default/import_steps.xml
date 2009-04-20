@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<import-steps>
+ <import-step id="indexing" version="20090420-01"
+           handler="collective.indexing.exportimport.importSettings"
+           title="Indexing configuration">
+  <dependency step="componentregistry"/>
+  Import settings for queued indexing.
+ </import-step>
+</import-steps>
