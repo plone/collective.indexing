@@ -1,8 +1,12 @@
 Changelog
 =========
 
-1.0rc5 - Unreleased
+1.0rc6 - Unreleased
 -------------------
+
+
+1.0rc5 - Released April 20th, 2009
+----------------------------------
 
 * Add support for GenericSetup.
   [witsch]
