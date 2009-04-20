@@ -4,6 +4,9 @@ Changelog
 1.0rc5 - Unreleased
 -------------------
 
+* Add support for GenericSetup.
+  [witsch]
+
 * Add configlet to allow TTW activation and configuration.
   [witsch]
 
