@@ -1,6 +1,7 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:five="http://namespaces.zope.org/five"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="collective.indexing">
 
     <five:registerPackage package="." initialize=".initialize" />
@@ -19,5 +20,19 @@
         provides="Products.GenericSetup.interfaces.IBody"
         for=".interfaces.IIndexingConfig
              Products.GenericSetup.interfaces.ISetupEnviron" />
+
+    <genericsetup:exportStep
+        name="indexing"
+        title="Indexing configuration"
+        description="Export settings for queued indexing."
+        handler="collective.indexing.exportimport.exportSettings" />
+
+    <genericsetup:importStep
+        name="indexing"
+        title="Indexing configuration"
+        description="Import settings for queued indexing."
+        handler="collective.indexing.exportimport.importSettings">
+      <depends name="componentregistry"/>
+    </genericsetup:importStep>
 
 </configure>
