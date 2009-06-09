@@ -35,7 +35,7 @@ def unindexObject(self):
         indexer.unindex(obj)
 
 
-def reindexObject(self, idxs=None):
+def reindexObject(self, idxs=[]):
     if not isActive():
         return reindex(self, idxs)
     obj = filterTemporaryItems(self)
