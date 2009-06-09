@@ -93,6 +93,27 @@ class AutoFlushTests(IndexingTestCase, TestHelpers):
         self.assertEqual(len(self.portal.portal_catalog.searchResults(Title='news')), 2)
         self.assertEqual(log, ['monkey called'] * 2)
 
+    def testGetCounterWithoutAutoFlush(self):
+        # without auto-flush we must commit to update the catalog counter
+        self.failUnless(isActive())
+        self.config.auto_flush = False
+        catalog = self.portal.portal_catalog
+        value = catalog.getCounter()
+        self.folder.update(title='Foo')
+        self.assertEqual(catalog.getCounter(), value)
+        commit()
+        self.assertTrue(catalog.getCounter() > value)
+
+    def testGetCounterWithAutoFlush(self):
+        # with auto-flush enabled the catalog counter is always up-to-date
+        self.failUnless(isActive())
+        self.config.auto_flush = True
+        # no commits required now
+        catalog = self.portal.portal_catalog
+        value = catalog.getCounter()
+        self.folder.update(title='Foo')
+        self.assertTrue(catalog.getCounter() > value)
+
 
 def test_suite():
     return defaultTestLoader.loadTestsFromName(__name__)

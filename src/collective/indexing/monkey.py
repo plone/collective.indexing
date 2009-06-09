@@ -94,6 +94,14 @@ def unrestrictedSearchResults(self, REQUEST=None, **kw):
     return self.__af_old_unrestrictedSearchResults(REQUEST, **kw)
 
 
+def getCounter(self):
+    """ return a counter which is increased on catalog changes """
+    if isAutoFlushing():
+        debug('auto-flush for getCounter')
+        autoFlushQueue()
+    return self.__af_old_getCounter()
+
+
 def setupAutoFlush(enable=True):
     """ apply or revert monkey-patch for `searchResults`
         and `unrestrictedSearchResults` """
@@ -108,6 +116,10 @@ def setupAutoFlush(enable=True):
             CatalogTool.__af_old_unrestrictedSearchResults = CatalogTool.unrestrictedSearchResults
             CatalogTool.unrestrictedSearchResults = unrestrictedSearchResults
             info('patched %s', str(CatalogTool.unrestrictedSearchResults))
+        if not hasattr(CatalogTool, '__af_old_getCounter'):
+            CatalogTool.__af_old_getCounter = CatalogTool.getCounter
+            CatalogTool.getCounter = getCounter
+            info('patched %s', str(CatalogTool.getCounter))
     else:
         if hasattr(CatalogTool, '__af_old_searchResults'):
             CatalogTool.searchResults = CatalogTool.__af_old_searchResults
@@ -119,6 +131,10 @@ def setupAutoFlush(enable=True):
             CatalogTool.unrestrictedSearchResults = CatalogTool.__af_old_unrestrictedSearchResults
             delattr(CatalogTool, '__af_old_unrestrictedSearchResults')
             info('removed patch from %s', str(CatalogTool.unrestrictedSearchResults))
+        if hasattr(CatalogTool, '__af_old_getCounter'):
+            CatalogTool.getCounter = CatalogTool.__af_old_getCounter
+            delattr(CatalogTool, '__af_old_getCounter')
+            info('removed patch from %s', str(CatalogTool.getCounter))
 
 # (de)activate the auto-flush patches according to the setting...
 from collective.indexing.utils import isAutoFlushing

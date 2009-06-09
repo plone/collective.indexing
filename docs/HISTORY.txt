@@ -4,6 +4,10 @@ Changelog
 1.1 - Unreleased
 ----------------
 
+* Patch `CatalogTool.getCounter` to process the indexing queue before
+  returning the counter indicating catalog changes (aka auto-flush).
+  [witsch]
+
 
 1.0 - Released May 8th, 2009
 ----------------------------
