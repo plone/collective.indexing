@@ -4,10 +4,6 @@ Changelog
 1.1 - Unreleased
 ----------------
 
-* Change default idxs parameter for index operations to []. This brings it in
-  sync with catalog implementations and fixes problems with catalogs other
-  than portal_catalog.
-  [wichert]
 
 1.0 - Released May 8th, 2009
 ----------------------------

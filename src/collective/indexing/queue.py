@@ -87,13 +87,13 @@ class IndexQueue(local):
             self.tmhook = QueueTM(self).register
         self.tmhook()
 
-    def index(self, obj, attributes=[]):
+    def index(self, obj, attributes=None):
         assert obj is not None, 'invalid object'
         debug('adding index operation for %r', obj)
         self.queue.append((INDEX, obj, attributes))
         self.hook()
 
-    def reindex(self, obj, attributes=[]):
+    def reindex(self, obj, attributes=None):
         assert obj is not None, 'invalid object'
         debug('adding reindex operation for %r', obj)
         self.queue.append((REINDEX, obj, attributes))
