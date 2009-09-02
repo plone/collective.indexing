@@ -4,6 +4,9 @@ Changelog
 1.2 - Unreleased
 ----------------
 
+* Fix event subscriber for `IObjectModified` events without a description.
+  [gweis]
+
 
 1.1 - Released June 9th, 2009
 -----------------------------

@@ -42,7 +42,7 @@ def objectModified(ev):
     if obj is None or indexer is None:
         return
     debug('object modified event for %r, reindexing using %r', obj, indexer)
-    if ev.descriptions:     # not used by archetypes/plone atm...
+    if getattr(ev, 'descriptions', None):   # not used by archetypes/plone atm
         # build the list of to be updated attributes
         attrs = []
         for desc in ev.descriptions:
