@@ -83,6 +83,16 @@ For outstanding issues and features remaining to be implemented please see the
 FAQs / Troubleshooting
 ----------------------
 
+The following tries to address some of the known issues.  Please also make
+sure to check the package's `issue tracker`__ and use it to report new bugs
+and/or discuss possible enhancements.  Alternatively, feedback via the
+`"Plone Developers" mailing-list`__ or `direct mail`__ is also most welcome.
+
+  .. __: http://plone.org/products/collective.indexing/issues
+  .. __: mailto:plone-developers@lists.sourceforge.net
+  .. __: mailto:witsch@plone.org
+
+
 **"OFS.Uninstalled Could not import class '...' from module '...'" Warnings**
 
   Symptom
