@@ -4,6 +4,10 @@ Changelog
 1.2 - Unreleased
 ----------------
 
+* Changed zope.app.event imports to zope.lifecycleevent. The former was
+  deprecated since Zope 2.10.
+  [hannosch]
+
 * Fix event subscriber for `IObjectModified` events without a description.
   [gweis]
 

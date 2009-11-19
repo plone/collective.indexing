@@ -33,6 +33,9 @@ setup(name = 'collective.indexing',
       include_package_data = True,
       platforms = 'Any',
       zip_safe = False,
-      install_requires = ['setuptools'],
+      install_requires = [
+        'setuptools',
+        'zope.app.container',
+      ],
       entry_points = '',
 )
