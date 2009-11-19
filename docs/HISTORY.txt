@@ -4,6 +4,9 @@ Changelog
 1.2 - Unreleased
 ----------------
 
+* Adjusted tests to set a site explicitly in the layer.
+  [hannosch]
+
 * Changed zope.app.event imports to zope.lifecycleevent. The former was
   deprecated since Zope 2.10.
   [hannosch]

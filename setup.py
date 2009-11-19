@@ -36,6 +36,7 @@ setup(name = 'collective.indexing',
       install_requires = [
         'setuptools',
         'zope.app.container',
+        'zope.app.component',
       ],
       entry_points = '',
 )

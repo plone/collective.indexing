@@ -3,6 +3,8 @@ from Products.CMFCore.utils import getToolByName
 from Products.PloneTestCase.layer import PloneSite
 from transaction import commit
 
+from zope.app.component.hooks import setHooks, setSite
+
 
 class IndexingLayer(PloneSite):
     """ layer for integration tests with activated deferred indexing """
@@ -13,6 +15,8 @@ class IndexingLayer(PloneSite):
         installPackage('collective.indexing', quiet=True)
         root = app()
         portal = root.plone
+        setHooks()
+        setSite(portal)
         profile = 'profile-collective.indexing:default'
         tool = getToolByName(portal, 'portal_setup')
         tool.runAllImportStepsFromProfile(profile, purge_old=False)
