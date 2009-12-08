@@ -115,5 +115,17 @@ class AutoFlushTests(IndexingTestCase, TestHelpers):
         self.assertTrue(catalog.getCounter() > value)
 
 
+class OverriddenIndexMethodTests(IndexingTestCase):
+
+    layer = IndexingLayer
+
+    def testIndexObjectCallingSuper(self):
+        from collective.indexing.tests.content import addFoo
+        addFoo(self.folder, 'foo')
+        # an indexing loop will trigger the assertion in `tests/content.py`
+        # so things are fine if the commit goes through...
+        commit()
+
+
 def test_suite():
     return defaultTestLoader.loadTestsFromName(__name__)
