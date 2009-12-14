@@ -1,6 +1,7 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:five="http://namespaces.zope.org/five"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="collective.indexing">
 
     <subscriber
@@ -8,40 +9,80 @@
         for="zope.lifecycleevent.interfaces.IObjectCreatedEvent"
         trusted="y" />
 
-    <subscriber
-        handler=".subscribers.objectAdded"
-        for="zope.app.container.interfaces.IObjectAddedEvent"
-        trusted="y" />
+    <configure zcml:conditional="installed plone.app.upgrade" >
+	<subscriber
+	    handler=".subscribers.objectAdded"
+	    for="zope.lifecycleevent.interfaces.IObjectAddedEvent"
+	    trusted="y" />
 
-    <subscriber
-        handler=".subscribers.objectModified"
-        for="zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-        trusted="y" />
+	<subscriber
+	    handler=".subscribers.objectModified"
+	    for="zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+	    trusted="y" />
 
-    <subscriber
-        handler=".subscribers.objectCopied"
-        for="zope.lifecycleevent.interfaces.IObjectCopiedEvent"
-        trusted="y" />
+	<subscriber
+	    handler=".subscribers.objectCopied"
+	    for="zope.lifecycleevent.interfaces.IObjectCopiedEvent"
+	    trusted="y" />
 
-    <subscriber
-        handler=".subscribers.objectRemoved"
-        for="zope.app.container.interfaces.IObjectRemovedEvent"
-        trusted="y" />
+	<subscriber
+	    handler=".subscribers.objectRemoved"
+	    for="zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+	    trusted="y" />
 
-    <subscriber
-        handler=".subscribers.objectMoved"
-        for="zope.app.container.interfaces.IObjectMovedEvent"
-        trusted="y" />
+	<subscriber
+	    handler=".subscribers.objectMoved"
+	    for="zope.lifecycleevent.interfaces.IObjectMovedEvent"
+	    trusted="y" />
 
-    <subscriber
-        handler=".subscribers.dispatchObjectMovedEvent"
-        for="OFS.interfaces.IItem
-             zope.app.container.interfaces.IObjectMovedEvent"
-        trusted="y" />
+	<subscriber
+	    handler=".subscribers.dispatchObjectMovedEvent"
+	    for="OFS.interfaces.IItem
+		 zope.lifecycleevent.interfaces.IObjectMovedEvent"
+	    trusted="y" />
 
-    <subscriber
-        handler=".subscribers.objectTransitioned"
-        for="Products.DCWorkflow.interfaces.IAfterTransitionEvent"
-        trusted="y" />
+	<subscriber
+	    handler=".subscribers.objectTransitioned"
+	    for="Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+	    trusted="y" />
+    </configure>
+
+    <configure zcml:conditional="not-installed plone.app.upgrade">
+      <subscriber
+	  handler=".subscribers.objectAdded"
+	  for="zope.app.container.interfaces.IObjectAddedEvent"
+	  trusted="y" />
+
+      <subscriber
+	  handler=".subscribers.objectModified"
+	  for="zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+	  trusted="y" />
+
+      <subscriber
+	  handler=".subscribers.objectCopied"
+	  for="zope.lifecycleevent.interfaces.IObjectCopiedEvent"
+	  trusted="y" />
+
+      <subscriber
+	  handler=".subscribers.objectRemoved"
+	  for="zope.app.container.interfaces.IObjectRemovedEvent"
+	  trusted="y" />
+
+      <subscriber
+	  handler=".subscribers.objectMoved"
+	  for="zope.app.container.interfaces.IObjectMovedEvent"
+	  trusted="y" />
+
+      <subscriber
+	  handler=".subscribers.dispatchObjectMovedEvent"
+	  for="OFS.interfaces.IItem
+	       zope.app.container.interfaces.IObjectMovedEvent"
+	  trusted="y" />
+
+      <subscriber
+	  handler=".subscribers.objectTransitioned"
+	  for="Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+	  trusted="y" />
+    </configure>
 
 </configure>

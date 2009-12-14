@@ -4,6 +4,9 @@ Changelog
 1.2 - Unreleased
 ----------------
 
+* Add support for Zope 2.12.
+  [wichert]
+
 * Made all but one test work on both Plone 3 and 4 by relying on fewer internal
   details of the functions under test.
   [hannosch]
