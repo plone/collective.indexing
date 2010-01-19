@@ -9,7 +9,7 @@
         for="zope.lifecycleevent.interfaces.IObjectCreatedEvent"
         trusted="y" />
 
-    <configure zcml:conditional="installed plone.app.upgrade" >
+    <configure zcml:condition="installed plone.app.upgrade" >
 	<subscriber
 	    handler=".subscribers.objectAdded"
 	    for="zope.lifecycleevent.interfaces.IObjectAddedEvent"
@@ -47,7 +47,7 @@
 	    trusted="y" />
     </configure>
 
-    <configure zcml:conditional="not-installed plone.app.upgrade">
+    <configure zcml:condition="not-installed plone.app.upgrade">
       <subscriber
 	  handler=".subscribers.objectAdded"
 	  for="zope.app.container.interfaces.IObjectAddedEvent"
