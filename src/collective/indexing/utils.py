@@ -41,7 +41,8 @@ def isAutoFlushing():
 def framespec(depth=1):
     """ formet the module, name & line for the frame at the given depth """
     frame = currentframe(depth)
-    name = frame.f_globals['__name__']
+    get = frame.f_globals.get
+    name = get('__name__') or get('test') or get('__file__') or '?'
     line = frame.f_lineno
     func = frame.f_code.co_name
     return '%s/%s:%d' % (name, func, line)
