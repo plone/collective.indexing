@@ -4,6 +4,9 @@ Changelog
 1.2 - Unreleased
 ----------------
 
+* Improve logging of auto-flushes for easier performance tuning.
+  [witsch]
+
 * Add support for Zope 2.12.
   [wichert]
 
