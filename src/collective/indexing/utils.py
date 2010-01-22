@@ -1,4 +1,4 @@
-from logging import getLogger
+from logging import getLogger, DEBUG
 from inspect import currentframe
 from zope.component import queryUtility, getUtilitiesFor
 from collective.indexing.interfaces import IIndexing
@@ -7,7 +7,8 @@ from collective.indexing.queue import getQueue
 from collective.indexing.queue import processQueue
 
 
-debug = getLogger(__name__).debug
+log = getLogger(__name__).log
+log_level = DEBUG
 
 
 def isActive():
@@ -50,6 +51,6 @@ def autoFlushQueue(hint='??', request=None, **kw):
     """ process the queue (for this thread) immediately if the
         auto-flush feature is enabled """
     if isActive() and isAutoFlushing() and getQueue().length():
-        debug('auto-flush via %s at `%s`: %r, %r',
+        log(log_level, 'auto-flush via %s at `%s`: %r, %r',
             hint, framespec(3), request, kw)
         return processQueue()
