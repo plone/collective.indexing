@@ -2,6 +2,7 @@
 # see http://plone.org/documentation/tutorial/testing/writing-a-plonetestcase-unit-integration-test
 # for more information about the following setup
 
+from Testing.ZopeTestCase import Sandboxed
 from Products.Five import zcml
 from Products.Five import fiveconfigure
 from Products.Five.testbrowser import Browser
@@ -24,7 +25,7 @@ setup_product()
 ptc.setupPloneSite()
 
 
-class IndexingTestCase(ptc.PloneTestCase):
+class IndexingTestCase(Sandboxed, ptc.PloneTestCase):
     """ base class for integration tests """
 
 
