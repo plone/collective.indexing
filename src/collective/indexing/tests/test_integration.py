@@ -65,7 +65,7 @@ class AutoFlushTests(IndexingTestCase, TestHelpers):
         # loop;  hence recursive auto-flushing must be prevented...
         self.failUnless(isActive())
         self.config.auto_flush = True
-        foo = self.folder[self.folder.invokeFactory('Event', id='foo')]
+        self.folder.invokeFactory('Event', id='foo')
         # monkey-patch foo's `sortable_title` method to use the catalog...
         original = ATEvent.getEventType
         ATEvent.getEventType = getEventType
