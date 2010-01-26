@@ -2,7 +2,7 @@ from logging import getLogger
 from threading import local
 from zope.interface import implements
 from zope.component import queryUtility, getUtilitiesFor
-from Acquisition import aq_base, aq_inner
+from Acquisition import aq_base, aq_inner, aq_parent
 
 from collective.indexing.interfaces import IIndexQueue
 from collective.indexing.interfaces import IIndexQueueProcessor
@@ -67,7 +67,7 @@ def wrap(obj):
         def getPhysicalPath(self):
             return self.path
 
-    return PathWrapper()
+    return PathWrapper().__of__(aq_parent(obj))
 
 
 class IndexQueue(local):

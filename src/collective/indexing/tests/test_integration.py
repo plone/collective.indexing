@@ -7,6 +7,7 @@ from collective.indexing.tests.utils import TestHelpers
 # test-specific imports go here...
 from transaction import commit
 from zope.component import getUtility
+from Acquisition import aq_parent, aq_inner, aq_base
 from Products.CMFCore.utils import getToolByName
 from Products.ATContentTypes.content.event import ATEvent
 from Products.CMFPlone.CatalogTool import CatalogTool
@@ -113,6 +114,54 @@ class AutoFlushTests(IndexingTestCase, TestHelpers):
         value = catalog.getCounter()
         self.folder.update(title='Foo')
         self.assertTrue(catalog.getCounter() > value)
+
+
+class PathWrapperTests(IndexingTestCase):
+
+    layer = IndexingLayer
+
+    def testWrapperAttributes(self):
+        from collective.indexing.queue import wrap
+        obj = self.folder
+        wrapper = wrap(obj)
+        self.assertEqual(wrapper.title, obj.title)
+        self.assertEqual(wrapper.Title(), obj.Title())
+        self.assertEqual(wrapper.modified(), obj.modified())
+        # stripping away acquisition shouldn't make a difference...
+        self.assertEqual(aq_base(wrapper).title, obj.title)
+        self.assertEqual(aq_base(wrapper).Title(), obj.Title())
+
+    def testWrapperRequest(self):
+        from collective.indexing.queue import wrap
+        obj = self.folder
+        self.assertEqual(wrap(obj).REQUEST, obj.REQUEST)
+
+    def testWrapperPath(self):
+        from collective.indexing.queue import wrap
+        obj = self.folder
+        self.assertEqual(wrap(obj).getPhysicalPath(), obj.getPhysicalPath())
+
+    def testWrapperHash(self):
+        from collective.indexing.queue import wrap
+        obj = self.folder
+        self.assertEqual(hash(wrap(obj)), hash(obj))
+
+    def testWrapperAcquisitionParent(self):
+        from collective.indexing.queue import wrap
+        obj = self.folder
+        wrapper = wrap(obj)
+        self.assertEqual(aq_parent(wrapper), aq_parent(obj))
+        self.assertEqual(aq_parent(aq_inner(wrapper)), aq_parent(aq_inner(obj)))
+        # also check an extended aq-chain
+        obj = self.folder.__of__(self.portal.news)
+        wrapper = wrap(obj)
+        self.assertEqual(aq_parent(wrapper), aq_parent(obj))
+        # `aq_parent(aq_inner(...))` for an aq-chain other than the inner
+        # chain won't work, because the wrapper cannot tell if it should
+        # re-wrap itself in the parent's context or containment (aka "inner")
+        # chain (in queue.py:70).  this can probably be fixed by using
+        # `__parent__`, but not before zope 2.12...
+        # self.assertEqual(aq_parent(aq_inner(wrapper)), aq_parent(aq_inner(obj)))
 
 
 class OverriddenIndexMethodTests(IndexingTestCase):
