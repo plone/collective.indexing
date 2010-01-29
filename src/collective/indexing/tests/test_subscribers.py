@@ -1,5 +1,5 @@
 from unittest import defaultTestLoader
-from collective.indexing.tests.base import IndexingTestCase
+from collective.indexing.tests.base import InstallationTestCase
 
 # test-specific imports go here...
 from zope.component import provideUtility, getUtilitiesFor, getGlobalSiteManager
@@ -13,7 +13,7 @@ from collective.indexing.utils import getIndexer
 from collective.indexing.tests import utils
 
 
-class SubscriberTests(IndexingTestCase):
+class SubscriberTests(InstallationTestCase):
 
     def afterSetUp(self):
         self.setRoles(['Manager'])
@@ -94,7 +94,7 @@ class SubscriberTests(IndexingTestCase):
         self.assertEqual(self.queue, [(REINDEX, self.folder, None)])
 
 
-class IntegrationTests(IndexingTestCase):
+class IntegrationTests(InstallationTestCase):
 
     def testGetIndexer(self):
         # no indexer should be found initially...

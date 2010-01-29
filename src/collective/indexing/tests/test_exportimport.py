@@ -4,13 +4,10 @@ from Products.GenericSetup.tests.common import TarballTester
 from StringIO import StringIO
 
 from collective.indexing.tests.base import IndexingTestCase
-from collective.indexing.tests.layer import IndexingLayer
 from collective.indexing.interfaces import IIndexingConfig
 
 
 class SetupToolTests(IndexingTestCase, TarballTester):
-
-    layer = IndexingLayer
 
     def afterSetUp(self):
         config = getUtility(IIndexingConfig)

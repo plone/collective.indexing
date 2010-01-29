@@ -1,29 +1,25 @@
-from Testing.ZopeTestCase import app, close, installPackage
-from Products.CMFCore.utils import getToolByName
-from Products.PloneTestCase.layer import PloneSite
-from transaction import commit
-
-from zope.app.component.hooks import setHooks, setSite
+from Testing.ZopeTestCase import installPackage
+from Products.Five import zcml, fiveconfigure
+from collective.testcaselayer.ptc import BasePTCLayer, ptc_layer
 
 
-class IndexingLayer(PloneSite):
+class InstallationLayer(BasePTCLayer):
+    """ basic layer for testing package (de)installation """
+
+installation = InstallationLayer(bases=[ptc_layer])
+
+
+class IndexingLayer(BasePTCLayer):
     """ layer for integration tests with activated deferred indexing """
 
-    @classmethod
-    def setUp(cls):
-        # install package, import profile...
+    def afterSetUp(self):
+        # load zcml for this package...
+        fiveconfigure.debug_mode = True
+        from collective import indexing
+        zcml.load_config('configure.zcml', package=indexing)
+        fiveconfigure.debug_mode = False
+        # after which it can be initialized and quick-installed...
         installPackage('collective.indexing', quiet=True)
-        root = app()
-        portal = root.plone
-        setHooks()
-        setSite(portal)
-        profile = 'profile-collective.indexing:default'
-        tool = getToolByName(portal, 'portal_setup')
-        tool.runAllImportStepsFromProfile(profile, purge_old=False)
-        # and commit the changes
-        commit()
-        close(root)
+        self.addProfile('collective.indexing:default')
 
-    @classmethod
-    def tearDown(cls):
-        pass
+indexing = IndexingLayer(bases=[installation])

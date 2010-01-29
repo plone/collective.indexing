@@ -37,6 +37,7 @@ setup(name = 'collective.indexing',
         'setuptools',
         'zope.app.container',
         'zope.app.component',
+        'collective.testcaselayer',
       ],
       entry_points = '',
 )

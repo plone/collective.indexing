@@ -1,38 +1,29 @@
-# integration and functional tests
-# see http://plone.org/documentation/tutorial/testing/writing-a-plonetestcase-unit-integration-test
-# for more information about the following setup
-
-from Testing.ZopeTestCase import Sandboxed
-from Products.Five import zcml
-from Products.Five import fiveconfigure
 from Products.Five.testbrowser import Browser
-from Products.PloneTestCase import PloneTestCase as ptc
-from Products.PloneTestCase.layer import onsetup
+from Products.PloneTestCase import ptc
 from plone.app.controlpanel.tests.cptc import ControlPanelTestCase
-
-from collective.indexing.tests.layer import IndexingLayer
-
-
-@onsetup
-def setup_product():
-    fiveconfigure.debug_mode = True
-    import collective.indexing
-    zcml.load_config('configure.zcml', collective.indexing)
-    fiveconfigure.debug_mode = False
+from collective.indexing.tests import layer as testing
+from collective.indexing.tests.utils import TestHelpers
 
 
-setup_product()
 ptc.setupPloneSite()
 
 
-class IndexingTestCase(Sandboxed, ptc.PloneTestCase):
+class InstallationTestCase(ptc.PloneTestCase, TestHelpers):
+    """ base class for (de)installation tests """
+
+    layer = testing.installation
+
+
+class IndexingTestCase(ptc.Sandboxed, ptc.PloneTestCase, TestHelpers):
     """ base class for integration tests """
+
+    layer = testing.indexing
 
 
 class IndexingFunctionalTestCase(ptc.FunctionalTestCase):
     """ base class for functional tests """
 
-    layer = IndexingLayer
+    layer = testing.indexing
 
     def getBrowser(self, loggedIn=True):
         """ instantiate and return a testbrowser for convenience """
@@ -47,4 +38,4 @@ class IndexingFunctionalTestCase(ptc.FunctionalTestCase):
 class IndexingControlPanelTestCase(ControlPanelTestCase):
     """ base class for control panel tests """
 
-    layer = IndexingLayer
+    layer = testing.indexing

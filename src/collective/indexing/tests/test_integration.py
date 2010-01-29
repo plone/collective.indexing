@@ -1,8 +1,5 @@
 from unittest import defaultTestLoader
 from collective.indexing.tests.base import IndexingTestCase
-from collective.indexing.tests.layer import IndexingLayer
-from collective.indexing.tests.utils import TestHelpers
-
 
 # test-specific imports go here...
 from transaction import commit
@@ -25,9 +22,7 @@ def getEventType(self):
         return 'Lonely event'
 
 
-class AutoFlushTests(IndexingTestCase, TestHelpers):
-
-    layer = IndexingLayer
+class AutoFlushTests(IndexingTestCase):
 
     def afterSetUp(self):
         # clear logs to avoid id collisions
@@ -118,8 +113,6 @@ class AutoFlushTests(IndexingTestCase, TestHelpers):
 
 class PathWrapperTests(IndexingTestCase):
 
-    layer = IndexingLayer
-
     def testWrapperAttributes(self):
         from collective.indexing.queue import wrap
         obj = self.folder
@@ -165,8 +158,6 @@ class PathWrapperTests(IndexingTestCase):
 
 
 class OverriddenIndexMethodTests(IndexingTestCase):
-
-    layer = IndexingLayer
 
     def testIndexObjectCallingSuper(self):
         from collective.indexing.tests.content import addFoo

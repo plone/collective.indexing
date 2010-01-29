@@ -1,9 +1,6 @@
 from unittest import defaultTestLoader
-from Products.PloneTestCase import PloneTestCase as ptc
-from collective.indexing.tests.utils import TestHelpers
-
-ptc.setupPloneSite()
-
+from Products.PloneTestCase import ptc
+from collective.indexing.tests.base import InstallationTestCase
 
 # test-specific imports go here...
 from transaction import commit
@@ -12,7 +9,7 @@ from collective.indexing.interfaces import IIndexingConfig
 from collective.indexing.utils import isActive, isAutoFlushing
 
 
-class InstallationTests(ptc.PloneTestCase, TestHelpers):
+class InstallationTests(InstallationTestCase):
 
     def testInstallation(self):
         # without the product indexing should happen normally...
