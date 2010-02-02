@@ -80,6 +80,31 @@ For outstanding issues and features remaining to be implemented please see the
   .. __: http://plone.org/products/collective.indexing/issues
 
 
+Installation
+------------
+
+The easiest way to use this package is when working with installations
+based on `zc.buildout`_.  Here you can simply add the package to your "eggs"
+and "zcml" options, run buildout and restart your `Zope`_/`Plone`_ instance.
+
+  .. _`Zope`: http://www.zope.org/
+
+Alternatively you can use the following configuration file to extend your
+existing buildout::
+
+  [buildout]
+  extends = buildout.cfg
+
+  [instance]
+  eggs += collective.indexing
+  zcml += collective.indexing
+
+After that and quick-installing the package the "Indexing" control panel
+should show up, allowing to switch optimized indexing support as well as
+processing of the indexing queue on catalog searches, a.k.a. auto-flushing,
+on and off.
+
+
 FAQs / Troubleshooting
 ----------------------
 
