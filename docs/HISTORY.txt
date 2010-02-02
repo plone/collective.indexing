@@ -1,8 +1,12 @@
 Changelog
 =========
 
-1.3 - Unreleased
+1.4 - Unreleased
 ----------------
+
+
+1.3 - Released February 2nd, 2010
+---------------------------------
 
 * Don't activate event subscriber support by default as it can have
   performance implications.
