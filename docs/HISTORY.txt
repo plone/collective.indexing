@@ -4,6 +4,10 @@ Changelog
 1.3 - Unreleased
 ----------------
 
+* Don't activate event subscriber support by default as it can have
+  performance implications.
+  [witsch]
+
 * Make the wrapper used for unindexing return the correct acquisition parent.
   This fixes http://plone.org/products/collective.indexing/issues/6 as well
   as http://dev.plone.org/plone/ticket/10088

@@ -23,3 +23,22 @@ class IndexingLayer(BasePTCLayer):
         self.addProfile('collective.indexing:default')
 
 indexing = IndexingLayer(bases=[installation])
+
+
+class SubscriberLayer(BasePTCLayer):
+    """ layer for integration tests with activated event subscribers """
+
+    def afterSetUp(self):
+        # load zcml for this package...
+        fiveconfigure.debug_mode = True
+        from collective import indexing
+        zcml.load_config('subscribers.zcml', package=indexing)
+        fiveconfigure.debug_mode = False
+
+subscribers = SubscriberLayer(bases=[installation])
+
+
+class SubscriberIndexingLayer(BasePTCLayer):
+    """ layer for integration tests with activated indexing & subscribers """
+
+combined = SubscriberIndexingLayer(bases=[subscribers, indexing])

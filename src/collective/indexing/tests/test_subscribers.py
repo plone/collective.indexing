@@ -1,4 +1,5 @@
 from unittest import defaultTestLoader
+from collective.indexing.tests.base import SubscriberTestCase
 from collective.indexing.tests.base import InstallationTestCase
 
 # test-specific imports go here...
@@ -13,7 +14,7 @@ from collective.indexing.utils import getIndexer
 from collective.indexing.tests import utils
 
 
-class SubscriberTests(InstallationTestCase):
+class SubscriberTests(SubscriberTestCase):
 
     def afterSetUp(self):
         self.setRoles(['Manager'])

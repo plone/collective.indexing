@@ -4,6 +4,8 @@
     xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="collective.indexing">
 
+    <include file="configure.zcml" />
+
     <subscriber
         handler=".subscribers.objectAdded"
         for="zope.lifecycleevent.interfaces.IObjectCreatedEvent"

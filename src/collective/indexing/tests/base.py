@@ -39,3 +39,15 @@ class IndexingControlPanelTestCase(ControlPanelTestCase):
     """ base class for control panel tests """
 
     layer = testing.indexing
+
+
+class SubscriberTestCase(InstallationTestCase):
+    """ base class for event subscriber tests """
+
+    layer = testing.subscribers
+
+
+class SubscriberFunctionalTestCase(IndexingFunctionalTestCase):
+    """ base class for functional tests with active event subscribers """
+
+    layer = testing.combined

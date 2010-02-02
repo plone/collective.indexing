@@ -105,6 +105,34 @@ processing of the indexing queue on catalog searches, a.k.a. auto-flushing,
 on and off.
 
 
+Subscriber Support
+------------------
+
+The package comes with support for queueing up and performing indexing
+operations via event subscribers.  The idea behind this is to not rely on
+explicit calls as defined in ``CMFCatalogAware`` alone, but instead make it
+possible to phase them out eventually.  As the additional indexing operations
+added via the subscribers are optimized away anyway, this only adds very
+little processing overhead.
+
+However, even though ``IObjectModifiedEvent`` has support for partial
+reindexing by passing a list of descriptions/index names, this is currently
+not used anywhere in `Archetypes`_ and/or `Plone`_.  Unfortunately that means
+that partial reindex operations will be "upgraded" to full reindexes, e.g.
+for ``IContainerModifiedEvent`` via the ``notifyContainerModified`` helper,
+which is one reason why subscriber support is not enabled by default for now.
+
+To activate please add::
+
+    [instance]
+    ...
+    zcml-additional =
+        <include package="collective.indexing" file="subscribers.zcml" />
+
+to your ``buildout.cfg``, re-run buildout and restart your `Zope`_/`Plone`_
+instance.
+
+
 FAQs / Troubleshooting
 ----------------------
 
