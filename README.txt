@@ -122,15 +122,14 @@ that partial reindex operations will be "upgraded" to full reindexes, e.g.
 for ``IContainerModifiedEvent`` via the ``notifyContainerModified`` helper,
 which is one reason why subscriber support is not enabled by default for now.
 
-To activate please add::
+To activate please use::
 
     [instance]
     ...
-    zcml-additional =
-        <include package="collective.indexing" file="subscribers.zcml" />
+    zcml = collective.indexing:subscribers.zcml
 
-to your ``buildout.cfg``, re-run buildout and restart your `Zope`_/`Plone`_
-instance.
+instead of just the package name itself, re-run buildout and restart your
+`Zope`_/`Plone`_ instance.
 
 
 FAQs / Troubleshooting
