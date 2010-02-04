@@ -1,7 +1,10 @@
+from logging import getLogger
 from zope.interface import implements
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
 from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
 from collective.indexing.interfaces import IIndexQueueProcessor
+
+debug = getLogger(__name__).debug
 
 
 # container to hold references to the original and "monkeyed" indexing methods
@@ -30,18 +33,21 @@ def getDispatcher(obj, name):
 def index(obj, attributes=None):
     op = getDispatcher(obj, 'index')
     if op is not None:
+        debug('indexing %r', obj)
         op(obj)
 
 
 def reindex(obj, attributes=None):
     op = getDispatcher(obj, 'reindex')
     if op is not None:
+        debug('reindexing %r %r', obj, attributes or ())
         op(obj, attributes or [])
 
 
 def unindex(obj):
     op = getDispatcher(obj, 'unindex')
     if op is not None:
+        debug('unindexing %r', obj)
         op(obj)
 
 
