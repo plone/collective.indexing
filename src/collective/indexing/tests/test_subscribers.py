@@ -1,16 +1,11 @@
 from unittest import defaultTestLoader
 from collective.indexing.tests.base import SubscriberTestCase
-from collective.indexing.tests.base import InstallationTestCase
 
 # test-specific imports go here...
-from zope.component import provideUtility, getUtilitiesFor, getGlobalSiteManager
 from transaction import savepoint
-
-from collective.indexing.interfaces import IIndexQueue, IIndexing
-from collective.indexing.interfaces import IIndexingConfig
-from collective.indexing.config import IndexingConfig
+from zope.component import provideUtility, getGlobalSiteManager
+from collective.indexing.interfaces import IIndexing
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
-from collective.indexing.utils import getIndexer
 from collective.indexing.tests import utils
 
 
@@ -93,38 +88,6 @@ class SubscriberTests(SubscriberTestCase):
     def testPublishObject(self):
         self.portal.portal_workflow.doActionFor(self.folder, 'publish')
         self.assertEqual(self.queue, [(REINDEX, self.folder, None)])
-
-
-class IntegrationTests(InstallationTestCase):
-
-    def testGetIndexer(self):
-        # no indexer should be found initially...
-        indexer = getIndexer()
-        self.failIf(indexer, 'indexer found?')
-        # a direct indexer is provided...
-        direct_indexer = utils.MockIndexer()
-        provideUtility(direct_indexer, name='indexer')
-        indexer = getIndexer()
-        self.failUnless(indexer, 'no indexer found')
-        self.assertEqual(indexer, direct_indexer, 'who are you?')
-        # a second direct indexer is provided...
-        mock_indexer = utils.MockIndexer()
-        provideUtility(mock_indexer, name='rexedni')
-        self.assertRaises(AssertionError, getIndexer)
-        # queued indexing is enabled...
-        config = IndexingConfig()
-        provideUtility(config, IIndexingConfig)
-        indexer = getIndexer()
-        self.failUnless(indexer, 'no indexer found')
-        self.failUnless(IIndexQueue.providedBy(indexer), 'non-queued indexer found')
-        # and we've got two indexers to dispatch things to...
-        indexers = list(getUtilitiesFor(IIndexing))
-        self.assertEqual(len(indexers), 2)
-        # finally, clean up registrations
-        unregister = getGlobalSiteManager().unregisterUtility
-        unregister(direct_indexer, name='indexer')
-        unregister(mock_indexer, name='rexedni')
-        unregister(config, IIndexingConfig)
 
 
 def test_suite():
