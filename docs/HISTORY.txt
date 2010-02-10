@@ -4,6 +4,10 @@ Changelog
 1.4 - Unreleased
 ----------------
 
+* Ensure indexing for "lifecycle" operations works in (nearly) the same
+  way with and without event subscribers.
+  [witsch]
+
 
 1.3 - Released February 2nd, 2010
 ---------------------------------

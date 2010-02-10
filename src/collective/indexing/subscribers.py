@@ -78,8 +78,8 @@ def objectMoved(ev):
     obj = filterTemporaryItems(ev.object)
     indexer = getIndexer()
     if obj is not None and indexer is not None:
-        debug('object moved event for %r, reindexing using %r', obj, indexer)
-        indexer.reindex(obj)
+        debug('object moved event for %r, indexing using %r', obj, indexer)
+        indexer.index(obj)
 
 
 def dispatchObjectMovedEvent(ob, ev):
