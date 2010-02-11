@@ -4,7 +4,7 @@ Changelog
 1.5 - Unreleased
 ----------------
 
-* Add "z3c.autoinclude.plugin" entry point, so in Plone 3.3+ you can avoid 
+* Add "z3c.autoinclude.plugin" entry point, so in Plone 3.3+ you can avoid
   loading the ZCML file.
   [hannosch]
 
