@@ -1,8 +1,12 @@
 Changelog
 =========
 
-1.4 - Unreleased
+1.5 - Unreleased
 ----------------
+
+
+1.4 - Released February 11th, 2010
+----------------------------------
 
 * Ensure indexing for "lifecycle" operations works in (nearly) the same
   way with and without event subscribers.
