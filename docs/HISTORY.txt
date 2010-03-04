@@ -1,8 +1,12 @@
 Changelog
 =========
 
-1.5 - Unreleased
+1.6 - Unreleased
 ----------------
+
+
+1.5 - Released March 4th, 2010
+------------------------------
 
 * Immediately update an object's modification date on full reindex.
   This fixes http://plone.org/products/collective.indexing/issues/4
