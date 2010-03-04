@@ -21,6 +21,9 @@ def test_suite():
            'move-in-subscriber.txt', package='collective.indexing.tests',
            test_class=IndexingFunctionalTestCase, optionflags=optionflags),
         ztc.FunctionalDocFileSuite(
+           'change-notes.txt', package='collective.indexing.tests',
+           test_class=IndexingFunctionalTestCase, optionflags=optionflags),
+        ztc.FunctionalDocFileSuite(
            'configlet.txt', package='collective.indexing.tests',
            test_class=IndexingControlPanelTestCase, optionflags=optionflags),
     ])

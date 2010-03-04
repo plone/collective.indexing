@@ -1,0 +1,25 @@
+This tests tries to make sure `issue #4`_ is fixed, i.e. that change notes
+in an item's history are correctly added.
+
+  .. _`issue #4`: http://plone.org/products/collective.indexing/issues/4
+
+First a testbrowser with a logged-in user holding the necessary permissions
+is needed:
+
+  >>> self.setRoles(('Manager',))
+  >>> browser = self.getBrowser()
+  >>> browser.open('http://nohost/plone/')
+
+Now let's edit the front page and provide a meaningful change note:
+
+  >>> browser.getLink('Edit').click()
+  >>> browser.getControl('Title').value = 'Welcome to Phone!'
+  >>> browser.getControl('Change note').value = 'Foo!'
+  >>> browser.getControl('Save').click()
+
+The given note should now appear in the "history" section:
+
+  >>> browser.contents
+  '...Info...Changes saved...
+   ...History...
+   ...Foo!...'
