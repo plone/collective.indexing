@@ -167,5 +167,29 @@ class OverriddenIndexMethodTests(IndexingTestCase):
         commit()
 
 
+class IntegrationTests(IndexingTestCase):
+
+    def testReindexingUpdatesModificationDate(self):
+        # `CMFCatalogAware.reindexObject` also updates the modification date
+        # of the object for the "reindex all" case.  unfortunately, some other
+        # packages like `CMFEditions` check that date to see if the object was
+        # modified during the request, so we need to do the same...
+        obj = self.folder
+        date1 = obj.modified()
+        # so on reindex the modification date should be updated
+        self.folder.reindexObject()
+        date2 = obj.modified()
+        self.failUnless(date1 < date2)
+        # this only happens when the object is fully reindexed
+        self.folder.reindexObject(idxs=['Title'])
+        date3 = obj.modified()
+        self.assertEqual(date2, date3)
+        # unfortunately, on commit the date is updated again, which will
+        # hopefully not cause any other issues...
+        commit()
+        date4 = obj.modified()
+        self.failUnless(date1 < date2 < date4)
+
+
 def test_suite():
     return defaultTestLoader.loadTestsFromName(__name__)

@@ -5,6 +5,7 @@
 # default indexer (using the original methods)
 
 from logging import getLogger
+from Acquisition import aq_base
 from collective.indexing.utils import isActive, getIndexer
 from collective.indexing.indexer import catalogMultiplexMethods
 from collective.indexing.indexer import catalogAwareMethods
@@ -35,6 +36,12 @@ def unindexObject(self):
 
 
 def reindexObject(self, idxs=None):
+    # `CMFCatalogAware.reindexObject` also updates the modification date
+    # of the object for the "reindex all" case.  unfortunately, some other
+    # packages like `CMFEditions` check that date to see if the object was
+    # modified during the request, which fails when it's only set on commit
+    if idxs in (None, []) and hasattr(aq_base(self), 'notifyModified'):
+        self.notifyModified()
     if not isActive():
         return reindex(self, idxs)
     obj = filterTemporaryItems(self)
