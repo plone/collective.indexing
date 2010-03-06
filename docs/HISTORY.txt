@@ -4,6 +4,9 @@ Changelog
 1.6 - Unreleased
 ----------------
 
+* Clean up and split out test-only dependencies.
+  [witsch]
+
 
 1.5 - Released March 4th, 2010
 ------------------------------

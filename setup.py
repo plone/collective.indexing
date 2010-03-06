@@ -36,9 +36,10 @@ setup(name = 'collective.indexing',
       install_requires = [
         'setuptools',
         'zope.app.container',
-        'zope.app.component',
-        'collective.testcaselayer',
       ],
+      extras_require = { 'test': [
+        'collective.testcaselayer',
+      ]},
       entry_points = '''
         [z3c.autoinclude.plugin]
         target = plone
