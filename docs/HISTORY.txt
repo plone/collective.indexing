@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.6 - Unreleased
-----------------
+1.6 - Released March 6th, 2010
+------------------------------
 
 * Clean up and split out test-only dependencies.
   [witsch]
