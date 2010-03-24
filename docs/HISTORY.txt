@@ -4,6 +4,10 @@ Changelog
 1.7 - Unreleased
 ----------------
 
+* Move loading of the monkey-patches for `CMFCatalogAware` etc to the
+  module level so they also apply to `ATBTreeFolder`s.
+  [witsch]
+
 * Add helper method to determine if a given object has its own copy of a
   given indexing method, e.g. `reindexObject`.
   [witsch]

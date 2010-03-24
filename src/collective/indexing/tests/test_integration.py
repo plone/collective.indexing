@@ -171,6 +171,13 @@ class OverriddenIndexMethodTests(IndexingTestCase):
         self.setRoles(['Manager'])
         # a regular content object uses the standard methods...
         container = self.folder
+        self.failIf(getOwnIndexMethod(container, 'indexObject'))
+        self.failIf(getOwnIndexMethod(container, 'reindexObject'))
+        self.failIf(getOwnIndexMethod(container, 'unindexObject'))
+        news = self.portal.news
+        self.failIf(getOwnIndexMethod(news, 'indexObject'))
+        self.failIf(getOwnIndexMethod(news, 'reindexObject'))
+        self.failIf(getOwnIndexMethod(news, 'unindexObject'))
         event = container[container.invokeFactory('Event', id='event')]
         self.failIf(getOwnIndexMethod(event, 'indexObject'))
         self.failIf(getOwnIndexMethod(event, 'reindexObject'))
