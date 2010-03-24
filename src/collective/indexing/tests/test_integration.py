@@ -166,6 +166,28 @@ class OverriddenIndexMethodTests(IndexingTestCase):
         # so things are fine if the commit goes through...
         commit()
 
+    def testGetOwnIndexMethod(self):
+        from collective.indexing.indexer import getOwnIndexMethod
+        self.setRoles(['Manager'])
+        # a regular content object uses the standard methods...
+        container = self.folder
+        event = container[container.invokeFactory('Event', id='event')]
+        self.failIf(getOwnIndexMethod(event, 'indexObject'))
+        self.failIf(getOwnIndexMethod(event, 'reindexObject'))
+        self.failIf(getOwnIndexMethod(event, 'unindexObject'))
+        # while a criterion has private methods...
+        container.invokeFactory('Topic', id='coll')
+        crit = container.coll.addCriterion('Type', 'ATPortalTypeCriterion')
+        self.failUnless(getOwnIndexMethod(crit, 'indexObject'))
+        self.failUnless(getOwnIndexMethod(crit, 'reindexObject'))
+        self.failUnless(getOwnIndexMethod(crit, 'unindexObject'))
+        # our sample class only has a private `indexObject`...
+        from collective.indexing.tests.content import Foo
+        foo = Foo('foo')
+        self.failUnless(getOwnIndexMethod(foo, 'indexObject'))
+        self.failIf(getOwnIndexMethod(foo, 'reindexObject'))
+        self.failIf(getOwnIndexMethod(foo, 'unindexObject'))
+
 
 class IntegrationTests(IndexingTestCase):
 

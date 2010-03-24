@@ -14,6 +14,16 @@ catalogAwareMethods = {}
 monkeyMethods = {}
 
 
+def getOwnIndexMethod(obj, name):
+    """ return private indexing method if the given object has one """
+    attr = getattr(obj.__class__, name, None)
+    if attr is not None:
+        method = attr.im_func
+        monkey = monkeyMethods.get(name.rstrip('Object'), None)
+        if monkey is not None and method is not monkey:
+            return method
+
+
 def getDispatcher(obj, name):
     """ return named indexing method according on the used mixin class """
     if isinstance(obj, CatalogMultiplex):
@@ -23,9 +33,8 @@ def getDispatcher(obj, name):
     else:
         op = None
     if callable(op):
-        method = getattr(obj.__class__, op.__name__).im_func
-        monkey = monkeyMethods.get(name, None)
-        if monkey is not None and method is not monkey:
+        method = getOwnIndexMethod(obj, op.__name__)
+        if method is not None:
             op = method     # return object's own method to be used...
     return op
 

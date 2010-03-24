@@ -4,6 +4,10 @@ Changelog
 1.7 - Unreleased
 ----------------
 
+* Add helper method to determine if a given object has its own copy of a
+  given indexing method, e.g. `reindexObject`.
+  [witsch]
+
 
 1.6 - Released March 6th, 2010
 ------------------------------
