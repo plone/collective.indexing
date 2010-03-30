@@ -1,7 +1,7 @@
 from logging import getLogger
 from zope.interface import implements
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
-from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
+from collective.indexing.archetypes import CatalogMultiplex
 from collective.indexing.interfaces import IIndexQueueProcessor
 
 debug = getLogger(__name__).debug

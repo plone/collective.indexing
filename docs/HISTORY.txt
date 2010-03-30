@@ -4,6 +4,9 @@ Changelog
 1.7 - Unreleased
 ----------------
 
+* Change the dependency on Archetypes into a soft one.
+  [witsch]
+
 * Also monkey-patch Archetypes' `BaseBTreeFolder`, which keeps references
   to the methods from `CMFCatalogAware` as it is usually initialized before
   the patched methods are in place.
