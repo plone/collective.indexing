@@ -99,7 +99,7 @@ Now both should be in the catalog and show up in the global sections:
 And the search should of course also return the new news:
 
   >>> browser.getControl('Search Site').value = 'today'
-  >>> browser.getForm(name='searchform').submit()
+  >>> browser.getForm(action='search').submit()
   >>> browser.url
   'http://nohost/plone/search?SearchableText=today'
   >>> browser.contents

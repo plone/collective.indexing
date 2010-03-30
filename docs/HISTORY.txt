@@ -4,6 +4,9 @@ Changelog
 1.7 - Unreleased
 ----------------
 
+* Adjust test to the changes related to PLIP 4379.
+  [witsch]
+
 * Move loading of the monkey-patches for `CMFCatalogAware` etc to the
   module level so they also apply to `ATBTreeFolder`s.
   [witsch]
