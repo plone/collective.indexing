@@ -4,11 +4,12 @@ Changelog
 1.7 - Unreleased
 ----------------
 
-* Adjust test to the changes related to PLIP 4379.
+* Also monkey-patch Archetypes' `BaseBTreeFolder`, which keeps references
+  to the methods from `CMFCatalogAware` as it is usually initialized before
+  the patched methods are in place.
   [witsch]
 
-* Move loading of the monkey-patches for `CMFCatalogAware` etc to the
-  module level so they also apply to `ATBTreeFolder`s.
+* Adjust test to the changes related to PLIP 4379.
   [witsch]
 
 * Add helper method to determine if a given object has its own copy of a

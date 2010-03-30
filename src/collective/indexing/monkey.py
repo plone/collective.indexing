@@ -54,8 +54,10 @@ def reindexObject(self, idxs=None):
 # hook up the new methods if that hasn't been done before...
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
 from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
+from Products.Archetypes.BaseBTreeFolder import BaseBTreeFolder
 for module, container in ((CMFCatalogAware, catalogAwareMethods),
-                          (CatalogMultiplex, catalogMultiplexMethods)):
+                          (CatalogMultiplex, catalogMultiplexMethods),
+                          (BaseBTreeFolder, {})):
     if not container:
         container.update({
             'index': module.indexObject,
