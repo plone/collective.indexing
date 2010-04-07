@@ -4,6 +4,10 @@ Changelog
 1.7 - Unreleased
 ----------------
 
+* Ensure that errors during queue processing won't leave behind the queue in
+  the module global processing set, thereby preventing any further indexing.
+  [hannosch]
+
 * Change the dependency on Archetypes into a soft one.
   [witsch]
 
