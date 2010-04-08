@@ -4,6 +4,10 @@ Changelog
 1.7 - Unreleased
 ----------------
 
+* Prevent multiple updates of an object's modification date on full reindex.
+  This fixes http://plone.org/products/collective.indexing/issues/11
+  [witsch]
+
 * Ensure that errors during queue processing won't leave behind the queue in
   the module global processing set, thereby preventing any further indexing.
   [hannosch]

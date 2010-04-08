@@ -50,7 +50,13 @@ def reindex(obj, attributes=None):
     op = getDispatcher(obj, 'reindex')
     if op is not None:
         debug('reindexing %r %r', obj, attributes or ())
+        # prevent update of modification date during deferred reindexing
+        od = obj.__dict__
+        if not 'notifyModified' in od:
+            od['notifyModified'] = lambda *args: None
         op(obj, attributes or [])
+        if 'notifyModified' in od:
+            del od['notifyModified']
 
 
 def unindex(obj):
