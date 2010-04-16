@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.7 - Unreleased
-----------------
+1.7 - Released April 16th, 2010
+-------------------------------
 
 * Prevent multiple updates of an object's modification date on full reindex.
   This fixes http://plone.org/products/collective.indexing/issues/11
