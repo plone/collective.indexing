@@ -1,0 +1,47 @@
+# --- PLEASE EDIT THE LINES BELOW CORRECTLY ---
+# SOME DESCRIPTIVE TITLE.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2010-05-05 15:40+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: da\n"
+"Language-Name: Danish\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: collective.indexing\n"
+
+#: ./interfaces.py:10
+msgid "Active"
+msgstr "Aktiv"
+
+#: ./interfaces.py:14
+msgid "Auto-flush queue"
+msgstr "Tøm automatisk kø"
+
+#: ./interfaces.py:11
+msgid "Check this to enable optimized indexing on the commit boundary."
+msgstr "Set kryds for at slå optimering af indeksering til. "
+
+#: ./interfaces.py:15
+msgid "Check to enable automatically processing all queued up indexing operations just before a catalog query is performed."
+msgstr "Set kryds for automatisk at tømme indekseringskøen umiddelbart før en søgning."
+
+#: ./profiles/default/controlpanel.xml
+msgid "Indexing Settings"
+msgstr "Indeksering"
+
+#: ./browser/configlet.py:43
+msgid "Indexing settings"
+msgstr "Indeksering"
+
+#: ./browser/configlet.py:44
+msgid "Settings to enable and configure queued indexing."
+msgstr "Når indhold bliver gemt, indekserer søgemaskinen det. Her kan du slå optimeret optimeret indeksering til og konfigurere det. Modulet gør indeksering hurtigere."
+
