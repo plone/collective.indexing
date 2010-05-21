@@ -7,6 +7,9 @@ Changelog
 * Fix broken pickling caused by the lambda introduced by fix to issue 11
   [gotcha]
 
+* i18ned (includes danish translation)
+  [stonor]
+
 1.7 - Released April 16th, 2010
 -------------------------------
 
