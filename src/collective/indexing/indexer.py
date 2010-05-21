@@ -46,6 +46,11 @@ def index(obj, attributes=None):
         op(obj)
 
 
+#used instead of a lambda as ZODB dump does not know how to serialize lamda
+def notifyModified(*args):
+    pass
+
+
 def reindex(obj, attributes=None):
     op = getDispatcher(obj, 'reindex')
     if op is not None:
@@ -53,7 +58,7 @@ def reindex(obj, attributes=None):
         # prevent update of modification date during deferred reindexing
         od = obj.__dict__
         if not 'notifyModified' in od:
-            od['notifyModified'] = lambda *args: None
+            od['notifyModified'] = notifyModified
         op(obj, attributes or [])
         if 'notifyModified' in od:
             del od['notifyModified']

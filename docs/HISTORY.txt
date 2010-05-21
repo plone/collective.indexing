@@ -4,6 +4,8 @@ Changelog
 1.8 - Unreleased
 ----------------
 
+* Fix broken pickling caused by the lambda introduced by fix to issue 11
+  [gotcha]
 
 1.7 - Released April 16th, 2010
 -------------------------------
