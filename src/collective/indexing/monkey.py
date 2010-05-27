@@ -14,7 +14,7 @@ from collective.indexing.indexer import index, reindex, unindex
 from collective.indexing.subscribers import filterTemporaryItems
 
 logger = getLogger(__name__)
-info = logger.info
+debug = logger.debug
 
 
 def indexObject(self):
@@ -67,9 +67,9 @@ for module, container in ((CMFCatalogAware, catalogAwareMethods),
         module.indexObject = indexObject
         module.reindexObject = reindexObject
         module.unindexObject = unindexObject
-        info('patched %s', str(module.indexObject))
-        info('patched %s', str(module.reindexObject))
-        info('patched %s', str(module.unindexObject))
+        debug('patched %s', str(module.indexObject))
+        debug('patched %s', str(module.reindexObject))
+        debug('patched %s', str(module.unindexObject))
 
 # also record the new methods in order to be able to compare them
 monkeyMethods.update({
@@ -115,31 +115,31 @@ def setupAutoFlush(enable=True):
             CatalogTool.__af_old_searchResults = CatalogTool.searchResults
             CatalogTool.searchResults = searchResults
             CatalogTool.__call__ = searchResults
-            info('patched %s', str(CatalogTool.searchResults))
-            info('patched %s', str(CatalogTool.__call__))
+            debug('patched %s', str(CatalogTool.searchResults))
+            debug('patched %s', str(CatalogTool.__call__))
         if not hasattr(CatalogTool, '__af_old_unrestrictedSearchResults'):
             CatalogTool.__af_old_unrestrictedSearchResults = CatalogTool.unrestrictedSearchResults
             CatalogTool.unrestrictedSearchResults = unrestrictedSearchResults
-            info('patched %s', str(CatalogTool.unrestrictedSearchResults))
+            debug('patched %s', str(CatalogTool.unrestrictedSearchResults))
         if not hasattr(CatalogTool, '__af_old_getCounter'):
             CatalogTool.__af_old_getCounter = CatalogTool.getCounter
             CatalogTool.getCounter = getCounter
-            info('patched %s', str(CatalogTool.getCounter))
+            debug('patched %s', str(CatalogTool.getCounter))
     else:
         if hasattr(CatalogTool, '__af_old_searchResults'):
             CatalogTool.searchResults = CatalogTool.__af_old_searchResults
             CatalogTool.__call__ = CatalogTool.__af_old_searchResults
             delattr(CatalogTool, '__af_old_searchResults')
-            info('removed patch from %s', str(CatalogTool.searchResults))
-            info('removed patch from %s', str(CatalogTool.__call__))
+            debug('removed patch from %s', str(CatalogTool.searchResults))
+            debug('removed patch from %s', str(CatalogTool.__call__))
         if hasattr(CatalogTool, '__af_old_unrestrictedSearchResults'):
             CatalogTool.unrestrictedSearchResults = CatalogTool.__af_old_unrestrictedSearchResults
             delattr(CatalogTool, '__af_old_unrestrictedSearchResults')
-            info('removed patch from %s', str(CatalogTool.unrestrictedSearchResults))
+            debug('removed patch from %s', str(CatalogTool.unrestrictedSearchResults))
         if hasattr(CatalogTool, '__af_old_getCounter'):
             CatalogTool.getCounter = CatalogTool.__af_old_getCounter
             delattr(CatalogTool, '__af_old_getCounter')
-            info('removed patch from %s', str(CatalogTool.getCounter))
+            debug('removed patch from %s', str(CatalogTool.getCounter))
 
 # (de)activate the auto-flush patches according to the setting...
 from collective.indexing.utils import isAutoFlushing
@@ -167,4 +167,4 @@ def reindexOnReorder(self, parent):
                 obj.reindexObject(['getObjPositionInParent'])
 
 PloneTool.reindexOnReorder = reindexOnReorder
-info('patched %s', str(PloneTool.reindexOnReorder))
+debug('patched %s', str(PloneTool.reindexOnReorder))

@@ -4,6 +4,9 @@ Changelog
 1.8 - Unreleased
 ----------------
 
+* Moved patching log calls to debug level.
+  [hannosch]
+
 * Fix broken pickling caused by the lambda introduced by fix to issue 11
   [gotcha]
 
