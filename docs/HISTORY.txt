@@ -1,17 +1,19 @@
 Changelog
 =========
 
-1.8 - Unreleased
-----------------
+1.8 - Released July 20th, 2010
+------------------------------
 
 * Moved patching log calls to debug level.
   [hannosch]
 
-* Fix broken pickling caused by the lambda introduced by fix to issue 11
+* Fix broken pickling caused by the lambda introduced by the fix for
+  http://plone.org/products/collective.indexing/issues/11
   [gotcha]
 
-* i18ned (includes danish translation)
+* Add danish translations for control panel strings.
   [stonor]
+
 
 1.7 - Released April 16th, 2010
 -------------------------------

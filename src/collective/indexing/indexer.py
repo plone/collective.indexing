@@ -46,7 +46,7 @@ def index(obj, attributes=None):
         op(obj)
 
 
-#used instead of a lambda as ZODB dump does not know how to serialize lamda
+# used instead of a lambda as ZODB dump does not know how to serialize those
 def notifyModified(*args):
     pass
 
