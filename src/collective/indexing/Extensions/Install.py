@@ -58,14 +58,11 @@ def unregisterUtility(context, iface, name=None):
 
 def uninstall(portal):
     logger = logging.getLogger('collective.indexing.Uninstall')
-    setup_tool = getToolByName(portal, 'portal_setup')
-    setup_tool.runAllImportStepsFromProfile('profile-collective.indexing:uninstall')
     cp = getToolByName(portal, 'portal_controlpanel')
     cp.unregisterConfiglet('IndexingSettings')
-    for iface, name in ((IIndexingConfig,None),
+    for iface, name in ((IIndexingConfig, None),
                         (IPortalCatalogQueueProcessor, 'portal-catalog')):
         try:
             unregisterUtility(portal, iface, name)
-        except:
+        except Exception:
             logger.debug('Cant unregister: %s/%s' % (iface, name))
-
