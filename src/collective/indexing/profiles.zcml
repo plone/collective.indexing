@@ -10,12 +10,5 @@
       description='Abstract framework for queued indexing of portal content'
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
-  <genericsetup:registerProfile
-      name="uninstall"
-      title="collective.indexing (uninstall)"
-      directory="profiles/uninsntall"
-      description='Abstract framework for queued indexing of portal content uninstall profile'
-      provides="Products.GenericSetup.interfaces.EXTENSION"
-      /> 
 
 </configure>
