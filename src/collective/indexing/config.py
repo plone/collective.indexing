@@ -13,5 +13,4 @@ class IndexingConfig(object):
     implements(IIndexingConfig)
 
     def __init__(self):
-        self.active = True
         self.auto_flush = True

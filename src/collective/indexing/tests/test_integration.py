@@ -8,7 +8,6 @@ from Products.CMFCore.utils import getToolByName
 from Products.ATContentTypes.content.event import ATEvent
 from Products.CMFPlone.CatalogTool import CatalogTool
 from collective.indexing.interfaces import IIndexingConfig
-from collective.indexing.utils import isActive
 
 
 def getEventSubject(self):
@@ -34,7 +33,6 @@ class AutoFlushTests(IndexingTestCase):
 
     def testNoAutoFlush(self):
         # without auto-flush we must commit to update the catalog
-        self.failUnless(isActive())
         self.config.auto_flush = False
         self.assertEqual(self.create(), [])
         commit()
@@ -45,7 +43,6 @@ class AutoFlushTests(IndexingTestCase):
 
     def testAutoFlush(self):
         # with auto-flush enabled the catalog is always up-to-date
-        self.failUnless(isActive())
         self.config.auto_flush = True
         # no commits required now
         self.assertEqual(self.create(), ['foo'])
@@ -57,7 +54,6 @@ class AutoFlushTests(IndexingTestCase):
         # an indexing helper using the catalog, thereby triggering queue
         # processing via auto-flush, used to potentially cause an infinite
         # loop;  hence recursive auto-flushing must be prevented...
-        self.failUnless(isActive())
         self.config.auto_flush = True
         self.folder.invokeFactory('Event', id='foo')
         # monkey-patch a method to use the catalog...
@@ -90,7 +86,6 @@ class AutoFlushTests(IndexingTestCase):
 
     def testGetCounterWithoutAutoFlush(self):
         # without auto-flush we must commit to update the catalog counter
-        self.failUnless(isActive())
         self.config.auto_flush = False
         catalog = self.portal.portal_catalog
         value = catalog.getCounter()
@@ -101,7 +96,6 @@ class AutoFlushTests(IndexingTestCase):
 
     def testGetCounterWithAutoFlush(self):
         # with auto-flush enabled the catalog counter is always up-to-date
-        self.failUnless(isActive())
         self.config.auto_flush = True
         # no commits required now
         catalog = self.portal.portal_catalog

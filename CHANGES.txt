@@ -4,6 +4,9 @@ Changelog
 2.0 - Unreleased
 ----------------
 
+- Remove `utils.isActive` - when installed we are always active.
+  [hannosch]
+
 - Remove Plone 3 backwards compatibility code. This version requires Plone 4.
   [hannosch]
 

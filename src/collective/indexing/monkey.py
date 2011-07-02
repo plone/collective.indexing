@@ -6,11 +6,10 @@
 
 from logging import getLogger
 from Acquisition import aq_base
-from collective.indexing.utils import isActive, getIndexer
+from collective.indexing.utils import getIndexer
 from collective.indexing.indexer import catalogMultiplexMethods
 from collective.indexing.indexer import catalogAwareMethods
 from collective.indexing.indexer import monkeyMethods
-from collective.indexing.indexer import index, reindex, unindex
 from collective.indexing.subscribers import filterTemporaryItems
 
 logger = getLogger(__name__)
@@ -18,8 +17,6 @@ debug = logger.debug
 
 
 def indexObject(self):
-    if not isActive():
-        return index(self)
     obj = filterTemporaryItems(self)
     indexer = getIndexer()
     if obj is not None and indexer is not None:
@@ -27,8 +24,6 @@ def indexObject(self):
 
 
 def unindexObject(self):
-    if not isActive():
-        return unindex(self)
     obj = filterTemporaryItems(self, checkId=False)
     indexer = getIndexer()
     if obj is not None and indexer is not None:
@@ -42,8 +37,6 @@ def reindexObject(self, idxs=None):
     # modified during the request, which fails when it's only set on commit
     if idxs in (None, []) and hasattr(aq_base(self), 'notifyModified'):
         self.notifyModified()
-    if not isActive():
-        return reindex(self, idxs)
     obj = filterTemporaryItems(self)
     indexer = getIndexer()
     if obj is not None and indexer is not None:

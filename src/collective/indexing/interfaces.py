@@ -7,10 +7,6 @@ _ = MessageFactory('collective.indexing')
 
 class IIndexingSchema(Interface):
 
-    active = Bool(title=_(u'Active'), default=True,
-        description=_(u'Check this to enable optimized indexing on the '
-                       'commit boundary.'))
-
     auto_flush = Bool(title=_(u'Auto-flush queue'), default=True,
         description=_(u'Check to enable automatically processing all queued '
                        'up indexing operations just before a catalog query '
