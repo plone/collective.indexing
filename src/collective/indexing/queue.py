@@ -17,6 +17,10 @@ localQueue = None
 processing = set()
 
 
+class InvalidQueueOperation(Exception):
+    pass
+
+
 def getQueue():
     """ return a (thread-local) queue object, create one if necessary """
     global localQueue
@@ -73,7 +77,7 @@ def wrap(obj):
 
 
 class IndexQueue(local):
-    """ an indexing queue """
+
     implements(IIndexQueue)
 
     def __init__(self):
@@ -150,7 +154,7 @@ class IndexQueue(local):
                 elif op == UNINDEX:
                     util.unindex(obj)
                 else:
-                    raise 'InvalidQueueOperation', op
+                    raise InvalidQueueOperation(op)
             processed += 1
         debug('finished processing %d items...', processed)
         self.clear()
@@ -172,4 +176,5 @@ class IndexQueue(local):
     def clear(self):
         debug('clearing %d queue item(s)', len(self.queue))
         del self.queue[:]
-        self.tmhook = None      # release transaction manager...
+        # release transaction manager
+        self.tmhook = None
