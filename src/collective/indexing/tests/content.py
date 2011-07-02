@@ -1,5 +1,3 @@
-from zope.event import notify
-from zope.lifecycleevent import ObjectCreatedEvent, ObjectModifiedEvent
 from Products.ATContentTypes.content.base import ATCTContent, registerATCT
 from Products.ATContentTypes.content.schemata import ATContentTypeSchema
 
@@ -25,9 +23,8 @@ registerATCT(Foo, 'collective.indexing.tests')
 def addFoo(container, id, **kwargs):
     """ at-constructor copied from ClassGen.py """
     obj = Foo(id)
-    notify(ObjectCreatedEvent(obj))
-    container._setObject(id, obj)
+    container._setObject(id, obj, suppress_events=True)
     obj = container._getOb(id)
+    obj.manage_afterAdd(obj, container)
     obj.initializeArchetype(**kwargs)
-    notify(ObjectModifiedEvent(obj))
-    return obj
+    return obj.getId()
