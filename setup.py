@@ -6,7 +6,7 @@ setup(name = 'collective.indexing',
       version = version,
       description = 'Abstract framework for queueing, optimizing and '
           'dispatching index operations for Plone content.',
-      long_description = open("README.txt").read() + '\n' +
+      long_description = open("README.rst").read() + '\n' +
                          open('CHANGES.txt').read(),
       classifiers = [
         'Development Status :: 5 - Production/Stable',
