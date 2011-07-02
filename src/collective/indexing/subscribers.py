@@ -1,6 +1,7 @@
 from logging import getLogger
 from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent, Attributes
+from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.app.container.contained import dispatchToSublocations
 from Acquisition import aq_parent, aq_inner, aq_base
 from collective.indexing.utils import getIndexer
@@ -15,8 +16,13 @@ def filterTemporaryItems(obj, checkId=True):
     parent = aq_parent(aq_inner(obj))
     if parent is None:
         return None
+    if IBrowserRequest.providedBy(parent):
+        return None
     if checkId and getattr(obj, 'getId', None):
-        if getattr(aq_base(parent), obj.getId(), None) is None:
+        parent = aq_base(parent)
+        if getattr(parent, '__contains__', None) is None:
+            return None
+        elif obj.getId() not in parent:
             return None
     isTemporary = getattr(obj, 'isTemporary', None)
     if isTemporary is not None:
