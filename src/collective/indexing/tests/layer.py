@@ -28,9 +28,3 @@ class SubscriberLayer(BasePTCLayer):
         fiveconfigure.debug_mode = False
 
 subscribers = SubscriberLayer(bases=[indexing])
-
-
-class SubscriberIndexingLayer(BasePTCLayer):
-    """ layer for integration tests with activated indexing & subscribers """
-
-combined = SubscriberIndexingLayer(bases=[subscribers, indexing])

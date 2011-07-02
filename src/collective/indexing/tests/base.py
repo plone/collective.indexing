@@ -37,4 +37,4 @@ class SubscriberTestCase(IndexingTestCase):
 class SubscriberFunctionalTestCase(IndexingFunctionalTestCase):
     """ base class for functional tests with active event subscribers """
 
-    layer = testing.combined
+    layer = testing.subscribers
