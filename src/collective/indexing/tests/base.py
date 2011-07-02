@@ -17,13 +17,13 @@ class InstallationTestCase(ptc.PloneTestCase, TestHelpers):
 class IndexingTestCase(ptc.Sandboxed, ptc.PloneTestCase, TestHelpers):
     """ base class for integration tests """
 
-    layer = testing.indexing
+    layer = testing.installation
 
 
 class IndexingFunctionalTestCase(ptc.FunctionalTestCase):
     """ base class for functional tests """
 
-    layer = testing.indexing
+    layer = testing.installation
 
     def getBrowser(self, loggedIn=True):
         """ instantiate and return a testbrowser for convenience """
@@ -38,7 +38,7 @@ class IndexingFunctionalTestCase(ptc.FunctionalTestCase):
 class IndexingControlPanelTestCase(ControlPanelTestCase):
     """ base class for control panel tests """
 
-    layer = testing.indexing
+    layer = testing.installation
 
 
 class SubscriberTestCase(InstallationTestCase):

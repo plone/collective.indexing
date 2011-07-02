@@ -2,38 +2,25 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:i18n="http://namespaces.zope.org/i18n"
-    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="collective.indexing">
 
     <five:registerPackage package="." initialize=".initialize" />
 
     <include package=".browser" />
-    <include file="profiles.zcml" />
 
     <utility
         factory=".reducer.QueueReducer"
         provides=".interfaces.IQueueReducer"
         />
 
-    <adapter
-        factory=".exportimport.ConfigXMLAdapter"
-        provides="Products.GenericSetup.interfaces.IBody"
-        for=".interfaces.IIndexingConfig
-             Products.GenericSetup.interfaces.ISetupEnviron" />
+    <utility
+       provides="collective.indexing.interfaces.IIndexingConfig"
+       factory="collective.indexing.config.IndexingConfig "/>
 
-    <genericsetup:exportStep
-        name="indexing"
-        title="Indexing configuration"
-        description="Export settings for queued indexing."
-        handler="collective.indexing.exportimport.exportSettings" />
-
-    <genericsetup:importStep
-        name="indexing"
-        title="Indexing configuration"
-        description="Import settings for queued indexing."
-        handler="collective.indexing.exportimport.importSettings">
-      <depends name="componentregistry"/>
-    </genericsetup:importStep>
+    <utility
+       provides="collective.indexing.indexer.IPortalCatalogQueueProcessor"
+       name="portal-catalog"
+       factory="collective.indexing.indexer.PortalCatalogProcessor" />
 
     <i18n:registerTranslations directory="locales" /> 
 

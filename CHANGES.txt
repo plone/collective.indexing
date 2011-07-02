@@ -4,6 +4,9 @@ Changelog
 2.0 - Unreleased
 ----------------
 
+- Remove GenericSetup profile and move configuration to global utility.
+  [hannosch]
+
 - Add uninstall profile.
   [kiorky]
 

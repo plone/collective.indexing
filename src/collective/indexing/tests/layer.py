@@ -16,16 +16,7 @@ class InstallationLayer(BasePTCLayer):
         installPackage('collective.indexing', quiet=True)
 
 installation = InstallationLayer(bases=[ptc_layer])
-
-
-class IndexingLayer(BasePTCLayer):
-    """ layer for integration tests with activated deferred indexing """
-
-    def afterSetUp(self):
-        # quick-install the package to activate deferred indexing...
-        self.addProfile('collective.indexing:default')
-
-indexing = IndexingLayer(bases=[installation])
+indexing = installation
 
 
 class SubscriberLayer(BasePTCLayer):
@@ -44,4 +35,4 @@ subscribers = SubscriberLayer(bases=[installation])
 class SubscriberIndexingLayer(BasePTCLayer):
     """ layer for integration tests with activated indexing & subscribers """
 
-combined = SubscriberIndexingLayer(bases=[subscribers, indexing])
+combined = SubscriberIndexingLayer(bases=[subscribers, installation])
