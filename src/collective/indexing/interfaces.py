@@ -21,11 +21,6 @@ class IIndexingConfig(IIndexingSchema):
     """ utility to hold the configuration related to indexing """
 
 
-class IIndexQueueSwitch(Interface):
-    """ deprecated marker interface left in place for BBB reasons, i.e. to
-        avoid breaking sites that have used versions before 1.0 final """
-
-
 class IIndexing(Interface):
     """ interface for indexing operations, used both for the queue and
         the processors, which perform the actual indexing;  the queue gets

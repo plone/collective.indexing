@@ -4,6 +4,9 @@ Changelog
 2.0 - Unreleased
 ----------------
 
+- Remove Plone 3 backwards compatibility code. This version requires Plone 4.
+  [hannosch]
+
 - Remove GenericSetup profile, Plone control panel and move configuration to
   global utility.
   [hannosch]
