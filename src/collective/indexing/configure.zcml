@@ -6,11 +6,6 @@
     <five:registerPackage package="." initialize=".initialize" />
 
     <utility
-        factory=".reducer.QueueReducer"
-        provides=".interfaces.IQueueReducer"
-        />
-
-    <utility
        provides="collective.indexing.interfaces.IIndexingConfig"
        factory="collective.indexing.config.IndexingConfig "/>
 

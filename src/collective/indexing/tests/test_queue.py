@@ -2,15 +2,12 @@ from unittest import TestCase
 from threading import Thread, currentThread
 from time import sleep
 
-from zope.interface import implements
 from zope.component import provideUtility
 from zope.testing.cleanup import CleanUp
 
 from collective.indexing.interfaces import IIndexQueue
 from collective.indexing.interfaces import IIndexQueueProcessor
 from collective.indexing.interfaces import IIndexingConfig
-from collective.indexing.interfaces import IQueueReducer
-from collective.indexing.reducer import QueueReducer
 from collective.indexing.queue import IndexQueue
 from collective.indexing.config import IndexingConfig
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
@@ -44,7 +41,7 @@ class QueueTests(CleanUp, TestCase):
         queue.reindex('bar')
         self.assertEqual(len(queue.getState()), 3)
         self.assertEqual(hook.hooked, 3)
-        self.assertEqual(queue.process(), 3)
+        self.assertEqual(queue.process(), 2)
         self.assertEqual(hook.hooked, 3)
 
     def testQueueState(self):
@@ -94,31 +91,15 @@ class QueueTests(CleanUp, TestCase):
         queue.index('foo')
         queue.reindex('foo')
         queue.unindex('foo')
-        self.assertEqual(queue.process(), 3)    # also do the processing...
+        self.assertEqual(queue.process(), 0)
         self.assertEqual(queue.getState(), [])
-        self.assertEqual(proc.getState(), [(INDEX, 'foo', None), (REINDEX, 'foo', None), (UNINDEX, 'foo', None)])
-        self.assertEqual(proc.state, 'started') # the real queue won't update the state...
+        self.assertEqual(proc.getState(), [])
+        # the real queue won't update the state
+        self.assertEqual(proc.state, 'started')
         queue.commit()
         self.assertEqual(proc.state, 'finished')
 
-    def testQueueReducer(self):
-        class MessyReducer(object):
-            implements(IQueueReducer)
-            def optimize(self, queue):
-                return [op for op in queue if not op[0] == UNINDEX]
-        queue = self.queue
-        queue.index('foo')
-        queue.reindex('foo')
-        queue.unindex('foo')
-        queue.index('foo', 'bar')
-        queue.optimize()
-        self.assertEqual(queue.getState(), [(INDEX, 'foo', None), (REINDEX, 'foo', None), (UNINDEX, 'foo', None), (INDEX, 'foo', 'bar')])
-        provideUtility(MessyReducer())  # hook up the reducer
-        queue.optimize()                # and try again...
-        self.assertEqual(queue.getState(), [(INDEX, 'foo', None), (REINDEX, 'foo', None), (INDEX, 'foo', 'bar')])
-
-    def testRealQueueReducer(self):
-        provideUtility(QueueReducer())
+    def testQueueOptimization(self):
         queue = self.queue
         queue.index('foo')
         queue.reindex('foo')
@@ -126,6 +107,30 @@ class QueueTests(CleanUp, TestCase):
         queue.index('foo', 'bar')
         queue.optimize()
         self.assertEqual(queue.getState(), [(INDEX, 'foo', None)])
+
+    def testCustomQueueOptimization(self):
+        def optimize(self):
+            self.setState([op for op in self.getState() if not op[0] == UNINDEX])
+        queue = self.queue
+        queue.index('foo')
+        queue.reindex('foo')
+        queue.unindex('foo')
+        queue.index('foo', 'bar')
+        queue.optimize()
+        self.assertEqual(queue.getState(), [(INDEX, 'foo', None)])
+        queue.clear()
+        # hook up the custom optimize
+        orig_optimize = queue.optimize
+        try:
+            queue.optimize = optimize
+            queue.index('foo')
+            queue.reindex('foo')
+            queue.unindex('foo')
+            queue.index('foo', 'bar')
+            queue.optimize(queue)
+            self.assertEqual(queue.getState(), [(INDEX, 'foo', None), (REINDEX, 'foo', None), (INDEX, 'foo', 'bar')])
+        finally:
+            queue.optimize = orig_optimize
 
     def testQueueAbortBeforeProcessing(self):
         queue = self.queue
@@ -146,62 +151,70 @@ class QueueTests(CleanUp, TestCase):
         provideUtility(proc, IIndexQueueProcessor)
         queue.index('foo')
         queue.reindex('foo')
-        self.assertEqual(queue.process(), 2)    # also do the processing...
+        self.assertEqual(queue.process(), 1)
         self.assertNotEqual(proc.getState(), [])
         queue.abort()
         self.assertEqual(queue.getState(), [])
         self.assertEqual(proc.getState(), [])
         self.assertEqual(proc.state, 'aborted')
 
+    def testOptimizeQueue(self):
+        queue = self.queue
+        queue.setState([(REINDEX, 'A', None), (REINDEX, 'A', None)])
+        queue.optimize()
+        self.failUnlessEqual(queue.getState(), [(REINDEX, 'A', None)])
 
-class QueueReducerTests(TestCase):
+        queue.setState([(INDEX, 'A', None), (REINDEX, 'A', None)])
+        queue.optimize()
+        self.failUnlessEqual(queue.getState(), [(INDEX, 'A', None)])
 
-    def testReduceQueue(self):
-        reducer = QueueReducer()
+        queue.setState([(INDEX, 'A', None), (UNINDEX, 'A', None)])
+        queue.optimize()
+        self.failUnlessEqual(queue.getState(), [])
 
-        queue = [(REINDEX, 'A', None), (REINDEX, 'A', None)]
-        self.failUnlessEqual(reducer.optimize(queue), [(REINDEX, 'A', None)])
+        queue.setState([(UNINDEX, 'A', None), (INDEX, 'A', None)])
+        queue.optimize()
+        self.failUnlessEqual(queue.getState(), [(REINDEX, 'A', None)])
 
-        queue = [(INDEX, 'A', None), (REINDEX, 'A', None)]
-        self.failUnlessEqual(reducer.optimize(queue), [(INDEX, 'A', None)])
+    def testOptimizeQueueWithAttributes(self):
+        queue = self.queue
 
-        queue = [(INDEX, 'A', None), (UNINDEX, 'A', None)]
-        self.failUnlessEqual(reducer.optimize(queue), [])
+        queue.setState([(REINDEX, 'A', None), (REINDEX, 'A', ('a', 'b'))])
+        queue.optimize()
+        self.failUnlessEqual(queue.getState(), [(REINDEX, 'A', None)])
 
-        queue = [(UNINDEX, 'A', None), (INDEX, 'A', None)]
-        self.failUnlessEqual(reducer.optimize(queue), [(REINDEX, 'A', None)])
+        queue.setState([(REINDEX, 'A', ('a', 'b')), (REINDEX, 'A', None)])
+        queue.optimize()
+        self.failUnlessEqual(queue.getState(), [(REINDEX, 'A', None)])
 
-    def testReduceQueueWithAttributes(self):
-        reducer = QueueReducer()
+        queue.setState([(REINDEX, 'A', ('a', 'b')), (REINDEX, 'A', ('b', 'c'))])
+        queue.optimize()
+        self.failUnlessEqual(queue.getState(), [(REINDEX, 'A', ('a', 'c', 'b'))])
 
-        queue = [(REINDEX, 'A', None), (REINDEX, 'A', ('a', 'b'))]
-        self.failUnlessEqual(reducer.optimize(queue), [(REINDEX, 'A', None)])
+        queue.setState([(INDEX, 'A', None), (REINDEX, 'A', None)])
+        queue.optimize()
+        self.failUnlessEqual(queue.getState(), [(INDEX, 'A', None)])
 
-        queue = [(REINDEX, 'A', ('a', 'b')), (REINDEX, 'A', None)]
-        self.failUnlessEqual(reducer.optimize(queue), [(REINDEX, 'A', None)])
+        queue.setState([(REINDEX, 'A', ('a', 'b')), (UNINDEX, 'A', None), (INDEX, 'A', None)])
+        queue.optimize()
+        self.failUnlessEqual(queue.getState(), [(REINDEX, 'A', None)])
 
-        queue = [(REINDEX, 'A', ('a', 'b')), (REINDEX, 'A', ('b', 'c'))]
-        self.failUnlessEqual(reducer.optimize(queue), [(REINDEX, 'A', ('a', 'c', 'b'))])
+    def testOptimizeQueueSortsByOpcode(self):
+        queue = self.queue
 
-        queue = [(INDEX, 'A', None), (REINDEX, 'A', None)]
-        self.failUnlessEqual(reducer.optimize(queue), [(INDEX, 'A', None)])
-
-        queue = [(REINDEX, 'A', ('a', 'b')), (UNINDEX, 'A', None), (INDEX, 'A', None)]
-        self.failUnlessEqual(reducer.optimize(queue), [(REINDEX, 'A', None)])
-
-    def testReduceQueueSortsByOpcode(self):
-        reducer = QueueReducer()
-
-        queue = [(INDEX, 'C', None), (UNINDEX, 'B', None)]
-        self.failUnlessEqual(reducer.optimize(queue),
+        queue.setState([(INDEX, 'C', None), (UNINDEX, 'B', None)])
+        queue.optimize()
+        self.failUnlessEqual(queue.getState(),
             [(UNINDEX, 'B', None), (INDEX, 'C', None)])
 
-        queue = [(REINDEX, 'A', None), (UNINDEX, 'B', None)]
-        self.failUnlessEqual(reducer.optimize(queue),
+        queue.setState([(REINDEX, 'A', None), (UNINDEX, 'B', None)])
+        queue.optimize()
+        self.failUnlessEqual(queue.getState(),
             [(UNINDEX, 'B', None), (REINDEX, 'A', None)])
 
-        queue = [(REINDEX, 'A', None), (UNINDEX, 'B', None), (INDEX, 'C', None)]
-        self.failUnlessEqual(reducer.optimize(queue),
+        queue.setState([(REINDEX, 'A', None), (UNINDEX, 'B', None), (INDEX, 'C', None)])
+        queue.optimize()
+        self.failUnlessEqual(queue.getState(),
             [(UNINDEX, 'B', None), (REINDEX, 'A', None), (INDEX, 'C', None)])
 
 

@@ -4,6 +4,9 @@ Changelog
 2.0 - Unreleased
 ----------------
 
+- Merged `QueueReducer` into the `queue.optimize` method.
+  [hannosch]
+
 - Remove the `utils.getIndexer` indirection.
   [hannosch]
 
