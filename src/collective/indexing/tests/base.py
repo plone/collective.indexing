@@ -1,13 +1,12 @@
 from Products.Five.testbrowser import Browser
 from Products.PloneTestCase import ptc
 from collective.indexing.tests import layer as testing
-from collective.indexing.tests.utils import TestHelpers
 
 
 ptc.setupPloneSite()
 
 
-class IndexingTestCase(ptc.Sandboxed, ptc.PloneTestCase, TestHelpers):
+class IndexingTestCase(ptc.Sandboxed, ptc.PloneTestCase):
     """ base class for integration tests """
 
     layer = testing.indexing
