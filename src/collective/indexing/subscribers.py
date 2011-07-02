@@ -4,7 +4,7 @@ from zope.lifecycleevent import ObjectModifiedEvent, Attributes
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.app.container.contained import dispatchToSublocations
 from Acquisition import aq_parent, aq_inner, aq_base
-from collective.indexing.utils import getIndexer
+from collective.indexing.queue import getQueue
 
 debug = getLogger('collective.indexing.subscribers').debug
 
@@ -36,7 +36,7 @@ def filterTemporaryItems(obj, checkId=True):
 
 def objectAdded(ev):
     obj = filterTemporaryItems(ev.object)
-    indexer = getIndexer()
+    indexer = getQueue()
     if obj is not None and indexer is not None:
         debug('object added event for %r, indexing using %r', obj, indexer)
         indexer.index(obj)
@@ -44,7 +44,7 @@ def objectAdded(ev):
 
 def objectModified(ev):
     obj = filterTemporaryItems(ev.object)
-    indexer = getIndexer()
+    indexer = getQueue()
     if obj is None or indexer is None:
         return
     debug('object modified event for %r, reindexing using %r', obj, indexer)
@@ -68,7 +68,7 @@ def objectCopied(ev):
 
 def objectRemoved(ev):
     obj = filterTemporaryItems(ev.object, checkId=False)
-    indexer = getIndexer()
+    indexer = getQueue()
     if obj is not None and indexer is not None:
         debug('object removed event for %r, unindexing using %r', obj, indexer)
         indexer.unindex(obj)
@@ -82,7 +82,7 @@ def objectMoved(ev):
         # it's a renaming operation
         dispatchToSublocations(ev.object, ev)
     obj = filterTemporaryItems(ev.object)
-    indexer = getIndexer()
+    indexer = getQueue()
     if obj is not None and indexer is not None:
         debug('object moved event for %r, indexing using %r', obj, indexer)
         indexer.index(obj)
@@ -97,7 +97,7 @@ def dispatchObjectMovedEvent(ob, ev):
 
 def objectTransitioned(ev):
     obj = filterTemporaryItems(ev.object)
-    indexer = getIndexer()
+    indexer = getQueue()
     if obj is not None and indexer is not None:
         debug('object transitioned event for %r, reindexing using %r', obj, indexer)
         indexer.reindex(obj)

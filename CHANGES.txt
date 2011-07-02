@@ -4,6 +4,9 @@ Changelog
 2.0 - Unreleased
 ----------------
 
+- Remove the `utils.getIndexer` indirection.
+  [hannosch]
+
 - Remove `utils.isActive` - when installed we are always active.
   [hannosch]
 

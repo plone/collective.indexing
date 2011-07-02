@@ -6,10 +6,10 @@
 
 from logging import getLogger
 from Acquisition import aq_base
-from collective.indexing.utils import getIndexer
 from collective.indexing.indexer import catalogMultiplexMethods
 from collective.indexing.indexer import catalogAwareMethods
 from collective.indexing.indexer import monkeyMethods
+from collective.indexing.queue import getQueue
 from collective.indexing.subscribers import filterTemporaryItems
 
 logger = getLogger(__name__)
@@ -18,14 +18,14 @@ debug = logger.debug
 
 def indexObject(self):
     obj = filterTemporaryItems(self)
-    indexer = getIndexer()
+    indexer = getQueue()
     if obj is not None and indexer is not None:
         indexer.index(obj)
 
 
 def unindexObject(self):
     obj = filterTemporaryItems(self, checkId=False)
-    indexer = getIndexer()
+    indexer = getQueue()
     if obj is not None and indexer is not None:
         indexer.unindex(obj)
 
@@ -38,7 +38,7 @@ def reindexObject(self, idxs=None):
     if idxs in (None, []) and hasattr(aq_base(self), 'notifyModified'):
         self.notifyModified()
     obj = filterTemporaryItems(self)
-    indexer = getIndexer()
+    indexer = getQueue()
     if obj is not None and indexer is not None:
         indexer.reindex(obj, idxs)
 

@@ -12,11 +12,11 @@ class SubscriberTests(SubscriberTestCase, LifeCycleTests):
     def afterSetUp(self):
         self.prepare()
         # trick the subscribers to use the mock indexer...
-        self.original_getIndexer = subscribers.getIndexer
-        subscribers.getIndexer = lambda: self.indexer
+        self.original_getIndexer = subscribers.getQueue
+        subscribers.getQueue = lambda: self.indexer
 
     def beforeTearDown(self):
-        subscribers.getIndexer = self.original_getIndexer
+        subscribers.getQueue = self.original_getIndexer
 
     def testUpdateObject(self):
         self.file.update(title='Foo')

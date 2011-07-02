@@ -10,11 +10,6 @@ log = getLogger(__name__).log
 log_level = DEBUG
 
 
-def getIndexer():
-    """ look for and return an indexer """
-    return getQueue()
-
-
 def isAutoFlushing():
     config = queryUtility(IIndexingConfig)
     if config is not None:

@@ -86,8 +86,8 @@ class LifeCycleTestCase(IndexingTestCase, LifeCycleTests):
     def afterSetUp(self):
         self.prepare()
         # trick the monkey-patches to use the mock indexer...
-        self.original_getIndexer = monkey.getIndexer
-        monkey.getIndexer = lambda: self.indexer
+        self.original_getIndexer = monkey.getQueue
+        monkey.getQueue = lambda: self.indexer
 
     def beforeTearDown(self):
-        monkey.getIndexer = self.original_getIndexer
+        monkey.getQueue = self.original_getIndexer
