@@ -3,12 +3,11 @@ from threading import local
 from transaction.interfaces import ISavepointDataManager
 from transaction import get as getTransaction
 from zope.interface import implements
-from collective.indexing.interfaces import IIndexQueue
 
 logger = getLogger('collective.indexing.transactions')
 
 
-class QueueSavepoint:
+class QueueSavepoint(object):
     """ transaction savepoints using the IIndexQueue interface """
 
     def __init__(self, queue):
@@ -24,11 +23,9 @@ class QueueTM(local):
     implements(ISavepointDataManager)
 
     def __init__(self, queue):
-        logger.debug('initializing tm %r for queue %r...', self, queue)
         local.__init__(self)
         self.registered = False
         self.vote = False
-        assert IIndexQueue.providedBy(queue), queue
         self.queue = queue
 
     def register(self):
@@ -38,9 +35,9 @@ class QueueTM(local):
                 transaction.join(self)
                 transaction.addBeforeCommitHook(self.before_commit)
                 self.registered = True
-                logger.debug('registered tm %r (queue %r).', self, self.queue)
-            except:
-                logger.exception('exception during register (registered=%s)', self.registered)
+            except Exception:
+                logger.exception('Exception during register (registered=%s)',
+                    self.registered)
 
     def savepoint(self):
         return QueueSavepoint(self.queue)
@@ -53,7 +50,6 @@ class QueueTM(local):
 
     def before_commit(self):
         if self.queue.getState():
-            logger.debug('processing queue...')
             processed = self.queue.process()
             logger.debug('%d item(s) processed during queue run', processed)
         self.queue.clear()

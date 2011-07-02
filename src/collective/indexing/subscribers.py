@@ -1,12 +1,9 @@
-from logging import getLogger
 from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent, Attributes
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.app.container.contained import dispatchToSublocations
 from Acquisition import aq_parent, aq_inner, aq_base
 from collective.indexing.queue import getQueue
-
-debug = getLogger('collective.indexing.subscribers').debug
 
 
 def filterTemporaryItems(obj, checkId=True):
@@ -38,7 +35,6 @@ def objectAdded(ev):
     obj = filterTemporaryItems(ev.object)
     indexer = getQueue()
     if obj is not None and indexer is not None:
-        debug('object added event for %r, indexing using %r', obj, indexer)
         indexer.index(obj)
 
 
@@ -47,7 +43,6 @@ def objectModified(ev):
     indexer = getQueue()
     if obj is None or indexer is None:
         return
-    debug('object modified event for %r, reindexing using %r', obj, indexer)
     if getattr(ev, 'descriptions', None):   # not used by archetypes/plone atm
         # build the list of to be updated attributes
         attrs = []
@@ -70,7 +65,6 @@ def objectRemoved(ev):
     obj = filterTemporaryItems(ev.object, checkId=False)
     indexer = getQueue()
     if obj is not None and indexer is not None:
-        debug('object removed event for %r, unindexing using %r', obj, indexer)
         indexer.unindex(obj)
 
 
@@ -84,7 +78,6 @@ def objectMoved(ev):
     obj = filterTemporaryItems(ev.object)
     indexer = getQueue()
     if obj is not None and indexer is not None:
-        debug('object moved event for %r, indexing using %r', obj, indexer)
         indexer.index(obj)
 
 
@@ -99,5 +92,4 @@ def objectTransitioned(ev):
     obj = filterTemporaryItems(ev.object)
     indexer = getQueue()
     if obj is not None and indexer is not None:
-        debug('object transitioned event for %r, reindexing using %r', obj, indexer)
         indexer.reindex(obj)

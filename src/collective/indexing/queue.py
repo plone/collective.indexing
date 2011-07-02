@@ -94,34 +94,24 @@ class IndexQueue(local):
         self.tmhook()
 
     def index(self, obj, attributes=None):
-        assert obj is not None, 'invalid object'
-        debug('adding index operation for %r', obj)
         self.queue.append((INDEX, obj, attributes))
         self.hook()
 
     def reindex(self, obj, attributes=None):
-        assert obj is not None, 'invalid object'
-        debug('adding reindex operation for %r', obj)
         self.queue.append((REINDEX, obj, attributes))
         self.hook()
 
     def unindex(self, obj):
-        assert obj is not None, 'invalid object'
-        debug('adding unindex operation for %r', obj)
         self.queue.append((UNINDEX, wrap(obj), None))
         self.hook()
 
     def setHook(self, hook):
-        assert callable(hook), 'hook must be callable'
-        debug('setting hook to %r', hook)
         self.tmhook = hook
 
     def getState(self):
         return list(self.queue)     # better return a copy... :)
 
     def setState(self, state):
-        assert isinstance(state, list), 'state must be a list'
-        debug('setting queue state to %r', state)
         self.queue = state
 
     def length(self):
@@ -139,7 +129,6 @@ class IndexQueue(local):
     def process(self):
         gsm = getGlobalSiteManager()
         utilities = list(gsm.getUtilitiesFor(IIndexQueueProcessor))
-        debug('processing queue using %r', utilities)
         processed = 0
         for name, util in utilities:
             util.begin()
@@ -163,18 +152,15 @@ class IndexQueue(local):
     def commit(self):
         gsm = getGlobalSiteManager()
         for name, util in gsm.getUtilitiesFor(IIndexQueueProcessor):
-            debug('committing changes queue using %r', util)
             util.commit()
 
     def abort(self):
         gsm = getGlobalSiteManager()
         for name, util in gsm.getUtilitiesFor(IIndexQueueProcessor):
-            debug('aborting changes queue using %r', util)
             util.abort()
         self.clear()
 
     def clear(self):
-        debug('clearing %d queue item(s)', len(self.queue))
         del self.queue[:]
         # release transaction manager
         self.tmhook = None
