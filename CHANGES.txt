@@ -4,6 +4,10 @@ Changelog
 2.0 - Unreleased
 ----------------
 
+- Optimize the queue before calling `begin` on index processors, thus avoiding
+  the extra setup cost if the queue is optimized to contain no items.
+  [hannosch]
+
 - Removed `reindexOnReorder` patch, which isn't required anymore in Plone 4.
   [hannosch]
 

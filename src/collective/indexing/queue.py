@@ -148,13 +148,15 @@ class IndexQueue(local):
         self.setState(sorted(res.values()))
 
     def process(self):
+        self.optimize()
+        if not self.queue:
+            return 0
         gsm = getGlobalSiteManager()
         utilities = list(gsm.getUtilitiesFor(IIndexQueueProcessor))
         processed = 0
         for name, util in utilities:
             util.begin()
         # TODO: must the queue be handled independently for each processor?
-        self.optimize()
         for op, obj, attributes in self.queue:
             for name, util in utilities:
                 if op == INDEX:

@@ -88,10 +88,9 @@ class QueueTests(CleanUp, TestCase):
         provideUtility(proc, IIndexQueueProcessor)
         queue.index('foo')
         queue.reindex('foo')
-        queue.unindex('foo')
-        self.assertEqual(queue.process(), 0)
+        self.assertEqual(queue.process(), 1)
         self.assertEqual(queue.getState(), [])
-        self.assertEqual(proc.getState(), [])
+        self.assertEqual(proc.getState(), [(INDEX, 'foo', None)])
         # the real queue won't update the state
         self.assertEqual(proc.state, 'started')
         queue.commit()
@@ -141,7 +140,7 @@ class QueueTests(CleanUp, TestCase):
         self.assertEqual(queue.process(), 0)    # nothing left...
         self.assertEqual(queue.getState(), [])
         self.assertEqual(proc.getState(), [])
-        self.assertEqual(proc.state, 'started') # the real queue won't update the state...
+        self.assertEqual(proc.state, 'aborted')
 
     def testQueueAbortAfterProcessing(self):
         queue = self.queue

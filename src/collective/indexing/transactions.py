@@ -49,9 +49,7 @@ class QueueTM(local):
         pass
 
     def before_commit(self):
-        if self.queue.getState():
-            processed = self.queue.process()
-            logger.debug('%d item(s) processed during queue run', processed)
+        self.queue.process()
         self.queue.clear()
 
     def tpc_vote(self, transaction):
@@ -63,8 +61,6 @@ class QueueTM(local):
 
     def tpc_abort(self, transaction):
         self.queue.abort()
-        if self.queue.getState():
-            logger.debug('emptying unprocessed queue due to abort()...')
         self.queue.clear()
         self.registered = False
 
