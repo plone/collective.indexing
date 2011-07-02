@@ -1,6 +1,5 @@
 from Products.Five.testbrowser import Browser
 from Products.PloneTestCase import ptc
-from plone.app.controlpanel.tests.cptc import ControlPanelTestCase
 from collective.indexing.tests import layer as testing
 from collective.indexing.tests.utils import TestHelpers
 
@@ -8,22 +7,16 @@ from collective.indexing.tests.utils import TestHelpers
 ptc.setupPloneSite()
 
 
-class InstallationTestCase(ptc.PloneTestCase, TestHelpers):
-    """ base class for (de)installation tests """
-
-    layer = testing.installation
-
-
 class IndexingTestCase(ptc.Sandboxed, ptc.PloneTestCase, TestHelpers):
     """ base class for integration tests """
 
-    layer = testing.installation
+    layer = testing.indexing
 
 
 class IndexingFunctionalTestCase(ptc.FunctionalTestCase):
     """ base class for functional tests """
 
-    layer = testing.installation
+    layer = testing.indexing
 
     def getBrowser(self, loggedIn=True):
         """ instantiate and return a testbrowser for convenience """
@@ -35,13 +28,7 @@ class IndexingFunctionalTestCase(ptc.FunctionalTestCase):
         return browser
 
 
-class IndexingControlPanelTestCase(ControlPanelTestCase):
-    """ base class for control panel tests """
-
-    layer = testing.installation
-
-
-class SubscriberTestCase(InstallationTestCase):
+class SubscriberTestCase(IndexingTestCase):
     """ base class for event subscriber tests """
 
     layer = testing.subscribers

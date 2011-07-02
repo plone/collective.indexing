@@ -1,12 +1,12 @@
+import doctest
 from unittest import TestSuite
-from zope.testing import doctest
+
 from Testing import ZopeTestCase as ztc
+
 from collective.indexing.tests.base import IndexingFunctionalTestCase
-from collective.indexing.tests.base import IndexingControlPanelTestCase
 from collective.indexing.tests.base import SubscriberFunctionalTestCase
 
-optionflags = (doctest.REPORT_ONLY_FIRST_FAILURE |
-               doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
+optionflags = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
 
 
 def test_suite():
@@ -23,7 +23,4 @@ def test_suite():
         ztc.FunctionalDocFileSuite(
            'change-notes.txt', package='collective.indexing.tests',
            test_class=IndexingFunctionalTestCase, optionflags=optionflags),
-        ztc.FunctionalDocFileSuite(
-           'configlet.txt', package='collective.indexing.tests',
-           test_class=IndexingControlPanelTestCase, optionflags=optionflags),
     ])

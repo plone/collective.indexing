@@ -1,5 +1,5 @@
 from unittest import defaultTestLoader
-from collective.indexing.tests.base import InstallationTestCase
+from collective.indexing.tests.base import IndexingTestCase
 
 # test-specific imports go here...
 from transaction import savepoint
@@ -80,20 +80,17 @@ class LifeCycleTests:
         self.assertEqual(self.queue, [(REINDEX, self.folder, self.publish_attributes)])
 
 
-class LifeCycleTestCase(InstallationTestCase, LifeCycleTests):
+class LifeCycleTestCase(IndexingTestCase, LifeCycleTests):
 
     publish_attributes = ['review_state']
 
     def afterSetUp(self):
         self.prepare()
         # trick the monkey-patches to use the mock indexer...
-        self.original_isActive = monkey.isActive
         self.original_getIndexer = monkey.getIndexer
-        monkey.isActive = lambda: True
         monkey.getIndexer = lambda: self.indexer
 
     def beforeTearDown(self):
-        monkey.isActive = self.original_isActive
         monkey.getIndexer = self.original_getIndexer
 
 

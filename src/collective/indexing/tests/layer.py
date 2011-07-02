@@ -3,8 +3,7 @@ from Products.Five import zcml, fiveconfigure
 from collective.testcaselayer.ptc import BasePTCLayer, ptc_layer
 
 
-class InstallationLayer(BasePTCLayer):
-    """ basic layer for testing package (de)installation """
+class IndexingLayer(BasePTCLayer):
 
     def afterSetUp(self):
         # load zcml for this package...
@@ -15,8 +14,7 @@ class InstallationLayer(BasePTCLayer):
         # after which it can be initialized...
         installPackage('collective.indexing', quiet=True)
 
-installation = InstallationLayer(bases=[ptc_layer])
-indexing = installation
+indexing = IndexingLayer(bases=[ptc_layer])
 
 
 class SubscriberLayer(BasePTCLayer):
@@ -29,10 +27,10 @@ class SubscriberLayer(BasePTCLayer):
         zcml.load_config('subscribers.zcml', package=indexing)
         fiveconfigure.debug_mode = False
 
-subscribers = SubscriberLayer(bases=[installation])
+subscribers = SubscriberLayer(bases=[indexing])
 
 
 class SubscriberIndexingLayer(BasePTCLayer):
     """ layer for integration tests with activated indexing & subscribers """
 
-combined = SubscriberIndexingLayer(bases=[subscribers, installation])
+combined = SubscriberIndexingLayer(bases=[subscribers, indexing])
