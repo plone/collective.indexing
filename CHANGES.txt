@@ -4,6 +4,9 @@ Changelog
 2.0 - Unreleased
 ----------------
 
+- Removed `reindexOnReorder` patch, which isn't required anymore in Plone 4.
+  [hannosch]
+
 - Removed the conditional auto_flush feature and instead always enable it.
   [hannosch]
 

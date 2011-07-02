@@ -116,27 +116,3 @@ def setupFlush():
         debug('patched %s', str(CatalogTool.getCounter))
 
 setupFlush()
-
-
-# in plone 3.x renaming an item triggers a call to `reindexOnReorder`,
-# which uses the catalog to update the `getObjPositionInParent` index for
-# all objects in the given folder;  with queued indexing any renamed object's
-# id will still be present in the catalog at that time, but `getObject` will
-# fail, of course;  however, since using the catalog for this sort of thing
-# was a bad idea in the first place, the method is patched here and has should
-# hopefully get fixed in plone 3.3 as well...
-from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.permissions import ModifyPortalContent
-from Products.CMFPlone.PloneTool import PloneTool
-
-
-def reindexOnReorder(self, parent):
-    """ Catalog ordering support """
-    mtool = getToolByName(self, 'portal_membership')
-    if mtool.checkPermission(ModifyPortalContent, parent):
-        for obj in parent.objectValues():
-            if isinstance(obj, CatalogMultiplex) or isinstance(obj, CMFCatalogAware):
-                obj.reindexObject(['getObjPositionInParent'])
-
-PloneTool.reindexOnReorder = reindexOnReorder
-debug('patched %s', str(PloneTool.reindexOnReorder))

@@ -292,9 +292,7 @@ Renaming should also work, but let's reset the counters first:
   ['<ATFolder at /plone/some-news>', '<ATNewsItem at /plone/some-news/second-news-today>']
 
   >>> sorted(calledReindex)
-  ['<ATDocument at /plone/front-page>', '<ATFolder at /plone/Members>',
-   '<ATFolder at /plone/events>', '<ATFolder at /plone/news>',
-   '<ATNewsItem at /plone/second-news-today>', '<PloneSite at /plone>']
+  ['<PloneSite at /plone>']
 
   >>> sorted(calledUnindex)
   ['<PathWrapper at /plone/a-folder/second-news-today>', '<PathWrapper at /plone/a-folder>']
