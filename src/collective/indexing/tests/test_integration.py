@@ -213,8 +213,7 @@ class IntegrationTests(IndexingTestCase):
         self.folder.reindexObject(idxs=['Title'])
         date3 = obj.modified()
         self.assertEqual(date2, date3)
-        # on commit the date should not get updated again as this causes
-        # issues like http://plone.org/products/collective.indexing/issues/11
+        # on commit the date should not get updated again
         commit()
         date4 = obj.modified()
         self.assertEqual(date2, date4)

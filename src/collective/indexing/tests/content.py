@@ -13,8 +13,7 @@ class Foo(ATCTContent):
         """ overridden index method calling its super variant """
         super(Foo, self).indexObject()
         self.index_counter += 1
-        assert self.index_counter < 42, 'indexing loop detected, see ' \
-            'http://plone.org/products/collective.indexing/issues/3'
+        assert self.index_counter < 42, 'indexing loop detected'
 
 
 registerATCT(Foo, 'collective.indexing.tests')
