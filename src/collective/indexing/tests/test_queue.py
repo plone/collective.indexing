@@ -1,4 +1,4 @@
-from unittest import defaultTestLoader, main, TestCase
+from unittest import TestCase
 from threading import Thread, currentThread
 from time import sleep
 
@@ -291,10 +291,3 @@ class QueueThreadTests(TestCase):
             queue = queues[thread]
             names = [name for op, name, attrs in queue]
             self.assertEquals(names, [tid] * idx)
-
-
-def test_suite():
-    return defaultTestLoader.loadTestsFromName(__name__)
-
-if __name__ == '__main__':
-    main(defaultTest='test_suite')

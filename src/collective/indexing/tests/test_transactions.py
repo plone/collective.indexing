@@ -1,4 +1,4 @@
-from unittest import defaultTestLoader, main, TestCase
+from unittest import TestCase
 from transaction import savepoint, commit, abort
 
 from collective.indexing.transactions import QueueTM
@@ -45,10 +45,3 @@ class QueueTransactionManagerTests(TestCase):
         self.assertEqual(self.queue.getState(), [])
         self.assertEqual(self.queue.processed, [(INDEX, 'foo', None)])
         self.assertEqual(self.queue.state, 'finished')
-
-
-def test_suite():
-    return defaultTestLoader.loadTestsFromName(__name__)
-
-if __name__ == '__main__':
-    main(defaultTest='test_suite')

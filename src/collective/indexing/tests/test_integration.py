@@ -1,4 +1,3 @@
-from unittest import defaultTestLoader
 from collective.indexing.tests.base import IndexingTestCase
 
 # test-specific imports go here...
@@ -217,7 +216,3 @@ class IntegrationTests(IndexingTestCase):
         commit()
         date4 = obj.modified()
         self.assertEqual(date2, date4)
-
-
-def test_suite():
-    return defaultTestLoader.loadTestsFromName(__name__)

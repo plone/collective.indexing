@@ -1,4 +1,3 @@
-from unittest import defaultTestLoader
 from collective.indexing.tests.base import SubscriberTestCase
 from collective.indexing.tests.test_lifecycle import LifeCycleTests
 
@@ -23,7 +22,3 @@ class SubscriberTests(SubscriberTestCase, LifeCycleTests):
         self.file.update(title='Foo')
         # `update()` doesn't fire an event, so the queue remains empty
         self.assertEqual(self.queue, [])
-
-
-def test_suite():
-    return defaultTestLoader.loadTestsFromName(__name__)

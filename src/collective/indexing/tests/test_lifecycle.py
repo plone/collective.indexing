@@ -1,4 +1,3 @@
-from unittest import defaultTestLoader
 from collective.indexing.tests.base import IndexingTestCase
 
 # test-specific imports go here...
@@ -92,7 +91,3 @@ class LifeCycleTestCase(IndexingTestCase, LifeCycleTests):
 
     def beforeTearDown(self):
         monkey.getIndexer = self.original_getIndexer
-
-
-def test_suite():
-    return defaultTestLoader.loadTestsFromName(__name__)
