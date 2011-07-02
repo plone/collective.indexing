@@ -12,7 +12,7 @@ from collective.indexing.interfaces import IIndexingConfig
 from collective.indexing.utils import isActive
 
 
-def getEventType(self):
+def getEventSubject(self):
     """ helper for `testRecursiveAutoFlush`, see below """
     catalog = getToolByName(self, 'portal_catalog')
     count = len(catalog(portal_type='Event'))
@@ -61,13 +61,13 @@ class AutoFlushTests(IndexingTestCase):
         self.failUnless(isActive())
         self.config.auto_flush = True
         self.folder.invokeFactory('Event', id='foo')
-        # monkey-patch foo's `sortable_title` method to use the catalog...
-        original = ATEvent.getEventType
-        ATEvent.getEventType = getEventType
+        # monkey-patch a method to use the catalog...
+        original = ATEvent.Subject
+        ATEvent.Subject = getEventSubject
         # now we commit, which triggers indexing...
         commit()
         # un-monkey again in the end
-        ATEvent.getEventType = original
+        ATEvent.Subject = original
 
     def testAutoFlushMonkeyPatchChaining(self):
         # (de)activating auto-flushing shouldn't cause other monkey
