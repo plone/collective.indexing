@@ -1,8 +1,5 @@
-This tests tries to make sure issues `#4`_ & `#11`_ are fixed, i.e. that
-change notes in an item's history are correctly added.
-
-  .. _`#4`: http://plone.org/products/collective.indexing/issues/4
-  .. _`#11`: http://plone.org/products/collective.indexing/issues/11
+This tests tries to make sure that change notes in an item's history are
+correctly added.
 
 First a testbrowser with a logged-in user holding the necessary permissions
 is needed:
@@ -21,31 +18,29 @@ Now let's edit the front page and provide a meaningful change note:
 The given note should now appear in the "history" section and in total there
 should be two revisions listed:
 
+  >>> browser.open('http://nohost/plone/front-page/@@historyview')
   >>> browser.contents
-  '...Info...Changes saved...
-   ...History...
-   ...Foo!...'
+   '...Foo!...'
 
   >>> browser.contents.count('Revert to this revision')
-  2
+  1
 
-When editing the item again, only one new revision should be created.  In
+When editing the item again, only one new revision should be created. In
 particular, no revision with the comment "Initial revision" should be added
-again.  See issue `#11`_ for more details about this.
+again.
 
   >>> browser.getLink('Edit').click()
   >>> browser.getControl('Title').value = 'Welcome to Clone!'
   >>> browser.getControl('Change note').value = 'Bar!'
   >>> browser.getControl('Save').click()
 
+  >>> browser.open('http://nohost/plone/front-page/@@historyview')
   >>> browser.contents
-  '...Info...Changes saved...
-   ...History...
-   ...Bar!...
+  '...Bar!...
    ...Foo!...
    ...Initial revision...'
 
   >>> browser.contents.count('Revert to this revision')
-  3
+  2
   >>> browser.contents.count('Initial revision')
   1
