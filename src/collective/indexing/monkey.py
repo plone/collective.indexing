@@ -45,9 +45,9 @@ def reindexObject(self, idxs=None):
 
 # set up dispatcher containers for the original methods and
 # hook up the new methods if that hasn't been done before...
+from Products.Archetypes.BaseBTreeFolder import BaseBTreeFolder
+from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
-from collective.indexing.archetypes import CatalogMultiplex
-from collective.indexing.archetypes import BaseBTreeFolder
 for module, container in ((CMFCatalogAware, catalogAwareMethods),
                           (CatalogMultiplex, catalogMultiplexMethods),
                           (BaseBTreeFolder, {})):

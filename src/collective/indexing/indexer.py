@@ -1,6 +1,6 @@
 from zope.interface import implements
+from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
-from collective.indexing.archetypes import CatalogMultiplex
 from collective.indexing.interfaces import IIndexQueueProcessor
 
 
