@@ -6,10 +6,6 @@
     <five:registerPackage package="." initialize=".initialize" />
 
     <utility
-       provides="collective.indexing.interfaces.IIndexingConfig"
-       factory="collective.indexing.config.IndexingConfig "/>
-
-    <utility
        provides="collective.indexing.indexer.IPortalCatalogQueueProcessor"
        name="portal-catalog"
        factory="collective.indexing.indexer.PortalCatalogProcessor" />

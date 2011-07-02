@@ -76,67 +76,46 @@ monkeyMethods.update({
 # patch CatalogTool.(unrestricted)searchResults to flush the queue
 # before issuing a query
 from Products.CMFPlone.CatalogTool import CatalogTool
-from collective.indexing.utils import autoFlushQueue
+from collective.indexing.queue import processQueue
 
 
 def searchResults(self, REQUEST=None, **kw):
     """ flush the queue before querying the catalog """
-    if isAutoFlushing():
-        autoFlushQueue(hint='restricted search', request=REQUEST, **kw)
+    processQueue()
     return self.__af_old_searchResults(REQUEST, **kw)
 
 
 def unrestrictedSearchResults(self, REQUEST=None, **kw):
     """ flush the queue before querying the catalog """
-    if isAutoFlushing():
-        autoFlushQueue(hint='unrestricted search', request=REQUEST, **kw)
+    processQueue()
     return self.__af_old_unrestrictedSearchResults(REQUEST, **kw)
 
 
 def getCounter(self):
     """ return a counter which is increased on catalog changes """
-    if isAutoFlushing():
-        autoFlushQueue(hint='getCounter')
+    processQueue()
     return self.__af_old_getCounter()
 
 
-def setupAutoFlush(enable=True):
+def setupFlush():
     """ apply or revert monkey-patch for `searchResults`
         and `unrestrictedSearchResults` """
-    if enable:
-        if not hasattr(CatalogTool, '__af_old_searchResults'):
-            CatalogTool.__af_old_searchResults = CatalogTool.searchResults
-            CatalogTool.searchResults = searchResults
-            CatalogTool.__call__ = searchResults
-            debug('patched %s', str(CatalogTool.searchResults))
-            debug('patched %s', str(CatalogTool.__call__))
-        if not hasattr(CatalogTool, '__af_old_unrestrictedSearchResults'):
-            CatalogTool.__af_old_unrestrictedSearchResults = CatalogTool.unrestrictedSearchResults
-            CatalogTool.unrestrictedSearchResults = unrestrictedSearchResults
-            debug('patched %s', str(CatalogTool.unrestrictedSearchResults))
-        if not hasattr(CatalogTool, '__af_old_getCounter'):
-            CatalogTool.__af_old_getCounter = CatalogTool.getCounter
-            CatalogTool.getCounter = getCounter
-            debug('patched %s', str(CatalogTool.getCounter))
-    else:
-        if hasattr(CatalogTool, '__af_old_searchResults'):
-            CatalogTool.searchResults = CatalogTool.__af_old_searchResults
-            CatalogTool.__call__ = CatalogTool.__af_old_searchResults
-            delattr(CatalogTool, '__af_old_searchResults')
-            debug('removed patch from %s', str(CatalogTool.searchResults))
-            debug('removed patch from %s', str(CatalogTool.__call__))
-        if hasattr(CatalogTool, '__af_old_unrestrictedSearchResults'):
-            CatalogTool.unrestrictedSearchResults = CatalogTool.__af_old_unrestrictedSearchResults
-            delattr(CatalogTool, '__af_old_unrestrictedSearchResults')
-            debug('removed patch from %s', str(CatalogTool.unrestrictedSearchResults))
-        if hasattr(CatalogTool, '__af_old_getCounter'):
-            CatalogTool.getCounter = CatalogTool.__af_old_getCounter
-            delattr(CatalogTool, '__af_old_getCounter')
-            debug('removed patch from %s', str(CatalogTool.getCounter))
+    if not hasattr(CatalogTool, '__af_old_searchResults'):
+        CatalogTool.__af_old_searchResults = CatalogTool.searchResults
+        CatalogTool.searchResults = searchResults
+        CatalogTool.__call__ = searchResults
+        debug('patched %s', str(CatalogTool.searchResults))
+        debug('patched %s', str(CatalogTool.__call__))
+    if not hasattr(CatalogTool, '__af_old_unrestrictedSearchResults'):
+        CatalogTool.__af_old_unrestrictedSearchResults = CatalogTool.unrestrictedSearchResults
+        CatalogTool.unrestrictedSearchResults = unrestrictedSearchResults
+        debug('patched %s', str(CatalogTool.unrestrictedSearchResults))
+    if not hasattr(CatalogTool, '__af_old_getCounter'):
+        CatalogTool.__af_old_getCounter = CatalogTool.getCounter
+        CatalogTool.getCounter = getCounter
+        debug('patched %s', str(CatalogTool.getCounter))
 
-# (de)activate the auto-flush patches according to the setting...
-from collective.indexing.utils import isAutoFlushing
-setupAutoFlush(isAutoFlushing())
+setupFlush()
 
 
 # in plone 3.x renaming an item triggers a call to `reindexOnReorder`,

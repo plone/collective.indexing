@@ -1,6 +1,4 @@
-from zope.interface import implements
-from collective.indexing.interfaces import IIndexingConfig
-
+from persistent import Persistent
 
 # constants for indexing operations
 UNINDEX = -1
@@ -8,9 +6,6 @@ REINDEX = 0
 INDEX = 1
 
 
-class IndexingConfig(object):
-
-    implements(IIndexingConfig)
-
-    def __init__(self):
-        self.auto_flush = True
+class IndexingConfig(Persistent):
+    # BBB: support uninstall of 1.x versions
+    pass

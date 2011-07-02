@@ -1,20 +1,9 @@
 from zope.interface import Interface
-from zope.schema import Bool
-from zope.i18nmessageid import MessageFactory
-
-_ = MessageFactory('collective.indexing')
 
 
-class IIndexingSchema(Interface):
-
-    auto_flush = Bool(title=_(u'Auto-flush queue'), default=True,
-        description=_(u'Check to enable automatically processing all queued '
-                       'up indexing operations just before a catalog query '
-                       'is performed.'))
-
-
-class IIndexingConfig(IIndexingSchema):
-    """ utility to hold the configuration related to indexing """
+class IIndexingConfig(Interface):
+    # BBB: support uninstall of 1.x versions
+    pass
 
 
 class IIndexing(Interface):

@@ -4,6 +4,9 @@ Changelog
 2.0 - Unreleased
 ----------------
 
+- Removed the conditional auto_flush feature and instead always enable it.
+  [hannosch]
+
 - Merged `QueueReducer` into the `queue.optimize` method.
   [hannosch]
 

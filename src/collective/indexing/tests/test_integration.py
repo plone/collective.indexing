@@ -2,16 +2,13 @@ from collective.indexing.tests.base import IndexingTestCase
 
 # test-specific imports go here...
 from transaction import commit
-from zope.component import getUtility
 from Acquisition import aq_parent, aq_inner, aq_base
 from Products.CMFCore.utils import getToolByName
 from Products.ATContentTypes.content.event import ATEvent
-from Products.CMFPlone.CatalogTool import CatalogTool
-from collective.indexing.interfaces import IIndexingConfig
 
 
 def getEventSubject(self):
-    """ helper for `testRecursiveAutoFlush`, see below """
+    """ helper for `testRecursiveProcessQueue`, see below """
     catalog = getToolByName(self, 'portal_catalog')
     count = len(catalog(portal_type='Event'))
     if count:
@@ -20,41 +17,17 @@ def getEventSubject(self):
         return 'Lonely event'
 
 
-class AutoFlushTests(IndexingTestCase):
+class ProcessQueueTests(IndexingTestCase):
 
     def afterSetUp(self):
         # clear logs to avoid id collisions
         setup = self.portal.portal_setup
         setup.manage_delObjects(setup.objectIds())
-        self.config = getUtility(IIndexingConfig)
 
-    def beforeTearDown(self):
-        self.config.auto_flush = True       # reset to default
-
-    def testNoAutoFlush(self):
-        # without auto-flush we must commit to update the catalog
-        self.config.auto_flush = False
-        self.assertEqual(self.create(), [])
-        commit()
-        self.assertEqual(self.fileIds(), ['foo'])
-        self.assertEqual(self.remove(), ['foo'])
-        commit()
-        self.assertEqual(self.fileIds(), [])
-
-    def testAutoFlush(self):
-        # with auto-flush enabled the catalog is always up-to-date
-        self.config.auto_flush = True
-        # no commits required now
-        self.assertEqual(self.create(), ['foo'])
-        self.assertEqual(self.fileIds(), ['foo'])
-        self.assertEqual(self.remove(), [])
-        self.assertEqual(self.fileIds(), [])
-
-    def testRecursiveAutoFlush(self):
+    def testRecursiveProcessQueue(self):
         # an indexing helper using the catalog, thereby triggering queue
-        # processing via auto-flush, used to potentially cause an infinite
-        # loop;  hence recursive auto-flushing must be prevented...
-        self.config.auto_flush = True
+        # processing, used to potentially cause an infinite loop; hence
+        # recursive queue processing must be prevented
         self.folder.invokeFactory('Event', id='foo')
         # monkey-patch a method to use the catalog...
         original = ATEvent.Subject
@@ -64,40 +37,7 @@ class AutoFlushTests(IndexingTestCase):
         # un-monkey again in the end
         ATEvent.Subject = original
 
-    def testAutoFlushMonkeyPatchChaining(self):
-        # (de)activating auto-flushing shouldn't cause other monkey
-        # patches to be masqueraded or otherwise disabled...
-        # first let's set up another monkey patch...
-        log = []
-        original = CatalogTool.searchResults
-        def searchResults(self, REQUEST=None, **kw):
-            log.append('monkey called')
-            return original(self, REQUEST, **kw)
-        CatalogTool.searchResults = searchResults
-        # next we search something and make sure the monkey's in place...
-        self.assertEqual(len(self.portal.portal_catalog.searchResults(Title='news')), 2)
-        self.assertEqual(log, ['monkey called'])
-        # auto-flushing get deactivated and then activated again...
-        self.config.auto_flush = False
-        self.config.auto_flush = True
-        # after which another search should still our monkey patch...
-        self.assertEqual(len(self.portal.portal_catalog.searchResults(Title='news')), 2)
-        self.assertEqual(log, ['monkey called'] * 2)
-
-    def testGetCounterWithoutAutoFlush(self):
-        # without auto-flush we must commit to update the catalog counter
-        self.config.auto_flush = False
-        catalog = self.portal.portal_catalog
-        value = catalog.getCounter()
-        self.folder.update(title='Foo')
-        self.assertEqual(catalog.getCounter(), value)
-        commit()
-        self.assertTrue(catalog.getCounter() > value)
-
-    def testGetCounterWithAutoFlush(self):
-        # with auto-flush enabled the catalog counter is always up-to-date
-        self.config.auto_flush = True
-        # no commits required now
+    def testGetCounter(self):
         catalog = self.portal.portal_catalog
         value = catalog.getCounter()
         self.folder.update(title='Foo')
