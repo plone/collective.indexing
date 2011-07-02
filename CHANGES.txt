@@ -4,6 +4,10 @@ Changelog
 2.0 - Unreleased
 ----------------
 
+**Upgrade note**: This version no longer requires any persistent configuration
+or does it have any UI. Please deactivate the add-on. The functionality will be
+present as long as the package is available on the Python path.
+
 - Optimize the queue before calling `begin` on index processors, thus avoiding
   the extra setup cost if the queue is optimized to contain no items.
   [hannosch]
