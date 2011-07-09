@@ -1,8 +1,8 @@
 Changelog
 =========
 
-2.0 - Unreleased
-----------------
+2.0a1 - 2011-07-09
+------------------
 
 **Upgrade note**: This version requires Plone 4.1 but no longer requires any
 persistent configuration or does it have any UI. Please deactivate the add-on
