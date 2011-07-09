@@ -20,7 +20,7 @@ setup(name = 'collective.indexing',
       keywords = 'plone cmf zope indexing queueing catalog asynchronous',
       author = 'Plone Foundation',
       author_email = 'plone-developers@lists.sourceforge.net',
-      url = 'http://plone.org/products/collective.indexing',
+      url = 'https://github.com/Jarn/collective.indexing',
       license = 'GPL',
       packages = find_packages('src'),
       package_dir = {'': 'src'},
@@ -30,14 +30,13 @@ setup(name = 'collective.indexing',
       zip_safe = False,
       install_requires = [
         'setuptools',
+        'collective.testcaselayer',
         'zope.container',
         'zope.event',
         'zope.lifecycleevent',
         'zope.publisher',
+        'Zope2 >= 2.13',
       ],
-      extras_require = { 'test': [
-        'collective.testcaselayer',
-      ]},
       entry_points = '''
         [z3c.autoinclude.plugin]
         target = plone

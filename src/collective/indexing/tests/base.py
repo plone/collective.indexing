@@ -1,7 +1,7 @@
-from Products.Five.testbrowser import Browser
 from Products.PloneTestCase import ptc
-from collective.indexing.tests import layer as testing
+from Testing.testbrowser import Browser
 
+from collective.indexing.tests import layer as testing
 
 ptc.setupPloneSite()
 
