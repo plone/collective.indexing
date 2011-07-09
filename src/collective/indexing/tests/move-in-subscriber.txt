@@ -81,4 +81,3 @@ doesn't affect others:
   True
   >>> gsm.unregisterHandler(reindex)
   True
-

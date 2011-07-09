@@ -5,11 +5,11 @@ from time import sleep
 from zope.component import provideUtility
 from zope.testing.cleanup import CleanUp
 
+from collective.indexing.config import INDEX, REINDEX, UNINDEX
 from collective.indexing.interfaces import IIndexQueue
 from collective.indexing.interfaces import IIndexQueueProcessor
-from collective.indexing.queue import IndexQueue
-from collective.indexing.config import INDEX, REINDEX, UNINDEX
 from collective.indexing.queue import getQueue
+from collective.indexing.queue import IndexQueue
 from collective.indexing.tests import utils
 
 

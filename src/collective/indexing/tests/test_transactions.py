@@ -1,9 +1,10 @@
 from unittest import TestCase
+
 from transaction import savepoint, commit, abort
 
-from collective.indexing.transactions import QueueTM
 from collective.indexing.config import INDEX, REINDEX
 from collective.indexing.tests import utils
+from collective.indexing.transactions import QueueTM
 
 
 class QueueTransactionManagerTests(TestCase):

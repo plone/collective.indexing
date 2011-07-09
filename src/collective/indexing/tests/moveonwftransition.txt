@@ -87,4 +87,3 @@ The document should have moved into the destination folder:
 
   >>> browser.url
   'http://nohost/plone/destination-folder/my-doc'
-

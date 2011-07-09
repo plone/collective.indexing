@@ -1,8 +1,9 @@
 from zope.interface import implements
 
-from collective.indexing.interfaces import IIndexing, IIndexQueue
-from collective.indexing.interfaces import IIndexQueueProcessor
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
+from collective.indexing.interfaces import IIndexing
+from collective.indexing.interfaces import IIndexQueue
+from collective.indexing.interfaces import IIndexQueueProcessor
 
 
 class MockIndexer(object):

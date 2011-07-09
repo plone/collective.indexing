@@ -1,10 +1,9 @@
-from collective.indexing.tests.base import IndexingTestCase
-
-# test-specific imports go here...
-from transaction import commit
 from Acquisition import aq_parent, aq_inner, aq_base
-from Products.CMFCore.utils import getToolByName
 from Products.ATContentTypes.content.event import ATEvent
+from Products.CMFCore.utils import getToolByName
+from transaction import commit
+
+from collective.indexing.tests.base import IndexingTestCase
 
 
 def getEventSubject(self):

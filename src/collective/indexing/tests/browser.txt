@@ -339,4 +339,3 @@ Also, clean up the monkey patches:
   >>> PortalCatalogProcessor.index = p_index
   >>> PortalCatalogProcessor.reindex = p_reindex
   >>> PortalCatalogProcessor.unindex = p_unindex
-

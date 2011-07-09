@@ -15,7 +15,6 @@ class Foo(ATCTContent):
         self.index_counter += 1
         assert self.index_counter < 42, 'indexing loop detected'
 
-
 registerATCT(Foo, 'collective.indexing.tests')
 
 

@@ -1,8 +1,6 @@
+from collective.indexing import subscribers
 from collective.indexing.tests.base import SubscriberTestCase
 from collective.indexing.tests.test_lifecycle import LifeCycleTests
-
-# test-specific imports go here...
-from collective.indexing import subscribers
 
 
 class SubscriberTests(SubscriberTestCase, LifeCycleTests):

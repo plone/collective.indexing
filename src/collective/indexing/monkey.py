@@ -72,7 +72,6 @@ monkeyMethods.update({
 })
 
 
-
 # patch CatalogTool.(unrestricted)searchResults to flush the queue
 # before issuing a query
 from Products.CMFPlone.CatalogTool import CatalogTool

@@ -1,10 +1,9 @@
-from collective.indexing.tests.base import IndexingTestCase
-
-# test-specific imports go here...
 from transaction import savepoint
+
+from collective.indexing import monkey
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
 from collective.indexing.tests import utils
-from collective.indexing import monkey
+from collective.indexing.tests.base import IndexingTestCase
 
 
 class LifeCycleTests:
