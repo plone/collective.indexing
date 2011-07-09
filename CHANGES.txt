@@ -8,6 +8,9 @@ Changelog
 or does it have any UI. Please deactivate the add-on. The functionality will be
 present as long as the package is available on the Python path.
 
+- Use `dispatchToSublocations` from zope.container.
+  [hannosch]
+
 - Optimize the queue before calling `begin` on index processors, thus avoiding
   the extra setup cost if the queue is optimized to contain no items.
   [hannosch]

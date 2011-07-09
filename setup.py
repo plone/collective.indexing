@@ -30,7 +30,10 @@ setup(name = 'collective.indexing',
       zip_safe = False,
       install_requires = [
         'setuptools',
-        'zope.app.container',
+        'zope.container',
+        'zope.event',
+        'zope.lifecycleevent',
+        'zope.publisher',
       ],
       extras_require = { 'test': [
         'collective.testcaselayer',

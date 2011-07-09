@@ -1,8 +1,9 @@
+from Acquisition import aq_parent, aq_inner, aq_base
+from zope.container.contained import dispatchToSublocations
 from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent, Attributes
 from zope.publisher.interfaces.browser import IBrowserRequest
-from zope.app.container.contained import dispatchToSublocations
-from Acquisition import aq_parent, aq_inner, aq_base
+
 from collective.indexing.queue import getQueue
 
 
