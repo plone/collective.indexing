@@ -55,6 +55,8 @@ def unregisterUtility(context, iface, name=None):
         del sm.utilities.__dict__['_provided'][iface]
     if iface in sm.utilities._subscribers[0]:
         del sm.utilities._subscribers[0][iface]
+    sm.utilities._p_changed = True
+
 
 def uninstall(portal):
     logger = logging.getLogger('collective.indexing.Uninstall')
