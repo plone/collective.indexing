@@ -4,9 +4,10 @@ Changelog
 2.0 - Unreleased
 ----------------
 
-**Upgrade note**: This version no longer requires any persistent configuration
-or does it have any UI. Please deactivate the add-on. The functionality will be
-present as long as the package is available on the Python path.
+**Upgrade note**: This version requires Plone 4.1 but no longer requires any
+persistent configuration or does it have any UI. Please deactivate the add-on
+in the add-ons control panel. The functionality will be present as long as the
+package is available on the Python path.
 
 - Use `dispatchToSublocations` from zope.container.
   [hannosch]
