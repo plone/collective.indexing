@@ -103,9 +103,7 @@ And the search should of course also return the new news:
   >>> browser.url
   'http://nohost/plone/search?SearchableText=today'
   >>> browser.contents
-  '...Search results...2 items matching your search terms...
-   ...first news today...
-   ...second news today...'
+  '...Search results...2 items matching your search terms...'
 
 Now let's try some other operations, for example moving items around.  The
 change of location should be correctly reflected by the catalog.  First some
