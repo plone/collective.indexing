@@ -4,6 +4,9 @@ Changelog
 2.0 - unreleased
 ----------------
 
+- Use getSiteManager to look for all IIndexQueueProcessor's to capture the ones
+  registered in local site managers.
+  [hannosch]
 
 2.0a1 - 2011-07-09
 ------------------

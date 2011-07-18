@@ -1,7 +1,7 @@
 from logging import getLogger
 from threading import local
 from zope.interface import implements
-from zope.component import getGlobalSiteManager
+from zope.component import getSiteManager
 from Acquisition import aq_base, aq_inner, aq_parent
 
 from collective.indexing.interfaces import IIndexQueue
@@ -151,8 +151,8 @@ class IndexQueue(local):
         self.optimize()
         if not self.queue:
             return 0
-        gsm = getGlobalSiteManager()
-        utilities = list(gsm.getUtilitiesFor(IIndexQueueProcessor))
+        sm = getSiteManager()
+        utilities = list(sm.getUtilitiesFor(IIndexQueueProcessor))
         processed = 0
         for name, util in utilities:
             util.begin()
@@ -173,13 +173,13 @@ class IndexQueue(local):
         return processed
 
     def commit(self):
-        gsm = getGlobalSiteManager()
-        for name, util in gsm.getUtilitiesFor(IIndexQueueProcessor):
+        sm = getSiteManager()
+        for name, util in sm.getUtilitiesFor(IIndexQueueProcessor):
             util.commit()
 
     def abort(self):
-        gsm = getGlobalSiteManager()
-        for name, util in gsm.getUtilitiesFor(IIndexQueueProcessor):
+        sm = getSiteManager()
+        for name, util in sm.getUtilitiesFor(IIndexQueueProcessor):
             util.abort()
         self.clear()
 
