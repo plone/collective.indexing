@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.0 - unreleased
+----------------
+
+
 2.0a2 - 2011-07-19
 ------------------
 
@@ -340,4 +344,3 @@ package is available on the Python path.
 
 * Initial release
   [tesdal, witsch]
-
