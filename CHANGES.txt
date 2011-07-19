@@ -4,6 +4,9 @@ Changelog
 2.0 - unreleased
 ----------------
 
+- Use `plone.app.testing` instead of `c.testcaselayer`.
+  [hannosch]
+
 - Use getSiteManager to look for all IIndexQueueProcessor's to capture the ones
   registered in local site managers.
   [hannosch]

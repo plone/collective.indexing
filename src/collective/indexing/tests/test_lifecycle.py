@@ -11,8 +11,8 @@ class LifeCycleTests:
     def prepare(self):
         self.setRoles(['Manager'])
         self.portal.invokeFactory('Folder', id='folder1', title='Folder 1')
-        self.folder = self.portal.folder1
-        self.folder.unmarkCreationFlag()    # avoid extraneous events...
+        self.folder1 = self.portal.folder1
+        self.folder1.unmarkCreationFlag()    # avoid extraneous events...
         self.portal.invokeFactory('File', id='file1', title='File 1')
         self.file = self.portal.file1
         self.file.unmarkCreationFlag()      # avoid extraneous events...
@@ -64,8 +64,8 @@ class LifeCycleTests:
 
     def testCopyObject(self):
         cookie = self.portal.manage_copyObjects(ids=['file1'])
-        self.folder.manage_pasteObjects(cookie)
-        self.assert_((INDEX, self.folder.file1, None) in self.queue, self.queue)
+        self.folder1.manage_pasteObjects(cookie)
+        self.assert_((INDEX, self.folder1.file1, None) in self.queue, self.queue)
 
     def testRenameObject(self):
         savepoint()         # need to create a savepoint, because!
@@ -74,19 +74,19 @@ class LifeCycleTests:
         self.assertRaises(AttributeError, getattr, self.portal, 'file1')
 
     def testPublishObject(self):
-        self.portal.portal_workflow.doActionFor(self.folder, 'publish')
-        self.assertEqual(self.queue, [(REINDEX, self.folder, self.publish_attributes)])
+        self.portal.portal_workflow.doActionFor(self.folder1, 'publish')
+        self.assertEqual(self.queue, [(REINDEX, self.folder1, self.publish_attributes)])
 
 
 class LifeCycleTestCase(IndexingTestCase, LifeCycleTests):
 
     publish_attributes = ['review_state']
 
-    def afterSetUp(self):
+    def setUp(self):
         self.prepare()
         # trick the monkey-patches to use the mock indexer...
         self.original_getIndexer = monkey.getQueue
         monkey.getQueue = lambda: self.indexer
 
-    def beforeTearDown(self):
+    def tearDown(self):
         monkey.getQueue = self.original_getIndexer

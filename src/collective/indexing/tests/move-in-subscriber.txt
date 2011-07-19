@@ -17,35 +17,50 @@ While this is not a problem specific to or caused by `collective.indexing`,
 the package now does provide a workaround for it.  To make sure of that, we
 first have to set up the two event subscribers:
 
+  >>> portal = layer['portal']
+  >>> folder = portal['test-folder']
+
   >>> from zope.component import adapter, provideHandler
-  >>> from Products.Archetypes.event import ObjectInitializedEvent
+  >>> from Products.Archetypes.event import ObjectEditedEvent
   >>> called = []
-  >>> @adapter(ObjectInitializedEvent)
+  >>> @adapter(ObjectEditedEvent)
   ... def move(event):
   ...   called.append('move')
   ...   oid = event.object.getId()
   ...   if folder.get(oid):
-  ...     portal.manage_pasteObjects(folder.manage_cutObjects(ids=(oid,)))
+  ...     portal.manage_pasteObjects(folder.manage_cutObjects(ids=(oid, )))
   >>> provideHandler(move)
 
 The second one doesn't modify anything, but simply causes the reindexing
 operation directly:
 
-  >>> @adapter(ObjectInitializedEvent)
+  >>> @adapter(ObjectEditedEvent)
   ... def reindex(event):
   ...   called.append('reindex')
   ...   event.object.reindexObject()
   >>> provideHandler(reindex)
 
-Now a testbrowser is used to create an object in the user's home folder,
+Now a test browser is used to create an object in the user's home folder,
 which will then be move to the site root via the first subscriber defined
 above:
 
-  >>> self.setRoles(('Manager',))
-  >>> browser = self.getBrowser()
+  >>> from plone.app.testing import setRoles
+  >>> from plone.app.testing import TEST_USER_ID
+  >>> from plone.app.testing import TEST_USER_NAME
+  >>> from plone.app.testing import TEST_USER_PASSWORD
+  >>> setRoles(portal, TEST_USER_ID, ['Manager'])
+
+  >>> from plone.testing.z2 import Browser
+  >>> browser = Browser(layer['app'])
+  >>> browser.addHeader('Authorization',
+  ...     'Basic %s:%s' % (TEST_USER_NAME, TEST_USER_PASSWORD))
   >>> browser.open(folder.absolute_url())
   >>> browser.getLink(url='createObject?type_name=Event').click()
   >>> browser.getControl('Title').value = 'Foo'
+  >>> browser.getControl('Save').click()
+
+  >>> browser.getLink('Edit').click()
+  >>> browser.getControl('Title').value = 'Move!'
   >>> browser.getControl('Save').click()
 
 Let's make sure the events have been called (in the "correct" order) and the

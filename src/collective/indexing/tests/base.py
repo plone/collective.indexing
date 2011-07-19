@@ -1,39 +1,52 @@
-from Products.PloneTestCase import ptc
-from Testing.testbrowser import Browser
+import unittest2 as unittest
 
-from collective.indexing.tests import layer as testing
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import TEST_USER_PASSWORD
+from plone.testing.z2 import Browser
 
-ptc.setupPloneSite()
-
-
-class IndexingTestCase(ptc.Sandboxed, ptc.PloneTestCase):
-    """ base class for integration tests """
-
-    layer = testing.indexing
+from collective.indexing.tests import layer
 
 
-class IndexingFunctionalTestCase(ptc.FunctionalTestCase):
-    """ base class for functional tests """
+class Helper(unittest.TestCase):
 
-    layer = testing.indexing
+    @property
+    def portal(self):
+        return self.layer['portal']
+
+    @property
+    def folder(self):
+        return self.layer['portal']['test-folder']
+
+    def setRoles(self, roles):
+        setRoles(self.portal, TEST_USER_ID, roles)
+
+
+class IndexingTestCase(Helper):
+
+    layer = layer.INDEXING_INTEGRATION
+
+
+class IndexingFunctionalTestCase(Helper):
+
+    layer = layer.INDEXING_FUNCTIONAL
 
     def getBrowser(self, loggedIn=True):
         """ instantiate and return a testbrowser for convenience """
-        browser = Browser()
+        browser = Browser(self.layer['app'])
         if loggedIn:
-            user = ptc.default_user
-            pwd = ptc.default_password
+            user = TEST_USER_NAME
+            pwd = TEST_USER_PASSWORD
             browser.addHeader('Authorization', 'Basic %s:%s' % (user, pwd))
         return browser
 
 
-class SubscriberTestCase(IndexingTestCase):
-    """ base class for event subscriber tests """
+class SubscriberTestCase(Helper):
 
-    layer = testing.subscribers
+    layer = layer.SUBSCRIBER_INTEGRATION
 
 
-class SubscriberFunctionalTestCase(IndexingFunctionalTestCase):
-    """ base class for functional tests with active event subscribers """
+class SubscriberFunctionalTestCase(Helper):
 
-    layer = testing.subscribers
+    layer = layer.SUBSCRIBER_FUNCTIONAL

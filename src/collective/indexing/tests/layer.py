@@ -1,23 +1,53 @@
-from collective.testcaselayer.ptc import BasePTCLayer, ptc_layer
-from Testing.ZopeTestCase import installPackage
-from Zope2.App import zcml
+from plone.app.testing import FunctionalTesting
+from plone.app.testing import IntegrationTesting
+from plone.app.testing import PloneSandboxLayer
+from plone.app.testing import PLONE_FIXTURE
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
+from Products.CMFCore.utils import getToolByName
 
 
-class IndexingLayer(BasePTCLayer):
+class IndexingLayer(PloneSandboxLayer):
 
-    def afterSetUp(self):
+    defaultBases = (PLONE_FIXTURE, )
+
+    def setUpZope(self, app, configurationContext):
         from collective import indexing
-        zcml.load_config('configure.zcml', package=indexing)
-        installPackage('collective.indexing', quiet=True)
+        self.loadZCML(package=indexing)
 
-indexing = IndexingLayer(bases=[ptc_layer])
+    def setUpPloneSite(self, portal):
+        setRoles(portal, TEST_USER_ID, ['Manager'])
+        workflowTool = getToolByName(portal, 'portal_workflow')
+        workflowTool.setDefaultChain('simple_publication_workflow')
+        portal.invokeFactory('Folder', 'test-folder')
+        portal.invokeFactory('Folder', 'news')
 
 
-class SubscriberLayer(BasePTCLayer):
-    """ layer for integration tests with activated event subscribers """
 
-    def afterSetUp(self):
+INDEXING_LAYER = IndexingLayer()
+INDEXING_INTEGRATION = IntegrationTesting(
+    bases=(INDEXING_LAYER, ), name="IndexingLayer:Integration")
+INDEXING_FUNCTIONAL = FunctionalTesting(
+    bases=(INDEXING_LAYER, ), name="IndexingLayer:Functional")
+
+
+class SubscriberLayer(PloneSandboxLayer):
+
+    defaultBases = (PLONE_FIXTURE, )
+
+    def setUpZope(self, app, configurationContext):
         from collective import indexing
-        zcml.load_config('subscribers.zcml', package=indexing)
+        self.loadZCML('subscribers.zcml', package=indexing)
 
-subscribers = SubscriberLayer(bases=[indexing])
+    def setUpPloneSite(self, portal):
+        setRoles(portal, TEST_USER_ID, ['Manager'])
+        workflowTool = getToolByName(portal, 'portal_workflow')
+        workflowTool.setDefaultChain('simple_publication_workflow')
+        portal.invokeFactory('Folder', 'test-folder')
+
+
+SUBSCRIBER_LAYER = SubscriberLayer()
+SUBSCRIBER_INTEGRATION = IntegrationTesting(
+    bases=(SUBSCRIBER_LAYER, ), name="SubscriberLayer:Integration")
+SUBSCRIBER_FUNCTIONAL = FunctionalTesting(
+    bases=(SUBSCRIBER_LAYER, ), name="SubscriberLayer:Functional")

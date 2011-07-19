@@ -18,16 +18,11 @@ def getEventSubject(self):
 
 class ProcessQueueTests(IndexingTestCase):
 
-    def afterSetUp(self):
-        # clear logs to avoid id collisions
-        setup = self.portal.portal_setup
-        setup.manage_delObjects(setup.objectIds())
-
     def testRecursiveProcessQueue(self):
         # an indexing helper using the catalog, thereby triggering queue
         # processing, used to potentially cause an infinite loop; hence
         # recursive queue processing must be prevented
-        self.folder.invokeFactory('Event', id='foo')
+        self.folder.invokeFactory('Event', id='bar')
         # monkey-patch a method to use the catalog...
         original = ATEvent.Subject
         ATEvent.Subject = getEventSubject
@@ -39,7 +34,7 @@ class ProcessQueueTests(IndexingTestCase):
     def testGetCounter(self):
         catalog = self.portal.portal_catalog
         value = catalog.getCounter()
-        self.folder.update(title='Foo')
+        self.folder.update(title='Bar')
         self.assertTrue(catalog.getCounter() > value)
 
 

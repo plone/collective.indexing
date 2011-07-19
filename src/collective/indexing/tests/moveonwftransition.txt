@@ -6,11 +6,21 @@ item on a workflow transition. We will create a source folder, where we apply
 our content rule and a destination folder, where the content rule's action
 will move our object into.
 
-First a testbrowser with a logged-in user holding the necessary permissions
+First a test browser with a logged-in user holding the necessary permissions
 is needed:
 
-  >>> self.setRoles(('Manager',))
-  >>> browser = self.getBrowser()
+  >>> from plone.app.testing import setRoles
+  >>> from plone.app.testing import TEST_USER_ID
+  >>> from plone.app.testing import TEST_USER_NAME
+  >>> from plone.app.testing import TEST_USER_PASSWORD
+  >>> portal = layer['portal']
+  >>> setRoles(portal, TEST_USER_ID, ['Manager'])
+
+  >>> from plone.testing.z2 import Browser
+  >>> browser = Browser(layer['app'])
+  >>> browser.addHeader('Authorization',
+  ...     'Basic %s:%s' % (TEST_USER_NAME, TEST_USER_PASSWORD))
+
   >>> browser.open('http://nohost/plone/')
 
 Next we create a source folder, where we are going to assign the content

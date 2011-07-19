@@ -7,13 +7,13 @@ class SubscriberTests(SubscriberTestCase, LifeCycleTests):
 
     publish_attributes = None   # everything gets indexed... :(
 
-    def afterSetUp(self):
+    def setUp(self):
         self.prepare()
         # trick the subscribers to use the mock indexer...
         self.original_getIndexer = subscribers.getQueue
         subscribers.getQueue = lambda: self.indexer
 
-    def beforeTearDown(self):
+    def tearDown(self):
         subscribers.getQueue = self.original_getIndexer
 
     def testUpdateObject(self):

@@ -3,11 +3,21 @@ order to make sure the combination of queueing, hooking into the transaction
 machinery, monkey-patches, interaction with the portal catalog, several event
 subscribers, thread-local variables etc is actually working... :)
 
-First a testbrowser with a logged-in user holding the necessary permissions
+First a test browser with a logged-in user holding the necessary permissions
 is needed:
 
-  >>> self.setRoles(('Manager',))
-  >>> browser = self.getBrowser()
+  >>> from plone.app.testing import setRoles
+  >>> from plone.app.testing import TEST_USER_ID
+  >>> from plone.app.testing import TEST_USER_NAME
+  >>> from plone.app.testing import TEST_USER_PASSWORD
+  >>> portal = layer['portal']
+  >>> setRoles(portal, TEST_USER_ID, ['Manager'])
+
+  >>> from plone.testing.z2 import Browser
+  >>> browser = Browser(layer['app'])
+  >>> browser.addHeader('Authorization',
+  ...     'Basic %s:%s' % (TEST_USER_NAME, TEST_USER_PASSWORD))
+
   >>> browser.open('http://nohost/plone/')
 
 Since the queueing and optimizing of indexing operations is supposed to be
@@ -47,10 +57,14 @@ which should have resulted in some indexing operations on the queue and the
 queue processor as well.  The latter should also have fewer operations, since
 Plone calls them redundantly after all:
 
-  >>> self.failUnless(queuedIndex, 'indexing queue not used?')
-  >>> self.failUnless(calledIndex, 'queue processor not used?')
-  >>> self.failUnless(len(queuedIndex) > len(calledIndex), 'not optimizing?')
-  >>> self.assertEqual(len(calledIndex), 2)
+  >>> bool(queuedIndex)
+  True
+  >>> bool(calledIndex)
+  True
+  >>> len(queuedIndex) > len(calledIndex)
+  True
+  >>> len(calledIndex)
+  2
 
 Let's make sure the new item has actually been indexed, that is added to the
 portal catalog:
@@ -81,7 +95,8 @@ the hook into the transaction machinery:
 
 Now both should be in the catalog and show up in the global sections:
 
-  >>> self.assertEqual(len(calledIndex), 4)
+  >>> len(calledIndex)
+  4
   >>> path = lambda obj: '/'.join(obj.getPhysicalPath())
   >>> def sort(brains):
   ...     return sorted([ brain.getObject() for brain in brains ], key=path)
@@ -114,7 +129,8 @@ preparations including more counters for reindexing and unindexing operations:
   >>> browser.getControl('Title').value = 'a folder'
   >>> browser.getControl('Save').click()
 
-  >>> self.assertEqual(len(calledIndex), 6)
+  >>> len(calledIndex)
+  6
   >>> calledIndex[:] = []
   >>> uid = portal['first-news-today'].UID()
   >>> folder = portal['a-folder']
@@ -159,13 +175,14 @@ Afterwards various aspects are checked:
   Traceback (most recent call last):
   ...
   KeyError: 'first-news-today'
-  >>> folder.objectValues()
+  >>> folder.values()
   [<ATNewsItem at /plone/a-folder/first-news-today>]
   >>> uid == folder['first-news-today'].UID()
   True
-  >>> calledIndex
-  ['<ATNewsItem at /plone/a-folder/first-news-today>']
-  >>> self.assertEqual(len(calledReindex), 2)
+  >>> bool(len(calledIndex))
+  True
+  >>> len(calledReindex)
+  2
   >>> calledUnindex
   ['<PathWrapper at /plone/first-news-today>']
   >>> sort(catalog(Title='first'))
@@ -199,11 +216,14 @@ Copying an item should also work:
   <ATNewsItem at /plone/a-folder/second-news-today>
   >>> portal['second-news-today'].UID() == folder['second-news-today'].UID()
   False
-  >>> self.failUnless(len(calledIndex))
+  >>> bool(len(calledIndex))
+  True
   >>> '<ATNewsItem at /plone/a-folder/second-news-today>' in calledIndex
   True
-  >>> self.failUnless(len(calledReindex))
-  >>> self.failUnless(len(calledUnindex))
+  >>> bool(len(calledReindex))
+  True
+  >>> bool(len(calledUnindex))
+  True
   >>> sort(catalog(Title='second'))
   [<ATNewsItem at /plone/a-folder/second-news-today>, <ATNewsItem at /plone/second-news-today>]
 
@@ -217,9 +237,12 @@ Removing an item should uncatalog it, of course:
   >>> browser.contents
   '...Info...Item(s) deleted...'
 
-  >>> self.failUnless(len(calledIndex))
-  >>> self.failUnless(len(calledReindex))
-  >>> self.failUnless(len(calledUnindex))
+  >>> bool(len(calledIndex))
+  True
+  >>> bool(len(calledReindex))
+  True
+  >>> bool(len(calledUnindex))
+  True
   >>> calledUnindex[-1]
   '<PathWrapper at /plone/a-folder/first-news-today>'
   >>> sort(catalog(Title='first'))
@@ -234,9 +257,12 @@ Modifying an item should trigger a reindex operation:
   >>> browser.getControl('Title').value = 'latest news'
   >>> browser.getControl('Save').click()
 
-  >>> self.failUnless(len(calledIndex))
-  >>> self.failUnless(len(calledReindex))
-  >>> self.failUnless(len(calledUnindex))
+  >>> bool(len(calledIndex))
+  True
+  >>> bool(len(calledReindex))
+  True
+  >>> bool(len(calledUnindex))
+  True
   >>> calledReindex[-1]
   '<ATFolder at /plone/a-folder>'
   >>> sort(catalog(Title='folder'))
@@ -246,20 +272,22 @@ Modifying an item should trigger a reindex operation:
 
 Publishing should do the same:
 
-  >>> info = self.portal.portal_workflow.getInfoFor
-  >>> info(self.portal['a-folder'], 'review_state')
+  >>> info = portal.portal_workflow.getInfoFor
+  >>> info(portal['a-folder'], 'review_state')
   'private'
   >>> sort(catalog(Title='latest', review_state='published'))
   []
 
   >>> browser.getLink('Publish').click()
-
-  >>> self.failUnless(len(calledIndex))
-  >>> self.failUnless(len(calledReindex))
-  >>> self.failUnless(len(calledUnindex))
+  >>> bool(len(calledIndex))
+  True
+  >>> bool(len(calledReindex))
+  True
+  >>> bool(len(calledUnindex))
+  True
   >>> calledReindex[-1]
   '<ATFolder at /plone/a-folder>'
-  >>> info(self.portal['a-folder'], 'review_state')
+  >>> info(portal['a-folder'], 'review_state')
   'published'
   >>> sort(catalog(Title='latest', review_state='published'))
   [<ATFolder at /plone/a-folder>]
