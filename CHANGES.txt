@@ -1,8 +1,8 @@
 Changelog
 =========
 
-2.0 - unreleased
-----------------
+2.0a2 - 2011-07-19
+------------------
 
 - Use `plone.app.testing` instead of `c.testcaselayer`.
   [hannosch]
