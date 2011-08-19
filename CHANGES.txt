@@ -4,6 +4,9 @@ Changelog
 2.0 - unreleased
 ----------------
 
+- Added back `IIndexQueueSwitch` marker interface for better uninstall support
+  for 1.x versions. Fixes https://github.com/Jarn/collective.indexing/issues/2.
+  [hannosch, dholth]
 
 2.0a2 - 2011-07-19
 ------------------

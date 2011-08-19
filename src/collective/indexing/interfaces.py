@@ -1,6 +1,10 @@
 from zope.interface import Interface
 
 
+class IIndexQueueSwitch(Interface):
+    # BBB: support uninstall of 1.x versions
+    pass
+
 class IIndexingConfig(Interface):
     # BBB: support uninstall of 1.x versions
     pass
