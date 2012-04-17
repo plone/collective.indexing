@@ -5,6 +5,8 @@
 
     <five:registerPackage package="." initialize=".initialize" />
 
+    <include package="Products.CMFCore" file="permissions.zcml" />
+
     <utility
        provides="collective.indexing.indexer.IPortalCatalogQueueProcessor"
        name="portal-catalog"
