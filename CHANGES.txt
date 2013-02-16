@@ -1,8 +1,11 @@
 Changelog
 =========
 
-2.0 - unreleased
-----------------
+2.0b1 - 2013-02-16
+------------------
+
+- Compensate for changes in ZCML configuration ordering
+  [rockfruit]
 
 
 2.0a3 - 2011-08-22
