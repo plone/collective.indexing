@@ -6,7 +6,7 @@ setup(name = 'collective.indexing',
       version = version,
       description = 'Abstract framework for queueing, optimizing and '
           'dispatching index operations for Plone content.',
-      long_description = open("README.rst").read() + '\n' +
+      long_description = open('README.rst').read() + '\n' +
                          open('CHANGES.rst').read(),
       classifiers = [
         'Development Status :: 5 - Production/Stable',
@@ -20,7 +20,7 @@ setup(name = 'collective.indexing',
       keywords = 'plone cmf zope indexing queueing catalog asynchronous',
       author = 'Plone Foundation',
       author_email = 'plone-developers@lists.sourceforge.net',
-      url = 'https://github.com/Jarn/collective.indexing',
+      url = 'https://github.com/collective/collective.indexing',
       license = 'GPL',
       packages = find_packages('src'),
       package_dir = {'': 'src'},
@@ -38,8 +38,8 @@ setup(name = 'collective.indexing',
         'zope.publisher',
         'Zope2 >= 2.13',
       ],
-      entry_points = '''
+      entry_points = """
         [z3c.autoinclude.plugin]
         target = plone
-      ''',
+      """,
 )
