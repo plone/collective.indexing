@@ -30,14 +30,18 @@ setup(name = 'collective.indexing',
       zip_safe = False,
       install_requires = [
         'setuptools',
-        'plone.app.testing',
-        'unittest2',
         'zope.container',
         'zope.event',
         'zope.lifecycleevent',
         'zope.publisher',
         'Zope2 >= 2.13',
       ],
+      extras_require = {
+            'test': [
+                  'plone.app.testing',
+                  'unittest2',
+            ]
+      },
       entry_points = """
         [z3c.autoinclude.plugin]
         target = plone
