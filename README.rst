@@ -61,7 +61,7 @@ package is currently in use in several production sites and considered stable.
 For outstanding issues and features remaining to be implemented please see the
 `issue tracker`__.
 
-  .. __: https://github.com/Jarn/collective.indexing/issues
+  .. __: https://github.com/plone/collective.indexing/issues
 
 
 Subscriber Support
