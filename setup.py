@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '2.0dev'
+version = '2.1.dev0'
 
 setup(name = 'collective.indexing',
       version = version,
