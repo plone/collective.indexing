@@ -1,68 +1,10 @@
 from zope.interface import implements
-from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
-from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
 from collective.indexing.interfaces import IIndexQueueProcessor
-
-
-# container to hold references to the original and "monkeyed" indexing methods
-# these are populated by `collective.indexing.monkey`
-catalogMultiplexMethods = {}
-catalogAwareMethods = {}
-monkeyMethods = {}
-
-
-def getOwnIndexMethod(obj, name):
-    """ return private indexing method if the given object has one """
-    attr = getattr(obj.__class__, name, None)
-    if attr is not None:
-        method = attr.im_func
-        monkey = monkeyMethods.get(name.rstrip('Object'), None)
-        if monkey is not None and method is not monkey:
-            return method
-
-
-def getDispatcher(obj, name):
-    """ return named indexing method according on the used mixin class """
-    if isinstance(obj, CatalogMultiplex):
-        op = catalogMultiplexMethods.get(name, None)
-    elif isinstance(obj, CMFCatalogAware):
-        op = catalogAwareMethods.get(name, None)
-    else:
-        op = None
-    if callable(op):
-        method = getOwnIndexMethod(obj, op.__name__)
-        if method is not None:
-            op = method     # return object's own method to be used...
-    return op
-
-
-def index(obj, attributes=None):
-    op = getDispatcher(obj, 'index')
-    if op is not None:
-        op(obj)
 
 
 # used instead of a lambda as ZODB dump does not know how to serialize those
 def notifyModified(*args):
     pass
-
-
-def reindex(obj, attributes=None):
-    op = getDispatcher(obj, 'reindex')
-    if op is not None:
-        # prevent update of modification date during deferred reindexing
-        od = obj.__dict__
-        if not 'notifyModified' in od:
-            od['notifyModified'] = notifyModified
-        op(obj, attributes or [])
-        if 'notifyModified' in od:
-            del od['notifyModified']
-
-
-def unindex(obj):
-    op = getDispatcher(obj, 'unindex')
-    if op is not None:
-        op(obj)
 
 
 class IPortalCatalogQueueProcessor(IIndexQueueProcessor):
@@ -74,13 +16,25 @@ class PortalCatalogProcessor(object):
     implements(IPortalCatalogQueueProcessor)
 
     def index(self, obj, attributes=None):
-        index(obj, attributes)
+        op = self.get_dispatcher(obj, 'indexObject')
+        if op is not None:
+            op(obj)
 
     def reindex(self, obj, attributes=None):
-        reindex(obj, attributes)
+        op = self.get_dispatcher(obj, 'reindexObject')
+        if op is not None:
+            # prevent update of modification date during deferred reindexing
+            od = obj.__dict__
+            if not 'notifyModified' in od:
+                od['notifyModified'] = notifyModified
+            op(obj, attributes or [])
+            if 'notifyModified' in od:
+                del od['notifyModified']
 
     def unindex(self, obj):
-        unindex(obj)
+        op = self.get_dispatcher(obj, 'unindexObject')
+        if op is not None:
+            op(obj)
 
     def begin(self):
         pass
@@ -90,3 +44,12 @@ class PortalCatalogProcessor(object):
 
     def abort(self):
         pass
+
+    @staticmethod
+    def get_dispatcher(obj, name):
+        """ return named indexing method according on the used mixin class """
+        attr = getattr(obj, '_{0}'.format(name), None)
+        if attr is not None:
+            method = attr.im_func
+            return method
+        return
