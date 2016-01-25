@@ -126,13 +126,11 @@ Solution
 Credits
 =======
 
-This code was inspired by `enfold.indexing`_ and `enfold.solr`_ by `Enfold
+This code was inspired by enfold.indexing and enfold.solr by `Enfold
 Systems`_ as well as `work done at the snowsprint'08`__.  The
-``TransactionManager`` pattern is taken from `enfold.solr`_.  Development was
+``TransactionManager`` pattern is taken from enfold.solr.  Development was
 kindly sponsored by `Elkjop`_.
 
-  .. _`enfold.indexing`: https://svn.enfoldsystems.com/browse/public/enfold.solr/branches/snowsprint08-buildout/enfold.indexing/
-  .. _`enfold.solr`: https://svn.enfoldsystems.com/browse/public/enfold.solr/branches/snowsprint08-buildout/enfold.solr/
   .. _`Enfold Systems`: http://www.enfoldsystems.com/
   .. __: http://tarekziade.wordpress.com/2008/01/20/snow-sprint-report-1-indexing/
   .. _`Elkjop`: http://www.elkjop.no/
