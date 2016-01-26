@@ -93,15 +93,15 @@ class IndexQueue(local):
         self.tmhook()
 
     def index(self, obj, attributes=None):
-        self.queue.append((INDEX, obj, attributes))
+        self.queue.append((INDEX, obj, attributes, None))
         self.hook()
 
-    def reindex(self, obj, attributes=None):
-        self.queue.append((REINDEX, obj, attributes))
+    def reindex(self, obj, attributes=None, update_metadata=1):
+        self.queue.append((REINDEX, obj, attributes, update_metadata))
         self.hook()
 
     def unindex(self, obj):
-        self.queue.append((UNINDEX, wrap(obj), None))
+        self.queue.append((UNINDEX, wrap(obj), None, None))
         self.hook()
 
     def setHook(self, hook):
@@ -123,12 +123,12 @@ class IndexQueue(local):
         res = {}
         from pprint import pprint
         pprint(self.getState())
-        for iop, obj, iattr in self.getState():
+        for iop, obj, iattr, imetadata in self.getState():
             oid = hash(obj)
             func = getattr(obj, 'getPhysicalPath', None)
             if callable(func):
                 oid = oid, func()
-            op, dummy, attr = res.get(oid, (0, obj, iattr))
+            op, dummy, attr, metadata = res.get(oid, (0, obj, iattr, imetadata))
             # If we are going to delete an item that was added in this transaction, ignore it
             if op == INDEX and iop == UNINDEX:
                 del res[oid]
@@ -143,7 +143,10 @@ class IndexQueue(local):
                 else:
                     attr = None
 
-                res[oid] = (op, obj, attr)
+                if imetadata == 1 or metadata == 1:
+                    metadata = 1
+
+                res[oid] = (op, obj, attr, metadata)
 
         debug('finished reducing; %d item(s) in queue...', len(res))
         # Sort so unindex operations come first
@@ -159,12 +162,12 @@ class IndexQueue(local):
         for name, util in utilities:
             util.begin()
         # TODO: must the queue be handled independently for each processor?
-        for op, obj, attributes in self.queue:
+        for op, obj, attributes, metadata in self.queue:
             for name, util in utilities:
                 if op == INDEX:
                     util.index(obj, attributes)
                 elif op == REINDEX:
-                    util.reindex(obj, attributes)
+                    util.reindex(obj, attributes, update_metadata=metadata)
                 elif op == UNINDEX:
                     util.unindex(obj)
                 else:
