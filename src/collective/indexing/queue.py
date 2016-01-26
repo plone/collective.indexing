@@ -121,8 +121,6 @@ class IndexQueue(local):
 
     def optimize(self):
         res = {}
-        from pprint import pprint
-        pprint(self.getState())
         for iop, obj, iattr, imetadata in self.getState():
             oid = hash(obj)
             func = getattr(obj, 'getPhysicalPath', None)

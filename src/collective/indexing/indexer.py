@@ -17,14 +17,12 @@ class PortalCatalogProcessor(object):
     implements(IPortalCatalogQueueProcessor)
 
     def index(self, obj, attributes=None):
-        print("process index %s" % obj)
         catalog = getToolByName(obj, 'portal_catalog', None)
         catalog._indexObject(obj)
         # if op is not None:
         #     op(obj)
 
     def reindex(self, obj, attributes=None, update_metadata=1):
-        print("process reindex %s" % obj)
         catalog = getToolByName(obj, 'portal_catalog', None)
         catalog._reindexObject(obj, update_metadata=update_metadata)
         # if op is not None:
@@ -37,7 +35,6 @@ class PortalCatalogProcessor(object):
         #         del od['notifyModified']
 
     def unindex(self, obj):
-        print("process unindex %s" % obj)
         catalog = getToolByName(obj, 'portal_catalog', None)
         catalog._unindexObject(obj)
         # if op is not None:
