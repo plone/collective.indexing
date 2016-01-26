@@ -1,5 +1,6 @@
 from zope.interface import implements
 from collective.indexing.interfaces import IIndexQueueProcessor
+from Products.CMFCore.utils import getToolByName
 
 
 # used instead of a lambda as ZODB dump does not know how to serialize those
@@ -16,25 +17,31 @@ class PortalCatalogProcessor(object):
     implements(IPortalCatalogQueueProcessor)
 
     def index(self, obj, attributes=None):
-        op = self.get_dispatcher(obj, 'indexObject')
-        if op is not None:
-            op(obj)
+        print("process index %s" % obj)
+        catalog = getToolByName(obj, 'portal_catalog', None)
+        catalog._indexObject(obj)
+        # if op is not None:
+        #     op(obj)
 
     def reindex(self, obj, attributes=None):
-        op = self.get_dispatcher(obj, 'reindexObject')
-        if op is not None:
-            # prevent update of modification date during deferred reindexing
-            od = obj.__dict__
-            if not 'notifyModified' in od:
-                od['notifyModified'] = notifyModified
-            op(obj, attributes or [])
-            if 'notifyModified' in od:
-                del od['notifyModified']
+        print("process reindex %s" % obj)
+        catalog = getToolByName(obj, 'portal_catalog', None)
+        catalog._reindexObject(obj)
+        # if op is not None:
+        #     # prevent update of modification date during deferred reindexing
+        #     od = obj.__dict__
+        #     if not 'notifyModified' in od:
+        #         od['notifyModified'] = notifyModified
+        #     op(obj, attributes or [])
+        #     if 'notifyModified' in od:
+        #         del od['notifyModified']
 
     def unindex(self, obj):
-        op = self.get_dispatcher(obj, 'unindexObject')
-        if op is not None:
-            op(obj)
+        print("process unindex %s" % obj)
+        catalog = getToolByName(obj, 'portal_catalog', None)
+        catalog._unindexObject(obj)
+        # if op is not None:
+        #     op(obj)
 
     def begin(self):
         pass
@@ -48,7 +55,10 @@ class PortalCatalogProcessor(object):
     @staticmethod
     def get_dispatcher(obj, name):
         """ return named indexing method according on the used mixin class """
-        attr = getattr(obj, '_{0}'.format(name), None)
+        catalog = getToolByName(obj, 'portal_catalog', None)
+        if catalog is None:
+            return
+        attr = getattr(catalog, '_{0}'.format(name), None)
         if attr is not None:
             method = attr.im_func
             return method
