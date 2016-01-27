@@ -136,10 +136,11 @@ class IndexQueue(local):
                 op = min(max(op, UNINDEX), INDEX) # operator always between -1 and 1
 
                 # Handle attributes, None means all fields, and takes presedence
-                if isinstance(attr, (tuple, list)) and isinstance(iattr, (tuple, list)):
+                if attr and iattr and isinstance(attr, (tuple, list)) and \
+                        isinstance(iattr, (tuple, list)):
                     attr = list(set(attr).union(iattr))
                 else:
-                    attr = None
+                    attr = []
 
                 if imetadata == 1 or metadata == 1:
                     metadata = 1
