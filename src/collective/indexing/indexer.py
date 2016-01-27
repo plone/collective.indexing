@@ -24,7 +24,7 @@ class PortalCatalogProcessor(object):
 
     def reindex(self, obj, attributes=None, update_metadata=1):
         catalog = getToolByName(obj, 'portal_catalog', None)
-        catalog._reindexObject(obj, update_metadata=update_metadata)
+        catalog._reindexObject(obj, idxs=attributes, update_metadata=update_metadata)
         # if op is not None:
         #     # prevent update of modification date during deferred reindexing
         #     od = obj.__dict__
