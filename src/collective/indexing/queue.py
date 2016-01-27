@@ -136,10 +136,11 @@ class IndexQueue(local):
                 op = min(max(op, UNINDEX), INDEX) # operator always between -1 and 1
 
                 # Handle attributes, None means all fields, and takes presedence
-                if isinstance(attr, (tuple, list)) and isinstance(iattr, (tuple, list)):
+                if attr and iattr and isinstance(attr, (tuple, list)) and \
+                        isinstance(iattr, (tuple, list)):
                     attr = list(set(attr).union(iattr))
                 else:
-                    attr = None
+                    attr = []
 
                 res[oid] = (op, obj, attr)
 
@@ -160,7 +161,7 @@ class IndexQueue(local):
         for op, obj, attributes in self.queue:
             for name, util in utilities:
                 if op == INDEX:
-                    util.index(obj, attributes)
+                    util.index(obj, None)
                 elif op == REINDEX:
                     util.reindex(obj, attributes)
                 elif op == UNINDEX:
