@@ -8,6 +8,7 @@ from logging import getLogger
 from Acquisition import aq_base
 from collective.indexing.indexer import catalogMultiplexMethods
 from collective.indexing.indexer import catalogAwareMethods
+from collective.indexing.indexer import cmfcatalogAwareMethods
 from collective.indexing.indexer import monkeyMethods
 from collective.indexing.queue import getQueue
 from collective.indexing.subscribers import filterTemporaryItems
@@ -42,13 +43,14 @@ def reindexObject(self, idxs=None):
     if obj is not None and indexer is not None:
         indexer.reindex(obj, idxs)
 
-
 # set up dispatcher containers for the original methods and
 # hook up the new methods if that hasn't been done before...
 from Products.Archetypes.BaseBTreeFolder import BaseBTreeFolder
 from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
-for module, container in ((CMFCatalogAware, catalogAwareMethods),
+from Products.CMFCore.CMFCatalogAware import CatalogAware
+for module, container in ((CMFCatalogAware, cmfcatalogAwareMethods),
+                          (CatalogAware, catalogAwareMethods),
                           (CatalogMultiplex, catalogMultiplexMethods),
                           (BaseBTreeFolder, {})):
     if not container and module is not None:
@@ -127,7 +129,8 @@ def unpatch():
     was using collective.indexing (maybe indirectly through collective.solr).
     """
     # remove the indexing patches
-    for module, container in ((CMFCatalogAware, catalogAwareMethods),
+    for module, container in ((CMFCatalogAware, cmfcatalogAwareMethods),
+                              (CatalogAware, catalogAwareMethods),
                               (CatalogMultiplex, catalogMultiplexMethods)):
         module.indexObject = container['index']
         module.reindexObject = container['reindex']

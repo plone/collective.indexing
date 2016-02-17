@@ -1,6 +1,7 @@
 from zope.interface import implements
 from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
+from Products.CMFCore.CMFCatalogAware import CatalogAware
 from collective.indexing.interfaces import IIndexQueueProcessor
 
 
@@ -8,6 +9,7 @@ from collective.indexing.interfaces import IIndexQueueProcessor
 # these are populated by `collective.indexing.monkey`
 catalogMultiplexMethods = {}
 catalogAwareMethods = {}
+cmfcatalogAwareMethods = {}
 monkeyMethods = {}
 
 
@@ -26,6 +28,8 @@ def getDispatcher(obj, name):
     if isinstance(obj, CatalogMultiplex):
         op = catalogMultiplexMethods.get(name, None)
     elif isinstance(obj, CMFCatalogAware):
+        op = cmfcatalogAwareMethods.get(name, None)
+    elif isinstance(obj, CatalogAware):
         op = catalogAwareMethods.get(name, None)
     else:
         op = None
