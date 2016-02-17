@@ -7,6 +7,7 @@
 from Acquisition import aq_base
 from collective.indexing.indexer import catalogAwareMethods
 from collective.indexing.indexer import catalogMultiplexMethods
+from collective.indexing.indexer import cmfcatalogAwareMethods
 from collective.indexing.indexer import monkeyMethods
 from collective.indexing.queue import getQueue
 from collective.indexing.queue import processQueue
@@ -17,6 +18,7 @@ from logging import getLogger
 from Products.Archetypes.BaseBTreeFolder import BaseBTreeFolder
 from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
+from Products.CMFCore.CMFCatalogAware import CatalogAware
 # patch CatalogTool.(unrestricted)searchResults to flush the queue
 # before issuing a query
 from Products.CMFPlone.CatalogTool import CatalogTool
@@ -66,7 +68,8 @@ def reindexObjectSecurity(self, skip_self=False):
     self.ZopeFindAndApply(self, search_sub=True, apply_func=_reindex)
 
 
-for module, container in ((CMFCatalogAware, catalogAwareMethods),
+for module, container in ((CMFCatalogAware, cmfcatalogAwareMethods),
+                          (CatalogAware, catalogAwareMethods),
                           (CatalogMultiplex, catalogMultiplexMethods),
                           (BaseBTreeFolder, {})):
     if not container and module is not None:
@@ -143,7 +146,8 @@ def unpatch():
     was using collective.indexing (maybe indirectly through collective.solr).
     """
     # remove the indexing patches
-    for module, container in ((CMFCatalogAware, catalogAwareMethods),
+    for module, container in ((CMFCatalogAware, cmfcatalogAwareMethods),
+                              (CatalogAware, catalogAwareMethods),
                               (CatalogMultiplex, catalogMultiplexMethods)):
         module.indexObject = container['index']
         module.reindexObject = container['reindex']
