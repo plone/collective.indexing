@@ -16,13 +16,13 @@ dedicated search engine solutions like `Solr`_, `Xapian`_ or `Google Search
 Appliance`_.  One backend implementation designed to be used with this package
 has already been started in the form of `collective.solr`_.
 
-  .. _`collective.indexing`: https://github.com/Jarn/collective.indexing
+  .. _`collective.indexing`: https://github.com/plone/collective.indexing
   .. _`Plone`: http://www.plone.org/
   .. _`CMF`: http://www.zope.org/Products/CMF/
   .. _`Solr`: http://lucene.apache.org/solr/
   .. _`Xapian`: http://www.xapian.org/
   .. _`Google Search Appliance`: http://www.google.com/enterprise/gsa/
-  .. _`collective.solr`: https://github.com/Jarn/collective.solr
+  .. _`collective.solr`: https://github.com/collective/collective.solr
 
 
 Current Status
@@ -99,7 +99,7 @@ sure to check the package's `issue tracker`__ and use it to report new bugs
 and/or discuss possible enhancements.  Alternatively, feedback via the
 `"Plone Developers" mailing-list`__ is also most welcome.
 
-  .. __: https://github.com/Jarn/collective.indexing/issues
+  .. __: https://github.com/plone/collective.indexing/issues
   .. __: mailto:plone-developers@lists.sourceforge.net
 
 
