@@ -115,3 +115,29 @@ def setupFlush():
         debug('patched %s', str(CatalogTool.getCounter))
 
 setupFlush()
+
+
+def unpatch():
+    """Remove monkey-patches applied when importing this module
+
+    This allows to cleanly remove all traces of collective.indexing,
+    bringing back the original implementation.
+
+    Mostly useful during testing, specially while tearing down a layer that
+    was using collective.indexing (maybe indirectly through collective.solr).
+    """
+    # remove the indexing patches
+    for module, container in ((CMFCatalogAware, catalogAwareMethods),
+                              (CatalogMultiplex, catalogMultiplexMethods)):
+        module.indexObject = container['index']
+        module.reindexObject = container['reindex']
+        module.unindexObject = container['unindex']
+
+    # remove the searching patches
+    if getattr(CatalogTool, '__af_old_searchResults', False):
+        CatalogTool.searchResults = CatalogTool.__af_old_searchResults
+        CatalogTool.__call__ = CatalogTool.__af_old_searchResults
+    if getattr(CatalogTool, '__af_old_unrestrictedSearchResults', False):
+        CatalogTool.unrestrictedSearchResults = CatalogTool.__af_old_unrestrictedSearchResults
+    if getattr(CatalogTool, '__af_old_getCounter', False):
+        CatalogTool.getCounter = CatalogTool.__af_old_getCounter
