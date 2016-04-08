@@ -4,8 +4,21 @@ Changelog
 2.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix a bug on the index operations optimization: attributes are
+  expected to be a list
+  [gforcada]
 
+- Bug: do not downgrade full reindexes to partial ones
+  [gforcada]
+
+- Patch CatalogAware objects as well, so comments are also indexed.
+  [gforcada]
+
+- Handle comments' security as well.
+  [gforcada]
+
+- Make archetypes optional.
+  [gforcada]
 
 2.1 (2018-07-20)
 ----------------
