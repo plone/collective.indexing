@@ -7,6 +7,10 @@ Changelog
 - Add a method to remove the monkey patches.
   [gforcada]
 
+- End Of Life: starting with Plone 5.1.0 release collective.indexing has been merged into Plone core.
+  The functionality provided by it is already available
+  [gforcada]
+
 
 2.0b1 - 2013-02-16
 ------------------
