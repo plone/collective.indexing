@@ -1,0 +1,8 @@
+include *.py
+include *.rst
+include buildout.cfg
+recursive-include docs *.GPL
+recursive-include docs *.txt
+recursive-include src *.txt
+recursive-include src *.zcml
+recursive-include var *.txt
