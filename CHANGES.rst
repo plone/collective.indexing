@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0 - unreleased
+2.0 (2017-04-13)
 ----------------
 
 - Add a method to remove the monkey patches.
