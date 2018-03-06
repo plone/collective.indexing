@@ -64,7 +64,7 @@ Plone calls them redundantly after all:
   >>> len(queuedIndex) > len(calledIndex)
   True
   >>> len(calledIndex)
-  3
+  2
 
 Let's make sure the new item has actually been indexed, that is added to the
 portal catalog:
@@ -96,7 +96,7 @@ the hook into the transaction machinery:
 Now both should be in the catalog and show up in the global sections:
 
   >>> len(calledIndex)
-  6
+  4
   >>> path = lambda obj: '/'.join(obj.getPhysicalPath())
   >>> def sort(brains):
   ...     return sorted([ brain.getObject() for brain in brains ], key=path)
@@ -130,7 +130,7 @@ preparations including more counters for reindexing and unindexing operations:
   >>> browser.getControl('Save').click()
 
   >>> len(calledIndex)
-  9
+  6
   >>> calledIndex[:] = []
   >>> uid = portal['first-news-today'].UID()
   >>> folder = portal['a-folder']
@@ -285,8 +285,12 @@ Publishing should do the same:
   True
   >>> bool(len(calledUnindex))
   True
+
+The last element in the reindex queue is actually the contained news item,
+due to the fact that the `reindexObjectSecurity` method was triggered
+
   >>> calledReindex[-1]
-  '<ATFolder at /plone/a-folder>'
+  '<ATNewsItem at /plone/a-folder/second-news-today>'
   >>> info(portal['a-folder'], 'review_state')
   'published'
   >>> sort(catalog(Title='latest', review_state='published'))
