@@ -6,6 +6,7 @@ downloads
 eggs
 include
 lib
+local
 parts
 htmlcov
 var

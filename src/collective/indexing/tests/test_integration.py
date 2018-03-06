@@ -1,9 +1,12 @@
-from Acquisition import aq_parent, aq_inner, aq_base
+# coding=utf-8
+from Acquisition import aq_base
+from Acquisition import aq_inner
+from Acquisition import aq_parent
+from collective.indexing.tests.base import IndexingTestCase
 from Products.ATContentTypes.content.event import ATEvent
+from Products.ATContentTypes.criteria.portaltype import ATPortalTypeCriterion
 from Products.CMFCore.utils import getToolByName
 from transaction import commit
-
-from collective.indexing.tests.base import IndexingTestCase
 
 
 def getEventSubject(self):
@@ -71,7 +74,10 @@ class PathWrapperTests(IndexingTestCase):
         obj = self.folder
         wrapper = wrap(obj)
         self.assertEqual(aq_parent(wrapper), aq_parent(obj))
-        self.assertEqual(aq_parent(aq_inner(wrapper)), aq_parent(aq_inner(obj)))
+        self.assertEqual(
+            aq_parent(aq_inner(wrapper)),
+            aq_parent(aq_inner(obj)),
+        )
         # also check an extended aq-chain
         obj = self.folder.__of__(self.portal.news)
         wrapper = wrap(obj)
@@ -81,7 +87,9 @@ class PathWrapperTests(IndexingTestCase):
         # re-wrap itself in the parent's context or containment (aka "inner")
         # chain (in queue.py:70).  this can probably be fixed by using
         # `__parent__`, but not before zope 2.12...
-        # self.assertEqual(aq_parent(aq_inner(wrapper)), aq_parent(aq_inner(obj)))
+        # self.assertEqual(
+        #     aq_parent(aq_inner(wrapper)), aq_parent(aq_inner(obj))
+        # )
 
 
 class OverriddenIndexMethodTests(IndexingTestCase):
@@ -110,8 +118,8 @@ class OverriddenIndexMethodTests(IndexingTestCase):
         self.failIf(getOwnIndexMethod(event, 'reindexObject'))
         self.failIf(getOwnIndexMethod(event, 'unindexObject'))
         # while a criterion has private methods...
-        container.invokeFactory('Topic', id='coll')
-        crit = container.coll.addCriterion('Type', 'ATPortalTypeCriterion')
+        container.invokeFactory('Collection', id='coll')
+        crit = ATPortalTypeCriterion('crit')
         self.failUnless(getOwnIndexMethod(crit, 'indexObject'))
         self.failUnless(getOwnIndexMethod(crit, 'reindexObject'))
         self.failUnless(getOwnIndexMethod(crit, 'unindexObject'))
