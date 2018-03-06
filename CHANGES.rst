@@ -4,6 +4,8 @@ Changelog
 2.1 (unreleased)
 ----------------
 
+- reindexObjectSecurirty operations are handled by the queue (#14)
+  [ale-rt]
 - Test the package against Plone 4.3
   [ale-rt]
 
