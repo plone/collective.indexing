@@ -47,18 +47,11 @@ Now we'll create a folder where we want to move our item to:
 Next we create a content rule, which will move the object to our destination
 folder whenever a workflow transition happens:
 
-  >>> browser.getLink('Rules').click()
-  >>> browser.getLink('content rules control panel').click()
+  >>> browser.open('http://nohost/plone/@@rules-controlpanel')
   >>> browser.getControl('Add content rule').click()
   >>> browser.getControl('Title').value = 'Move on workflow transition'
   >>> browser.getControl('Triggering event').displayValue = ['Workflow state changed']
   >>> browser.getControl('Save').click()
-
-We're back at the control panel.  Now we'll edit the content rule:
-
-  >>> browser.url
-  'http://nohost/plone/@@rules-controlpanel'
-  >>> browser.getLink('Move on workflow transition (Workflow state changed)').click()
 
 Now comes the action, we want all objects to be moved to the destination
 folder:

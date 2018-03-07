@@ -64,7 +64,7 @@ Plone calls them redundantly after all:
   >>> len(queuedIndex) > len(calledIndex)
   True
   >>> len(calledIndex)
-  2
+  3
 
 Let's make sure the new item has actually been indexed, that is added to the
 portal catalog:
@@ -96,7 +96,7 @@ the hook into the transaction machinery:
 Now both should be in the catalog and show up in the global sections:
 
   >>> len(calledIndex)
-  4
+  6
   >>> path = lambda obj: '/'.join(obj.getPhysicalPath())
   >>> def sort(brains):
   ...     return sorted([ brain.getObject() for brain in brains ], key=path)
@@ -116,9 +116,9 @@ And the search should of course also return the new news:
   >>> browser.getControl('Search Site').value = 'today'
   >>> browser.getForm(action='search').submit()
   >>> browser.url
-  'http://nohost/plone/search?SearchableText=today'
+  'http://nohost/plone/@@search?SearchableText=today'
   >>> browser.contents
-  '...Search results...2 items matching your search terms...'
+  '...Search results...<strong id="search-results-number">2</strong>...items matching your search terms...'
 
 Now let's try some other operations, for example moving items around.  The
 change of location should be correctly reflected by the catalog.  First some
@@ -130,7 +130,7 @@ preparations including more counters for reindexing and unindexing operations:
   >>> browser.getControl('Save').click()
 
   >>> len(calledIndex)
-  6
+  9
   >>> calledIndex[:] = []
   >>> uid = portal['first-news-today'].UID()
   >>> folder = portal['a-folder']
@@ -315,10 +315,10 @@ Renaming should also work, but let's reset the counters first:
   <ATFolder at /plone/some-news>
 
   >>> sorted(calledIndex)
-  ['<ATFolder at /plone/some-news>', '<ATNewsItem at /plone/some-news/second-news-today>']
+  ['<ATFolder at /plone/some-news>', '<ATFolder at /plone/some-news>', '<ATNewsItem at /plone/some-news/second-news-today>', '<ATNewsItem at /plone/some-news/second-news-today>']
 
   >>> sorted(calledReindex)
-  ['<PloneSite at /plone>']
+  ['<ATNewsItem at /plone/some-news/second-news-today>', '<ATNewsItem at /plone/some-news/second-news-today>', '<PloneSite at /plone>']
 
   >>> sorted(calledUnindex)
   ['<PathWrapper at /plone/a-folder/second-news-today>', '<PathWrapper at /plone/a-folder>']
@@ -327,24 +327,6 @@ Renaming should also work, but let's reset the counters first:
   []
   >>> sort(catalog(getId='some-news'))
   [<ATFolder at /plone/some-news>]
-
-Adding a criterion to a collection shouldn't catalog the criterion:
-
-  >>> browser.getLink('Home').click()
-  >>> browser.getLink(url='createObject?type_name=Topic').click()
-  >>> browser.getControl(name='title').value = 'a collection'
-  >>> browser.getControl('Save').click()
-  >>> browser.getLink('Criteria').click()
-  >>> browser.getForm(name='criteria_select').getControl('Item Type').selected = True
-  >>> browser.getForm(name='criteria_select').getControl('Select content types').selected = True
-  >>> browser.getControl('Add criteria').click()
-
-  >>> portal['a-collection']
-  <ATTopic at /plone/a-collection>
-  >>> portal['a-collection'].objectIds()
-  ['syndication_information', 'crit__Type_ATPortalTypeCriterion']
-  >>> catalog(portal_type='ATPortalTypeCriterion')
-  []
 
 Also the portal site object itself should never be indexed:
 

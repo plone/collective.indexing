@@ -1,12 +1,11 @@
-import unittest2 as unittest
-
+from collective.indexing.tests import layer
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.testing.z2 import Browser
 
-from collective.indexing.tests import layer
+import unittest
 
 
 class Helper(unittest.TestCase):

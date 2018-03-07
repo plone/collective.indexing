@@ -4,8 +4,8 @@ Changelog
 2.1 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Test the package against Plone 4.3
+  [ale-rt]
 
 2.0 (2017-04-13)
 ----------------

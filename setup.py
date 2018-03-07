@@ -1,4 +1,6 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages
+from setuptools import setup
+
 
 version = '2.1.dev0'
 
@@ -39,7 +41,6 @@ setup(name = 'collective.indexing',
       extras_require = {
             'test': [
                   'plone.app.testing',
-                  'unittest2',
             ]
       },
       entry_points = """
