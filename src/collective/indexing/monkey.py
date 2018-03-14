@@ -4,13 +4,23 @@
 # will be added to the queue or, if disabled, directly dispatched to the
 # default indexer (using the original methods)
 
-from logging import getLogger
 from Acquisition import aq_base
-from collective.indexing.indexer import catalogMultiplexMethods
 from collective.indexing.indexer import catalogAwareMethods
+from collective.indexing.indexer import catalogMultiplexMethods
 from collective.indexing.indexer import monkeyMethods
 from collective.indexing.queue import getQueue
+from collective.indexing.queue import processQueue
 from collective.indexing.subscribers import filterTemporaryItems
+from logging import getLogger
+# set up dispatcher containers for the original methods and
+# hook up the new methods if that hasn't been done before...
+from Products.Archetypes.BaseBTreeFolder import BaseBTreeFolder
+from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
+from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
+# patch CatalogTool.(unrestricted)searchResults to flush the queue
+# before issuing a query
+from Products.CMFPlone.CatalogTool import CatalogTool
+
 
 logger = getLogger(__name__)
 debug = logger.debug
@@ -43,11 +53,37 @@ def reindexObject(self, idxs=None):
         indexer.reindex(obj, idxs)
 
 
-# set up dispatcher containers for the original methods and
-# hook up the new methods if that hasn't been done before...
-from Products.Archetypes.BaseBTreeFolder import BaseBTreeFolder
-from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
-from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
+def reindexObjectSecurity(self, skip_self=False):
+    obj = filterTemporaryItems(self)
+    if not obj:
+        return
+    catalog = self._getCatalogTool()
+    if catalog is None:
+        return
+    path = '/'.join(self.getPhysicalPath())
+
+    for brain in catalog.unrestrictedSearchResults(path=path):
+        brain_path = brain.getPath()
+        if brain_path == path and skip_self:
+            continue
+        # Get the object
+        ob = brain._unrestrictedGetObject()
+        if ob is None:
+            # BBB: Ignore old references to deleted objects.
+            # Can happen only when using
+            # catalog-getObject-raises off in Zope 2.8
+            logger.warning("reindexObjectSecurity: Cannot get %s from "
+                           "catalog", brain_path)
+            continue
+        # Recatalog with the same catalog uid.
+        s = getattr(ob, '_p_changed', 0)
+        ob.reindexObject(
+            idxs=self._cmf_security_indexes,
+        )
+        if s is None:
+            ob._p_deactivate()
+
+
 for module, container in ((CMFCatalogAware, catalogAwareMethods),
                           (CatalogMultiplex, catalogMultiplexMethods),
                           (BaseBTreeFolder, {})):
@@ -60,6 +96,7 @@ for module, container in ((CMFCatalogAware, catalogAwareMethods),
         module.indexObject = indexObject
         module.reindexObject = reindexObject
         module.unindexObject = unindexObject
+        module.reindexObjectSecurity = reindexObjectSecurity
         debug('patched %s', str(module.indexObject))
         debug('patched %s', str(module.reindexObject))
         debug('patched %s', str(module.unindexObject))
@@ -72,10 +109,6 @@ monkeyMethods.update({
 })
 
 
-# patch CatalogTool.(unrestricted)searchResults to flush the queue
-# before issuing a query
-from Products.CMFPlone.CatalogTool import CatalogTool
-from collective.indexing.queue import processQueue
 
 
 def searchResults(self, REQUEST=None, **kw):
