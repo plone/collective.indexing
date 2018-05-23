@@ -74,6 +74,7 @@ for module, container in ((CMFCatalogAware, catalogAwareMethods),
             'index': module.indexObject,
             'reindex': module.reindexObject,
             'unindex': module.unindexObject,
+            'reindexObjectSecurity': module.reindexObjectSecurity
         })
         module.indexObject = indexObject
         module.reindexObject = reindexObject
@@ -82,12 +83,14 @@ for module, container in ((CMFCatalogAware, catalogAwareMethods),
         debug('patched %s', str(module.indexObject))
         debug('patched %s', str(module.reindexObject))
         debug('patched %s', str(module.unindexObject))
+        debug('patched %s', str(module.reindexObjectSecurity))
 
 # also record the new methods in order to be able to compare them
 monkeyMethods.update({
     'index': indexObject,
     'reindex': reindexObject,
     'unindex': unindexObject,
+    'reindexObjectSecurity': reindexObjectSecurity,
 })
 
 
@@ -145,6 +148,7 @@ def unpatch():
         module.indexObject = container['index']
         module.reindexObject = container['reindex']
         module.unindexObject = container['unindex']
+        module.reindexObjectSecurity = container['reindexObjectSecurity']
 
     # remove the searching patches
     if getattr(CatalogTool, '__af_old_searchResults', False):
