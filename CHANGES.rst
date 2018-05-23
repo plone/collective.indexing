@@ -4,7 +4,8 @@ Changelog
 2.1 (unreleased)
 ----------------
 
-- reindexObjectSecurirty operations are handled by the queue (#14)
+- reindexObjectSecurity operations are handled by the queue (#14).
+  This fixes a bug with out-of-sync security indexes on Solr etc.
   [ale-rt]
 - Test the package against Plone 4.3
   [ale-rt]
