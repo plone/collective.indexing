@@ -4,13 +4,23 @@
 # will be added to the queue or, if disabled, directly dispatched to the
 # default indexer (using the original methods)
 
-from logging import getLogger
 from Acquisition import aq_base
-from collective.indexing.indexer import catalogMultiplexMethods
 from collective.indexing.indexer import catalogAwareMethods
+from collective.indexing.indexer import catalogMultiplexMethods
 from collective.indexing.indexer import monkeyMethods
 from collective.indexing.queue import getQueue
+from collective.indexing.queue import processQueue
 from collective.indexing.subscribers import filterTemporaryItems
+from logging import getLogger
+# set up dispatcher containers for the original methods and
+# hook up the new methods if that hasn't been done before...
+from Products.Archetypes.BaseBTreeFolder import BaseBTreeFolder
+from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
+from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
+# patch CatalogTool.(unrestricted)searchResults to flush the queue
+# before issuing a query
+from Products.CMFPlone.CatalogTool import CatalogTool
+
 
 logger = getLogger(__name__)
 debug = logger.debug
@@ -43,11 +53,19 @@ def reindexObject(self, idxs=None):
         indexer.reindex(obj, idxs)
 
 
-# set up dispatcher containers for the original methods and
-# hook up the new methods if that hasn't been done before...
-from Products.Archetypes.BaseBTreeFolder import BaseBTreeFolder
-from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
-from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
+def reindexObjectSecurity(self, skip_self=False):
+    if not filterTemporaryItems(self):
+        return
+
+    if not skip_self:
+        self.reindexObject(idxs=self._cmf_security_indexes)
+
+    def _reindex(obj, path):
+        obj.reindexObject(idxs=self._cmf_security_indexes)
+
+    self.ZopeFindAndApply(self, search_sub=True, apply_func=_reindex)
+
+
 for module, container in ((CMFCatalogAware, catalogAwareMethods),
                           (CatalogMultiplex, catalogMultiplexMethods),
                           (BaseBTreeFolder, {})):
@@ -56,26 +74,24 @@ for module, container in ((CMFCatalogAware, catalogAwareMethods),
             'index': module.indexObject,
             'reindex': module.reindexObject,
             'unindex': module.unindexObject,
+            'reindexObjectSecurity': module.reindexObjectSecurity
         })
         module.indexObject = indexObject
         module.reindexObject = reindexObject
         module.unindexObject = unindexObject
+        module.reindexObjectSecurity = reindexObjectSecurity
         debug('patched %s', str(module.indexObject))
         debug('patched %s', str(module.reindexObject))
         debug('patched %s', str(module.unindexObject))
+        debug('patched %s', str(module.reindexObjectSecurity))
 
 # also record the new methods in order to be able to compare them
 monkeyMethods.update({
     'index': indexObject,
     'reindex': reindexObject,
     'unindex': unindexObject,
+    'reindexObjectSecurity': reindexObjectSecurity,
 })
-
-
-# patch CatalogTool.(unrestricted)searchResults to flush the queue
-# before issuing a query
-from Products.CMFPlone.CatalogTool import CatalogTool
-from collective.indexing.queue import processQueue
 
 
 def searchResults(self, REQUEST=None, **kw):
@@ -132,6 +148,7 @@ def unpatch():
         module.indexObject = container['index']
         module.reindexObject = container['reindex']
         module.unindexObject = container['unindex']
+        module.reindexObjectSecurity = container['reindexObjectSecurity']
 
     # remove the searching patches
     if getattr(CatalogTool, '__af_old_searchResults', False):
