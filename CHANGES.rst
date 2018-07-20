@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.1 (unreleased)
+2.1 (2018-07-20)
 ----------------
 
 - reindexObjectSecurity operations are handled by the queue (#14).
