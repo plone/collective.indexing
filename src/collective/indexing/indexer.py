@@ -1,9 +1,14 @@
 from zope.interface import implements
-from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
 from Products.CMFCore.CMFCatalogAware import CatalogAware
 from collective.indexing.interfaces import IIndexQueueProcessor
 
+try:
+    from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
+    HAS_ARCHETYPES = True
+except ImportError:
+    CatalogMultiplex = object()
+    HAS_ARCHETYPES = False
 
 # container to hold references to the original and "monkeyed" indexing methods
 # these are populated by `collective.indexing.monkey`
@@ -25,7 +30,7 @@ def getOwnIndexMethod(obj, name):
 
 def getDispatcher(obj, name):
     """ return named indexing method according on the used mixin class """
-    if isinstance(obj, CatalogMultiplex):
+    if HAS_ARCHETYPES and isinstance(obj, CatalogMultiplex):
         op = catalogMultiplexMethods.get(name, None)
     elif isinstance(obj, CMFCatalogAware):
         op = cmfcatalogAwareMethods.get(name, None)

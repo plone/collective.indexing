@@ -15,8 +15,12 @@ from collective.indexing.subscribers import filterTemporaryItems
 from logging import getLogger
 # set up dispatcher containers for the original methods and
 # hook up the new methods if that hasn't been done before...
-from Products.Archetypes.BaseBTreeFolder import BaseBTreeFolder
-from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
+try:
+    from Products.Archetypes.BaseBTreeFolder import BaseBTreeFolder
+    from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
+    HAS_ARCHETYPES = True
+except ImportError:
+    HAS_ARCHETYPES = False
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
 from Products.CMFCore.CMFCatalogAware import CatalogAware
 # patch CatalogTool.(unrestricted)searchResults to flush the queue
@@ -78,10 +82,16 @@ def reindexObjectSecurity(self, skip_self=False):
         comment.reindexObject(idxs=self._cmf_security_indexes)
 
 
-for module, container in ((CMFCatalogAware, cmfcatalogAwareMethods),
-                          (CatalogAware, catalogAwareMethods),
-                          (CatalogMultiplex, catalogMultiplexMethods),
-                          (BaseBTreeFolder, {})):
+MODULES = [
+    (CMFCatalogAware, cmfcatalogAwareMethods),
+    (CatalogAware, catalogAwareMethods),
+]
+
+if HAS_ARCHETYPES:
+    MODULES.append((CatalogMultiplex, catalogMultiplexMethods))
+    MODULES.append((BaseBTreeFolder, {}))
+
+for module, container in MODULES:
     if not container and module is not None:
         container.update({
             'index': module.indexObject,
@@ -156,9 +166,13 @@ def unpatch():
     was using collective.indexing (maybe indirectly through collective.solr).
     """
     # remove the indexing patches
-    for module, container in ((CMFCatalogAware, cmfcatalogAwareMethods),
-                              (CatalogAware, catalogAwareMethods),
-                              (CatalogMultiplex, catalogMultiplexMethods)):
+    MODULES = [
+        (CMFCatalogAware, cmfcatalogAwareMethods),
+        (CatalogAware, catalogAwareMethods),
+    ]
+    if HAS_ARCHETYPES:
+        MODULES.append((CatalogMultiplex, catalogMultiplexMethods))
+    for module, container in MODULES:
         module.indexObject = container['index']
         module.reindexObject = container['reindex']
         module.unindexObject = container['unindex']
