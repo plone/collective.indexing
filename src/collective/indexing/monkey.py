@@ -22,6 +22,7 @@ from Products.CMFCore.CMFCatalogAware import CatalogAware
 # patch CatalogTool.(unrestricted)searchResults to flush the queue
 # before issuing a query
 from Products.CMFPlone.CatalogTool import CatalogTool
+from plone.app.discussion.interfaces import IConversation
 
 
 logger = getLogger(__name__)
@@ -65,7 +66,16 @@ def reindexObjectSecurity(self, skip_self=False):
     def _reindex(obj, path):
         obj.reindexObject(idxs=self._cmf_security_indexes)
 
-    self.ZopeFindAndApply(self, search_sub=True, apply_func=_reindex)
+    if getattr(self, 'ZopeFindAndApply', None):
+        self.ZopeFindAndApply(self, search_sub=True, apply_func=_reindex)
+
+    try:
+        conversation = IConversation(self)
+    except TypeError:
+        return
+
+    for comment in conversation.getComments():
+        comment.reindexObject(idxs=self._cmf_security_indexes)
 
 
 for module, container in ((CMFCatalogAware, cmfcatalogAwareMethods),
