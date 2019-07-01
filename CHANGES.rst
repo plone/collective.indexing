@@ -4,7 +4,8 @@ Changelog
 2.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Python 3: Replaced "implements" class advice with "implementer" decorator.
+  [reinhardt]
 
 
 2.1 (2018-07-20)

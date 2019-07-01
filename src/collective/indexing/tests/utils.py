@@ -1,4 +1,4 @@
-from zope.interface import implements
+from zope.interface import implementer
 
 from collective.indexing.config import INDEX, REINDEX, UNINDEX
 from collective.indexing.interfaces import IIndexing
@@ -6,8 +6,8 @@ from collective.indexing.interfaces import IIndexQueue
 from collective.indexing.interfaces import IIndexQueueProcessor
 
 
+@implementer(IIndexing)
 class MockIndexer(object):
-    implements(IIndexing)
 
     def __init__(self):
         self.queue = []
@@ -22,8 +22,8 @@ class MockIndexer(object):
         self.queue.append((UNINDEX, obj, None))
 
 
+@implementer(IIndexQueue)
 class MockQueue(MockIndexer):
-    implements(IIndexQueue)
 
     processed = None
     hook = lambda self: 42
@@ -58,8 +58,8 @@ class MockQueue(MockIndexer):
         self.queue = []
 
 
+@implementer(IIndexQueueProcessor)
 class MockQueueProcessor(MockQueue):
-    implements(IIndexQueueProcessor)
 
     state = 'unknown'
 

@@ -1,6 +1,6 @@
 from logging import getLogger
 from threading import local
-from zope.interface import implements
+from zope.interface import implementer
 from zope.component import getSiteManager
 from Acquisition import aq_base, aq_inner, aq_parent
 
@@ -75,9 +75,9 @@ def wrap(obj):
     return PathWrapper().__of__(aq_parent(obj))
 
 
+@implementer(IIndexQueue)
 class IndexQueue(local):
 
-    implements(IIndexQueue)
 
     def __init__(self):
         self.queue = []

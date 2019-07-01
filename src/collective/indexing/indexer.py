@@ -1,4 +1,4 @@
-from zope.interface import implements
+from zope.interface import implementer
 from Products.Archetypes.CatalogMultiplex import CatalogMultiplex
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
 from collective.indexing.interfaces import IIndexQueueProcessor
@@ -70,8 +70,8 @@ class IPortalCatalogQueueProcessor(IIndexQueueProcessor):
         the `CatalogMultiplex` and `CMFCatalogAware` mixin classes """
 
 
+@implementer(IPortalCatalogQueueProcessor)
 class PortalCatalogProcessor(object):
-    implements(IPortalCatalogQueueProcessor)
 
     def index(self, obj, attributes=None):
         index(obj, attributes)
