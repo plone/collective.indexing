@@ -6,14 +6,13 @@ from Acquisition import aq_base, aq_inner, aq_parent
 
 from collective.indexing.interfaces import IIndexQueue
 from collective.indexing.interfaces import IIndexQueueProcessor
-from collective.indexing.config import INDEX, REINDEX, UNINDEX
+from collective.indexing.config import INDEX, REINDEX, UNINDEX, processing
 from collective.indexing.transactions import QueueTM
 
 debug = getLogger('collective.indexing.queue').debug
 
 
 localQueue = None
-processing = set()
 
 
 class InvalidQueueOperation(Exception):
@@ -25,6 +24,7 @@ def getQueue():
     global localQueue
     if localQueue is None:
         localQueue = IndexQueue()
+        processing.clear()
     return localQueue
 
 

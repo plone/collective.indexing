@@ -1,8 +1,10 @@
+from collective.indexing.config import processing
 from logging import getLogger
 from threading import local
-from transaction.interfaces import ISavepointDataManager
 from transaction import get as getTransaction
+from transaction.interfaces import ISavepointDataManager
 from zope.interface import implements
+
 
 logger = getLogger('collective.indexing.transactions')
 
@@ -49,8 +51,10 @@ class QueueTM(local):
         pass
 
     def before_commit(self):
+        processing.add(self.queue)
         self.queue.process()
         self.queue.clear()
+        processing.remove(self.queue)
 
     def tpc_vote(self, transaction):
         pass
