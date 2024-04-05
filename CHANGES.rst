@@ -4,8 +4,8 @@ Changelog
 2.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Avoid to call queue.process a second time when indexing.
+  [sgeulette]
 
 2.1 (2018-07-20)
 ----------------
