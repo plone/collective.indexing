@@ -1,3 +1,11 @@
+Archived
+========
+
+This repository has been archived.
+`collective.indexing` was merged into `Products.CMFCore` 2.4, which is used since Plone 5.2.
+`collective.indexing` itself has not had a real change since 2018.
+
+
 Introduction
 ============
 
